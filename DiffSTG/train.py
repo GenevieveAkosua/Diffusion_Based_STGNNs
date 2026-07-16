@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*-
+
+# Author:
+# Edited by: Génevieve Chikwanha
+# Date edited: 16 July 2026
+
 import os, sys
 import torch
 import argparse
@@ -289,7 +294,7 @@ def main(params: dict):
     #  data pre-processing
     # print('\n1. data pre-processing ...')
     clean_data = CleanDataset(config)
-    config.model.A = clean_data.adj
+    config.model.A = clean_data.adj # Loads the adj spatial file from the cleandataset object into a dictionary at entry A
 
     model = DiffSTG(config.model)
     model = model.to(config.device)
@@ -397,7 +402,7 @@ def main(params: dict):
 
 
     try:
-        model = torch.load(model_path, map_location=config.device)
+        model = torch.load(model_path, map_location=config.device, weights_only=False)
         print('best model loaded from: <<', model_path)
     except Exception as err:
         print(err)

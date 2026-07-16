@@ -38,9 +38,9 @@ class CleanDataset():
     def __init__(self, config):
 
         self.data_name = config.data.name
-        self.feature_file = config.data.feature_file
+        self.feature_file = config.data.feature_file # This is the flow.npy file. QUESTION: Why don't we use np.load here?
         self.val_start_idx = config.data.val_start_idx
-        self.adj = np.load(config.data.spatial)
+        self.adj = np.load(config.data.spatial) # Loads from the adj.npy file in the dataset folder
         self.label, self.feature = self.read_data()
 
         #for stpgcn
@@ -60,7 +60,7 @@ class CleanDataset():
             data = np.expand_dims(np.load(self.feature_file)[:, :, 0], -1)
             data = np.nan_to_num(data, nan=0)
         else:
-            data = np.load(self.feature_file)
+            data = np.load(self.feature_file) # QUESTION: Why does it just load the file like this if not pems, air, or metro?
         # return data.astype('float32'), self.normalization(data).astype('float32')
         return self.normalization(data).astype('float32'), self.normalization(data).astype('float32')
 
