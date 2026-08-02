@@ -1,20 +1,29 @@
 # -*- coding: utf-8 -*-
+# Edited by: Genevieve Chikwanha
+# Date: 31 July 2026
+
 import numpy as np
 import pandas as pd
 from torch.utils.data import Dataset
+import os
 
 def search_recent_data(train, label_start_idx, T_p, T_h):
     """
+    Finds the start and ending index of the data range using the observed history and the target horizon.
     T_p: prediction time steps
     T_h: historical time steps
     """
+
     if label_start_idx + T_p > len(train): return None
     start_idx, end_idx = label_start_idx - T_h, label_start_idx - T_p + T_p
     if start_idx < 0 or end_idx < 0: return None
+
     return (start_idx, end_idx), (label_start_idx, label_start_idx + T_p)
 
 
 def search_multihop_neighbor(adj, hops=5):
+    """Find the neighbours of nodes that are at most five hops away"""
+
     node_cnt = adj.shape[0]
     hop_arr = np.zeros((adj.shape[0], adj.shape[0]))
     for h_idx in range(node_cnt):  # refer node idx(n)
@@ -32,16 +41,17 @@ def search_multihop_neighbor(adj, hops=5):
             tmp_neibor_step = tmp_step_node_kth.copy()
             all_spatial_node = list(set(tmp_neibor_step))  # the all spatial node in kth step
             hop_arr[h_idx, all_spatial_node] = hop_idx + 1
+
     return hop_arr[:, :, np.newaxis]
 
 class CleanDataset():
     def __init__(self, config):
 
         self.data_name = config.data.name
-        self.feature_file = config.data.feature_file # This is the flow.npy file. QUESTION: Why don't we use np.load here?
-        self.val_start_idx = config.data.val_start_idx
-        self.adj = np.load(config.data.spatial) # Loads from the adj.npy file in the dataset folder
-        self.label, self.feature = self.read_data()
+        self.feature_file = config.data.feature_file # This is the graph
+        self.val_start_idx = config.data.val_start_idx # train = [0, val_start_indx-1]; val = [val_start_indx, test_start_indx-1]
+        self.adj = np.load(config.data.spatial) # This is the adjacency matrix
+        self.label, self.feature = self.read_data() # Normalised label and feature
 
         #for stpgcn
         if config.model.get('alpha', None) is not None:
@@ -51,21 +61,16 @@ class CleanDataset():
             self.range_mask = self.interaction_range_mask(hops=self.alpha, t_size=self.t_size)
 
     def read_data(self):
-        if 'PEMS' in self.data_name:
-            data = np.expand_dims(np.load(self.feature_file)[:, :, 0], -1)
+        if 'SAWS' in self.data.name:
+            data = np.expand_dims(np.load(self.feature_file)[:, :, 0], -1) # Loads in 1 feature at a time to train on
+			data = np.nan_to_nums(data, nan=0)
         elif 'AIR' in self.data_name:
             data = np.expand_dims(np.load(self.feature_file)[:, :, 0], -1)
             data = np.nan_to_num(data, nan=0)
-        elif 'Metro' in self.data_name:
-            data = np.expand_dims(np.load(self.feature_file)[:, :, 0], -1)
-            data = np.nan_to_num(data, nan=0)
         else:
-            data = np.load(self.feature_file) # QUESTION: Why does it just load the file like this if not pems, air, or metro?
+            data = np.load(self.feature_file)
         # return data.astype('float32'), self.normalization(data).astype('float32')
         return self.normalization(data).astype('float32'), self.normalization(data).astype('float32')
-
-
-
 
 
     def normalization(self, feature):
@@ -73,13 +78,12 @@ class CleanDataset():
         # if 'Metro' in self.data_name:
         #     idx_lst = [i for i in range(train.shape[0]) if i % (24 * 6) >= 7 * 6 - 12]
         #     train = train[idx_lst]
-
         mean = np.mean(train)
         std = np.std(train)
-
         # since the feature is actual the flow, the mean and std of feature is also the label's mean and std
         self.mean = mean
         self.std = std
+
         return (feature - mean) / std
 
     def reverse_normalization(self, x):
@@ -94,16 +98,15 @@ class CleanDataset():
 
 
 
-class TrafficDataset(Dataset):
+class WeatherDataset(Dataset):
     def __init__(self, clean_data, data_range, config):
+
         self.T_h = config.model.T_h
         self.T_p = config.model.T_p
         self.V = config.model.V
         self.points_per_hour = config.data.points_per_hour
         self.data_range = data_range
         self.data_name = clean_data.data_name
-
-
         self.label = np.array(clean_data.label) # (T_total, V, D), where T_all means the total time steps in the data
         self.feature = np.array(clean_data.feature)  # (T_total, V, D)
 
@@ -140,20 +143,10 @@ class TrafficDataset(Dataset):
         end = self.data_range[1] if self.data_range[1] != -1 else self.feature.shape[0]
 
         for label_start_idx in range(start, end):
-            # only 6:00-24:00 for Metro data
-            if 'Metro' in self.data_name:
-                if label_start_idx % (24 * 6) < (7 * 6):
-                    continue
-                if label_start_idx % (24 * 6) > (24 * 6) - self.T_p:
-                    continue
-
             recent = search_recent_data(self.feature, label_start_idx, self.T_p, self.T_h)  # recent data
-
             if recent:
                 idx_lst.append(recent)
         return idx_lst
-
-    #################################################
 
 
 if __name__ == '__main__':

@@ -53,7 +53,7 @@ def get_params():
 
     # train
     parser.add_argument("--is_train", type=bool, default=True) # train or evaluate
-    parser.add_argument("--data", type=str, default='PEMS08')
+    parser.add_argument("--data", type=str, default='SAWS')
     parser.add_argument("--mask_ratio", type=float, default=0.0) # mask of history data
     parser.add_argument("--is_test", type=bool, default=True)
     parser.add_argument("--nni", type=bool, default=False)
@@ -63,7 +63,7 @@ def get_params():
     args, _ = parser.parse_known_args()
     return args
 
-def default_config(data='AIR_BJ'):
+def default_config(data='SAWS'):
     config = edict()
     config.PATH_MOD = ws + '/output/model/'
     config.PATH_LOG = ws + '/output/log/'
@@ -78,26 +78,19 @@ def default_config(data='AIR_BJ'):
     config.data.spatial = config.data.path + config.data.name + '/adj.npy'
     config.data.num_recent = 1
 
-    if config.data.name == 'PEMS08':
-        config.data.num_features = 1
-        config.data.num_vertices = 170
-        config.data.points_per_hour = 12
-        config.data.val_start_idx = int(17856 * 0.6)
-        config.data.test_start_idx = int(17856 * 0.8)
-
-    if config.data.name == "AIR_BJ":
-        config.data.num_features = 1
-        config.data.num_vertices = 34
+    if config.data.name == 'SAWS':
+        config.data.num_features = 6
+        config.data.num_vertices = 8
         config.data.points_per_hour = 1
-        config.data.val_start_idx = int(8760 * 0.6)
-        config.data.test_start_idx = int(8760 * 0.8)
+        config.data.val_start_idx = int(87672 * 0.6)
+        config.data.test_start_idx = int(87672 * 0.8)
 
-    if config.data.name == 'AIR_GZ':
-        config.data.num_features = 1
-        config.data.num_vertices = 41
+    if config.data.name == 'ERA5':
+        config.data.num_features = 8
+        config.data.num_vertices = 8
         config.data.points_per_hour = 1
-        config.data.val_start_idx = int(8760 * 10 / 12) #
-        config.data.test_start_idx = int(8160 * 11 / 12)
+        config.data.val_start_idx = int(2232 * 0.6)
+        config.data.test_start_idx = int(2232 * 0.8)
 
     gpu_id = GPU().get_usefuel_gpu(max_memory=6000, condidate_gpu_id=[0,1,2,3,4,6,7,8])
     config.gpu_id = gpu_id
@@ -230,14 +223,14 @@ def evals(model, data_loader, epoch, metric, config, clean_data, mode='Test'):
 
     # log of performance in future prediction
     if metric.best_metrics['epoch'] == epoch:
-        message = f" |[{metric.metrics['mae']:<7.2f}{metric.metrics['rmse']:<7.2f}]"
+        message = f" |[{metric.metrics['mae']:<7.2f}{metric.metrics['rmse']:<7.2f}{metric.metrics['mape']:<7.2f}{metric.metrics['smape']:<7.2f}{metric.metrics['vpt']:<7.2f}{metric.metrics['crps']:<7.2f}{metric.metrics['mis']:<7.2f}]"
     else:
-        message = f" | {metric.metrics['mae']:<7.2f}{metric.metrics['rmse']:<7.2f}"
+        message = f" | {metric.metrics['mae']:<7.2f}{metric.metrics['rmse']:<7.2f}{metric.metrics['mape']:<7.2f}{metric.metrics['smape']:<7.2f}{metric.metrics['vpt']:<7.2f}{metric.metrics['crps']:<7.2f}{metric.metrics['mis']:<7.2f}"
     print(message, end='', flush=False)
     config.logger.message_buffer += message
 
     # log of performance in historical prediction
-    message = f" | {metrics_history.metrics['mae']:<7.2f}{metrics_history.metrics['rmse']:<7.2f}{time_cost:<5.2f}s"
+    message = f" | {metrics_history.metrics['mae']:<7.2f}{metrics_history.metrics['rmse']:<7.2f}{metrics_history.metrics['mape']:<7.2f}{metrics_history.metrics['smape']:<7.2f}{metrics_history.metrics['vpt']:<7.2f}{metrics_history.metrics['crps']:<7.2f}{metrics_history.metrics['mis']:<7.2f}{time_cost:<5.2f}s"
     print(message, end='\n', flush=False)
     config.logger.message_buffer += f"{message}\n"
 
@@ -300,14 +293,14 @@ def main(params: dict):
     model = model.to(config.device)
 
     # Load training dataset
-    train_dataset = TrafficDataset(clean_data, (0 + config.model.T_p, config.data.val_start_idx - config.model.T_p + 1), config)
+    train_dataset = WeatherDataset(clean_data, (0 + config.model.T_p, config.data.val_start_idx - config.model.T_p + 1), config)
     train_loader = torch.utils.data.DataLoader(train_dataset, config.batch_size, shuffle=True, pin_memory=True)
 
-    val_dataset = TrafficDataset(clean_data, (config.data.val_start_idx + config.model.T_p, config.data.test_start_idx - config.model.T_p + 1), config)
+    val_dataset = WeatherDataset(clean_data, (config.data.val_start_idx + config.model.T_p, config.data.test_start_idx - config.model.T_p + 1), config)
     # val_dataset   = TrafficDataset(clean_data, (config.data.val_start_idx + config.model.T_p, config.data.val_start_idx + config.model.T_p + 512), config)
     val_loader = torch.utils.data.DataLoader(val_dataset, 64, shuffle=False)
 
-    test_dataset = TrafficDataset(clean_data, (config.data.test_start_idx + config.model.T_p, -1), config)
+    test_dataset = WeatherDataset(clean_data, (config.data.test_start_idx + config.model.T_p, -1), config)
     test_loader = torch.utils.data.DataLoader(test_dataset, 64, shuffle=False)
 
 
@@ -339,7 +332,7 @@ def main(params: dict):
     message = "      |---Train--- |---Val Future-- -|-----Val History----|\n"
     config.logger.write(message, is_terminal=True)
 
-    message = "Epoch | Loss  Time | MAE     RMSE    |  MAE    RMSE   Time|\n" #f"{'Type':^5}{'Epoch':^5} | {'MAE':^7}{'RMSE':^7}{'MAPE':^7}
+    message = "Epoch | Loss  Time | MAE     RMSE     MAPE     SMAPE      VPT      CRPS     MIS    |  MAE    RMSE    MAPE    SMAPE    VPT     CRPS     MIS     Time|\n" #f"{'Type':^5}{'Epoch':^5} | {'MAE':^7}{'RMSE':^7}{'MAPE':^7}
     config.logger.write(message, is_terminal=True)
 
 
