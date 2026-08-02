@@ -16,7 +16,7 @@ from utils.eval import Metric
 from utils.gpu_dispatch import GPU
 from utils.common_utils import dir_check, to_device, ws, unfold_dict, dict_merge, GpuId2CudaId, Logger
 
-from algorithm.dataset import CleanDataset, TrafficDataset
+from algorithm.dataset import CleanDataset, WeatherDataset
 from algorithm.diffstg.model import DiffSTG, save2file
 
 def setup_seed(seed):
@@ -79,7 +79,7 @@ def default_config(data='SAWS'):
     config.data.num_recent = 1
 
     if config.data.name == 'SAWS':
-        config.data.num_features = 6
+        config.data.num_features = 1
         config.data.num_vertices = 8
         config.data.points_per_hour = 1
         config.data.val_start_idx = int(87672 * 0.6)
@@ -340,7 +340,7 @@ def main(params: dict):
     # Train and sample the data
     for epoch in range(config.epoch):
         if not params['is_train']: break
-        if epoch > 1 and config.is_test: break
+        if epoch > 100 and config.is_test: break
 
         n, avg_loss, time_lst = 0, 0, []
         # train diffusion model
