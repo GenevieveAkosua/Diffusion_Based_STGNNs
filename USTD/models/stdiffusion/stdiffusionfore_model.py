@@ -1,8 +1,11 @@
+# Adapted by: Genevieve Chikwanha
+# Date: 25 July 2025
+
 from models import init_net, BaseModel
 import torch
 import torch.nn.functional as F
 from .stformer import STFormerForecasting
-from utils.util import _mae_with_missing,_rmse_with_missing, _mape_with_missing, _quantile_CRPS_with_missing
+from utils.util import _mae_with_missing,_rmse_with_missing, _nrmse_with_missing, _smape_with_missing, _mape_with_missing, _quantile_CRPS_with_missing, _vpt_with_missing
 from .model_util import get_schedule, laplacian_positional_encoding, temporal_positional_embedding, norm_adj
 from .gwavenet import GWaveNetEncoder
 import os
@@ -32,9 +35,9 @@ class STDiffusionForeModel(BaseModel):
         # specify metrics you want to evaluate the model. The training/test scripts will call functions in order:
         # <BaseModel.compute_metrics> compute metrics for current batch
         # <BaseModel.get_current_metrics> compute and return mean of metrics, clear evaluation cache for next evaluation
-        self.metric_names = ['MAE', 'RMSE', 'MAPE']
+        self.metric_names = ['MAE', 'RMSE', 'NRMSE', 'MAPE', 'SMAPE']
         if self.opt.phase == 'test':
-            self.metric_names += ['CRPS']
+            self.metric_names += ['CRPS', 'VPT']
 
         # define networks. The model variable name should begin with 'self.net'
         model_config['task'] = 'forecasting'
@@ -219,15 +222,17 @@ class STDiffusionForeModel(BaseModel):
             self._add_to_cache('sampled_pred', self.sampled_pred, reverse_norm=True)
 
     def compute_metrics(self):
-        pred = self.results['pred']  # [B, N, L, D]
+        pred = self.results['pred']  # [B, N, L, D] -- batch, nodes, time, features
         gt = self.results['gt']  # [B, N, L, D]
         missing_mask = self.results['missing_mask']  # [B, N, L, D]
-        mae_list, rmse_list, mape_list = [], [], []
-        for i in range(12):
+        mae_list, rmse_list, nrmse_list, mape_list, smape_list = [], [], [], [], []
+        for i in range(12): # 12 is the prediction hrizon
             mae_list.append(_mae_with_missing(pred[:,:,i], gt[:,:,i], missing_mask[:,:,i]))
-            rmse_list.append(_rmse_with_missing(pred[:,:,i], gt[:,:,i], missing_mask[:,:,i]))
+            rmse_list.append(_rmse_with_missing(pred[:,:,i], gt[:,:,i], missing_mask[:,:,i]))i
+            nrmse_list.append(_nrmse_with_missing(pred[:,:,i], gt[:,:,i], missing_mask[:,:,i]))
             mape_list.append(_mape_with_missing(pred[:,:,i], gt[:,:,i], missing_mask[:,:,i]))
-        self.metric_MAE, self.metric_RMSE, self.metric_MAPE = np.mean(mae_list), np.mean(rmse_list), np.mean(mape_list)
+            smape_list.append(_smape_with_missing(pred[:,:,i], gt[:,:,i], missing_mask[:,:,i]))
+        self.metric_MAE, self.metric_RMSE, self.metric_NRMSE, self.metric_MAPE, self.metric_SMAPE = np.mean(mae_list), np.mean(rmse_list), np.mean(nrmse_list), np.mean(mape_list), np.mean(smape_list)
 
         if self.opt.phase == 'test':
             sampled_pred = self.results['sampled_pred']  # [B, num_sample, N, L, D]
@@ -235,6 +240,7 @@ class STDiffusionForeModel(BaseModel):
             for i in range(12):
                 crps_list.append(_quantile_CRPS_with_missing(sampled_pred[:,:,:,i], gt[:,:,i], missing_mask[:,:,i]))
             self.metric_CRPS = np.mean(crps_list)
+			self.metric_VPT = _vpt_with_missing(pred, gt, missing_mask, threshold=self.opt.vpt_threshold)
 
     def optimize_parameters(self):
         self.set_requires_grad(self.netEncoder, True)

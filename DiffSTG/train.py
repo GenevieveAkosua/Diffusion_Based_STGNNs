@@ -11,7 +11,7 @@ import numpy as np
 import torch.utils.data
 from easydict import EasyDict as edict
 from timeit import default_timer as timer
-
+import wandb_utils
 from utils.eval import Metric
 from utils.gpu_dispatch import GPU
 from utils.common_utils import dir_check, to_device, ws, unfold_dict, dict_merge, GpuId2CudaId, Logger
@@ -80,23 +80,19 @@ def default_config(data='SAWS'):
 
     if config.data.name == 'SAWS':
         config.data.num_features = 1
-        config.data.num_vertices = 8
+        config.data.num_vertices = 32
         config.data.points_per_hour = 1
         config.data.val_start_idx = int(87672 * 0.6)
         config.data.test_start_idx = int(87672 * 0.8)
-
-    if config.data.name == 'ERA5':
-        config.data.num_features = 8
-        config.data.num_vertices = 8
-        config.data.points_per_hour = 1
-        config.data.val_start_idx = int(2232 * 0.6)
-        config.data.test_start_idx = int(2232 * 0.8)
 
     gpu_id = GPU().get_usefuel_gpu(max_memory=6000, condidate_gpu_id=[0,1,2,3,4,6,7,8])
     config.gpu_id = gpu_id
     if gpu_id != None:
         cuda_id = GpuId2CudaId(gpu_id)
         torch.cuda.set_device(f"cuda:{cuda_id}")
+		print("---USING GPU---")
+	else:
+		print("---USING CPU---")
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     # model config
@@ -204,6 +200,8 @@ def evals(model, data_loader, epoch, metric, config, clean_data, mode='Test'):
     metric.update_best_metrics(epoch=epoch)
     metric.metrics['time'] = time_cost
 
+    wandb_utils.log_metrics({'mae': metric.metrics['mae'], 'rmse': metric.metrics['rmse'], 'mape': metric.metrics['mape'], 'vpt': metric.metrics['vpt'], 'crps': metric.metrics['crps'], 'mis': metric.metrics['mis']}, step=epoch, prefix=mode.lower())
+
     if mode == 'test': # save the prediction result to file
         samples = torch.cat(samples, dim=0)[:50]
         targets = torch.cat(targets, dim=0)[:50]
@@ -223,14 +221,14 @@ def evals(model, data_loader, epoch, metric, config, clean_data, mode='Test'):
 
     # log of performance in future prediction
     if metric.best_metrics['epoch'] == epoch:
-        message = f" |[{metric.metrics['mae']:<7.2f}{metric.metrics['rmse']:<7.2f}{metric.metrics['mape']:<7.2f}{metric.metrics['smape']:<7.2f}{metric.metrics['vpt']:<7.2f}{metric.metrics['crps']:<7.2f}{metric.metrics['mis']:<7.2f}]"
+        message = f" |[{metric.metrics['mae']:<7.2f}{metric.metrics['rmse']:<7.2f}{metric.metrics['mape']:<7.2f}{metric.metrics['vpt']:<7.2f}{metric.metrics['crps']:<7.2f}{metric.metrics['mis']:<7.2f}]"
     else:
-        message = f" | {metric.metrics['mae']:<7.2f}{metric.metrics['rmse']:<7.2f}{metric.metrics['mape']:<7.2f}{metric.metrics['smape']:<7.2f}{metric.metrics['vpt']:<7.2f}{metric.metrics['crps']:<7.2f}{metric.metrics['mis']:<7.2f}"
+        message = f" | {metric.metrics['mae']:<7.2f}{metric.metrics['rmse']:<7.2f}{metric.metrics['mape']:<7.2f}{metric.metrics['vpt']:<7.2f}{metric.metrics['crps']:<7.2f}{metric.metrics['mis']:<7.2f}"
     print(message, end='', flush=False)
     config.logger.message_buffer += message
 
     # log of performance in historical prediction
-    message = f" | {metrics_history.metrics['mae']:<7.2f}{metrics_history.metrics['rmse']:<7.2f}{metrics_history.metrics['mape']:<7.2f}{metrics_history.metrics['smape']:<7.2f}{metrics_history.metrics['vpt']:<7.2f}{metrics_history.metrics['crps']:<7.2f}{metrics_history.metrics['mis']:<7.2f}{time_cost:<5.2f}s"
+    message = f" | {metrics_history.metrics['mae']:<7.2f}{metrics_history.metrics['rmse']:<7.2f}{metrics_history.metrics['mape']:<7.2f}{metrics_history.metrics['vpt']:<7.2f}{metrics_history.metrics['crps']:<7.2f}{metrics_history.metrics['mis']:<7.2f}{time_cost:<5.2f}s"
     print(message, end='\n', flush=False)
     config.logger.message_buffer += f"{message}\n"
 
@@ -277,6 +275,8 @@ def main(params: dict):
 
     config.trial_name = '+'.join([f"{v}" for k, v in params.items()])
     config.log_path = f"{config.PATH_LOG}/{config.trial_name}.log"
+
+    wandb_utils.init_run(project="stgnn-weather", group=config.data.name, job_type=config.model_name, name=config.trial_name, config=params)
 
     pprint(config)
     dir_check(config.log_path)
@@ -332,7 +332,7 @@ def main(params: dict):
     message = "      |---Train--- |---Val Future-- -|-----Val History----|\n"
     config.logger.write(message, is_terminal=True)
 
-    message = "Epoch | Loss  Time | MAE     RMSE     MAPE     SMAPE      VPT      CRPS     MIS    |  MAE    RMSE    MAPE    SMAPE    VPT     CRPS     MIS     Time|\n" #f"{'Type':^5}{'Epoch':^5} | {'MAE':^7}{'RMSE':^7}{'MAPE':^7}
+    message = "Epoch | Loss  Time | MAE     RMSE     MAPE      VPT      CRPS     MIS    |  MAE    RMSE    MAPE    VPT     CRPS     MIS     Time|\n" #f"{'Type':^5}{'Epoch':^5} | {'MAE':^7}{'RMSE':^7}{'MAPE':^7}
     config.logger.write(message, is_terminal=True)
 
 
@@ -382,6 +382,7 @@ def main(params: dict):
             writer.add_scalar('train/loss', avg_loss, epoch)
         except:
             pass
+        wandb_utils.log_metrics({'loss': avg_loss}, step=epoch, prefix='train')
 
         if epoch >= config.start_epoch:
             evals(model, val_loader, epoch, metrics_val, config, clean_data, mode='Val')
@@ -438,6 +439,8 @@ def main(params: dict):
         pass
 
     nni.report_final_result(min(metric_lst))
+	wandb_utils.log_summary({'best_epoch': metrics_val.best_metrics['epoch'], 'best_mae': metrics_val.best_metrics['mae'], 'best_rmse': metrics_val.best_metrics['rmse'], 'best_crps': metrics_val.best_metrics['crps']})
+    wandb_utils.finish()
 
 
 # data.name	model	model.N	model.epsilon_theta	model.d_h	model.T_h	model.T_p	model.sample_strategy
@@ -450,7 +453,7 @@ if __name__ == '__main__':
 
     logger = logging.getLogger('training')
 
-    #print('GPU:', torch.cuda.current_device())
+    print('GPU:', torch.cuda.current_device())
     try:
         tuner_params = nni.get_next_parameter()
         logger.debug(tuner_params)
