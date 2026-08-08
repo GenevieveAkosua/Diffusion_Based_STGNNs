@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 import pandas as pd
+import subprocess
 
 from utils.common_utils import ws, dir_check
 import json, os
@@ -41,20 +42,11 @@ class GPU():
         self.info_dict = {}
 
     def get_nvidia_smi(self,fin):
-        f = open(fin)
-        lines = [l for l in f]
-        gpu_num = 8 # the GPU card number of your device
-        lineno = [9 + 4 * i for i in range(gpu_num)]
-
+	    result = subprocess.run(['nvidia-smi', '--query-gpu=index,memory.used,memory.total', '--format=csv,noheader,nounits'], capture_output=True, text=True, check=True)
         info_dict = {}
-        for id, idx in enumerate(lineno):
-            info = lines[idx]
-            info = info.split('|')[2]
-            info = info.rstrip(' ').lstrip(' ')
-            used, total = info.split('/')
-            used = int(used.rstrip('MiB '))
-            total = int(total.rstrip('MiB').lstrip(' '))
-            info_dict[int(id)] = [used, total]
+        for line in result.stdout.strip().splitlines():
+            idx_str, used_str, total_str = [x.strip() for x in line.split(',')]
+            info_dict[int(idx_str)] = [int(used_str), int(total_str)]
         return info_dict
 
     def save(self):
@@ -66,15 +58,9 @@ class GPU():
         return self.info_dict
 
     def update_info_dict(self):
-        stat_path = self.log_file + '/gpustat.txt'
-        cmds = [f'nvidia-smi > {stat_path}']
-        cmd_lst(cmds)
-
-        self.info_dict = self.get_nvidia_smi(stat_path)
-
+	    self.info_dict = self.get_nvidia_smi()
         self.save()
         return self.info_dict
-
 
     def load_info_dict(self):
         if not os.path.exists(self.info_path):
