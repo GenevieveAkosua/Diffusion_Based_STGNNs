@@ -55,7 +55,7 @@ def get_params():
     parser.add_argument("--is_train", type=bool, default=True) # train or evaluate
     parser.add_argument("--data", type=str, default='SAWS')
     parser.add_argument("--mask_ratio", type=float, default=0.0) # mask of history data
-    parser.add_argument("--is_test", type=bool, default=True)
+    parser.add_argument("--is_test", type=bool, default=False)
     parser.add_argument("--nni", type=bool, default=False)
     parser.add_argument("--lr", type=float, default=0.002)
     parser.add_argument("--batch_size", type=int, default=8)
@@ -90,9 +90,9 @@ def default_config(data='SAWS'):
     if gpu_id != None:
         cuda_id = GpuId2CudaId(gpu_id)
         torch.cuda.set_device(f"cuda:{cuda_id}")
-		print("---USING GPU---")
-	else:
-		print("---USING CPU---")
+        print("---USING GPU---")
+    else:
+        print("---USING CPU---")
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     # model config
@@ -439,7 +439,7 @@ def main(params: dict):
         pass
 
     nni.report_final_result(min(metric_lst))
-	wandb_utils.log_summary({'best_epoch': metrics_val.best_metrics['epoch'], 'best_mae': metrics_val.best_metrics['mae'], 'best_rmse': metrics_val.best_metrics['rmse'], 'best_crps': metrics_val.best_metrics['crps']})
+    wandb_utils.log_summary({'best_epoch': metrics_val.best_metrics['epoch'], 'best_mae': metrics_val.best_metrics['mae'], 'best_rmse': metrics_val.best_metrics['rmse'], 'best_crps': metrics_val.best_metrics['crps']})
     wandb_utils.finish()
 
 

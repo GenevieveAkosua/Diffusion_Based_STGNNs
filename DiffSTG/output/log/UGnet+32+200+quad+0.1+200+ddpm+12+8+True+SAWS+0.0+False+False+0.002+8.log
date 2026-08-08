@@ -1,6 +1,6 @@
-{'PATH_MOD': '/scratch/chkkar002/Diffusion_Based_STGNNs/DiffSTG/output/model/', 'PATH_LOG': '/scratch/chkkar002/Diffusion_Based_STGNNs/DiffSTG/output/log/', 'PATH_FORECAST': '/scratch/chkkar002/Diffusion_Based_STGNNs/DiffSTG/output/forecast/', 'data': {'name': 'SAWS', 'path': '/scratch/chkkar002/Diffusion_Based_STGNNs/DiffSTG/data/dataset/', 'feature_file': '/scratch/chkkar002/Diffusion_Based_STGNNs/DiffSTG/data/dataset/SAWS/flow.npy', 'spatial': '/scratch/chkkar002/Diffusion_Based_STGNNs/DiffSTG/data/dataset/SAWS/adj.npy', 'num_recent': 1, 'num_features': 1, 'num_vertices': 32, 'points_per_hour': 1, 'val_start_idx': 52603, 'test_start_idx': 70137}, 'gpu_id': None, 'model': {'T_p': 12, 'T_h': 12, 'V': 32, 'F': 1, 'week_len': 7, 'day_len': 24, 'device': device(type='cuda'), 'd_h': 32, 'N': 200, 'sample_steps': 200, 'epsilon_theta': 'UGnet', 'is_label_condition': True, 'beta_end': 0.1, 'beta_schedule': 'quad', 'sample_strategy': 'ddpm', 'channel_multipliers': [1, 2], 'supports_len': 2, 'C': 32, 'n_channels': 32}, 'n_samples': 8, 'model_name': 'DiffSTG', 'is_test': True, 'epoch': 300, 'optimizer': 'adam', 'lr': 0.002, 'batch_size': 8, 'wd': 1e-05, 'early_stop': 10, 'start_epoch': 0, 'device': device(type='cuda'), 'logger': <utils.common_utils.Logger object at 0x7fc9f0b1caf0>, 'nni': False, 'mask_ratio': 0.0, 'T_h': 12, 'T_p': 12, 'trial_name': 'UGnet+32+200+quad+0.1+200+ddpm+12+8+True+SAWS+0.0+True+False+0.002+8', 'log_path': '/scratch/chkkar002/Diffusion_Based_STGNNs/DiffSTG/output/log//UGnet+32+200+quad+0.1+200+ddpm+12+8+True+SAWS+0.0+True+False+0.002+8.log'}
-model path:/scratch/chkkar002/Diffusion_Based_STGNNs/DiffSTG/output/model/UGnet+32+200+quad+0.1+200+ddpm+12+8+True+SAWS+0.0+True+False+0.002+8N-200+T_h-12+T_p-12+epsilon_theta-UGnet.dm4stg
-forecast_path:/scratch/chkkar002/Diffusion_Based_STGNNs/DiffSTG/output/model/UGnet+32+200+quad+0.1+200+ddpm+12+8+True+SAWS+0.0+True+False+0.002+8N-200+T_h-12+T_p-12+epsilon_theta-UGnet.dm4stg
+{'PATH_MOD': '/scratch/chkkar002/Diffusion_Based_STGNNs/DiffSTG/output/model/', 'PATH_LOG': '/scratch/chkkar002/Diffusion_Based_STGNNs/DiffSTG/output/log/', 'PATH_FORECAST': '/scratch/chkkar002/Diffusion_Based_STGNNs/DiffSTG/output/forecast/', 'data': {'name': 'SAWS', 'path': '/scratch/chkkar002/Diffusion_Based_STGNNs/DiffSTG/data/dataset/', 'feature_file': '/scratch/chkkar002/Diffusion_Based_STGNNs/DiffSTG/data/dataset/SAWS/flow.npy', 'spatial': '/scratch/chkkar002/Diffusion_Based_STGNNs/DiffSTG/data/dataset/SAWS/adj.npy', 'num_recent': 1, 'num_features': 1, 'num_vertices': 32, 'points_per_hour': 1, 'val_start_idx': 52603, 'test_start_idx': 70137}, 'gpu_id': None, 'model': {'T_p': 12, 'T_h': 12, 'V': 32, 'F': 1, 'week_len': 7, 'day_len': 24, 'device': device(type='cuda'), 'd_h': 32, 'N': 200, 'sample_steps': 200, 'epsilon_theta': 'UGnet', 'is_label_condition': True, 'beta_end': 0.1, 'beta_schedule': 'quad', 'sample_strategy': 'ddpm', 'channel_multipliers': [1, 2], 'supports_len': 2, 'C': 32, 'n_channels': 32}, 'n_samples': 8, 'model_name': 'DiffSTG', 'is_test': False, 'epoch': 300, 'optimizer': 'adam', 'lr': 0.002, 'batch_size': 8, 'wd': 1e-05, 'early_stop': 10, 'start_epoch': 0, 'device': device(type='cuda'), 'logger': <utils.common_utils.Logger object at 0x7efbd295baf0>, 'nni': False, 'mask_ratio': 0.0, 'T_h': 12, 'T_p': 12, 'trial_name': 'UGnet+32+200+quad+0.1+200+ddpm+12+8+True+SAWS+0.0+False+False+0.002+8', 'log_path': '/scratch/chkkar002/Diffusion_Based_STGNNs/DiffSTG/output/log//UGnet+32+200+quad+0.1+200+ddpm+12+8+True+SAWS+0.0+False+False+0.002+8.log'}
+model path:/scratch/chkkar002/Diffusion_Based_STGNNs/DiffSTG/output/model/UGnet+32+200+quad+0.1+200+ddpm+12+8+True+SAWS+0.0+False+False+0.002+8N-200+T_h-12+T_p-12+epsilon_theta-UGnet.dm4stg
+forecast_path:/scratch/chkkar002/Diffusion_Based_STGNNs/DiffSTG/output/model/UGnet+32+200+quad+0.1+200+ddpm+12+8+True+SAWS+0.0+False+False+0.002+8N-200+T_h-12+T_p-12+epsilon_theta-UGnet.dm4stg
 DiffSTG(
   (eps_model): UGnet(
     (down): ModuleList(
@@ -248,21 +248,5 @@ DiffSTG(
 )Num_of_parameters:837817
       |---Train--- |---Val Future-- -|-----Val History----|
 Epoch | Loss  Time | MAE     RMSE     MAPE      VPT      CRPS     MIS    |  MAE    RMSE    MAPE    VPT     CRPS     MIS     Time|
-   0.0| 13.525 0.5s |[144.14 241.22 760.31 0.00   7.13   5765.76] | 165.08 270.97 886.38 0.00   8.23   6603.171.88 s
-   1.0| 10.337 0.1s | 149.55 245.52 788.62 0.00   7.39   5981.86 | 137.59 231.04 737.06 0.00   6.86   5503.661.80 s
-   2.0| 10.059 0.1s | 144.18 238.80 759.62 0.00   7.13   5767.07 | 140.29 234.72 751.43 0.00   6.99   5611.761.80 s
-   3.0| 10.034 0.1s |[142.84 236.76 752.58 0.00   7.06   5713.51] | 139.67 233.49 747.38 0.00   6.96   5586.971.79 s
-   4.0| 10.016 0.1s | 144.23 238.44 759.96 0.00   7.13   5769.07 | 140.43 234.23 751.40 0.00   7.00   5617.381.79 s
-   5.0| 10.005 0.1s | 143.68 238.35 756.83 0.00   7.10   5747.16 | 141.97 236.41 760.19 0.00   7.08   5678.641.79 s
-   6.0| 9.991 0.1s | 144.29 239.63 759.95 0.00   7.13   5771.78 | 141.63 236.46 758.13 0.00   7.06   5665.301.79 s
-   7.0| 9.977 0.1s | 144.86 240.96 762.70 0.00   7.16   5794.25 | 142.53 237.98 763.66 0.00   7.10   5701.141.79 s
-   8.0| 9.961 0.1s | 146.74 243.16 772.88 0.00   7.26   5869.41 | 142.94 238.49 765.27 0.00   7.12   5717.681.79 s
-   9.0| 9.951 0.1s | 145.48 241.94 765.99 0.00   7.19   5819.26 | 143.75 239.47 770.80 0.00   7.16   5750.161.79 s
-  10.0| 9.933 0.1s | 146.47 242.85 771.32 0.00   7.24   5858.62 | 142.23 237.52 762.18 0.00   7.09   5689.381.79 s
-  11.0| 9.919 0.1s | 146.13 242.64 769.52 0.00   7.23   5845.17 | 142.43 237.96 763.09 0.00   7.10   5697.021.79 s
-  12.0| 9.901 0.1s | 145.46 242.78 765.78 0.00   7.19   5818.54 | 144.57 241.20 775.03 0.00   7.20   5782.871.79 s
-  13.0| 9.879 0.1s | 147.29 246.26 775.96 0.00   7.28   5891.63 | 147.38 245.77 790.58 0.00   7.34   5895.111.80 s
-  14.0| 9.852 0.1s | 148.72 249.26 783.17 0.00   7.35   5949.00 | 148.30 248.00 796.23 0.00   7.39   5932.101.80 s
-predict_path = '/scratch/chkkar002/Diffusion_Based_STGNNs/DiffSTG/output/forecast/UGnet+32+200+quad+0.1+200+ddpm+12+8+True+SAWS+0.0+True+False+0.002+8.pkl'
- |[14.92  18.93  78.70  0.00   0.60   95.51  ] | 14.77  18.86  79.23  0.00   0.61   95.32  3.28 s
-sample_strategy:ddim_multi, sample_steps:40 Final results in test:14.92  18.93  78.70  0.00   0.60    95.51   | 15   
+   1.0| 1.274 170.2s |[7.24   9.23   92.12  0.08   0.42   289.51 ] | 1.84   2.15   8.96   3.15   0.09   73.53  501.74s
+   2.0| 0.927 165.4s |[4.72   6.37   52.55  0.68   0.27   188.85 ] | 0.19   0.26   0.97   12.00  0.01   7.68   501.03s

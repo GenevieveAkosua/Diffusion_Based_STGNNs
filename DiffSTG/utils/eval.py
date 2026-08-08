@@ -44,7 +44,7 @@ def masked_nrmse_np(y_true, y_pred, null_val=np.nan, epsilon=1e-7):
     std = np.nanstd(y_true[valid_mask_bool])
     return rmse / (std + epsilon)
 
-def masked_vpt_batch(y_true, y_pred, null_val=np.nan, threshold=0.5):
+def masked_vpt_np(y_true, y_pred, null_val=np.nan, threshold=0.5):
     """
     y_true, y_pred: (B, T_p, V, D)
     Returns dict of VPT summary stats over the batch, analogous to Henok's vpt_batch.

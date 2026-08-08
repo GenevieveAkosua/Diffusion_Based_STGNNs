@@ -1,0 +1,148 @@
+_wandb:
+    value:
+        cli_version: 0.26.1
+        e:
+            omc39fvkeejtvu17528qync4srz2mqhs:
+                codePath: DiffSTG/train.py
+                codePathLocal: train.py
+                cpu_count: 56
+                cpu_count_logical: 56
+                cudaVersion: "13.2"
+                disk:
+                    /:
+                        total: "943439200256"
+                        used: "36428091392"
+                email: chkkar002@myuct.ac.za
+                executable: /home/chkkar002/envs/diffstg/bin/python
+                git:
+                    commit: c1a41163ac05d93d3ea52323cc7fce0db83126c7
+                    remote: git@github.com:GenevieveAkosua/Diffusion_Based_STGNNs.git
+                gpu: NVIDIA A100-PCIE-40GB
+                gpu_count: 2
+                gpu_nvidia:
+                    - architecture: Ampere
+                      cudaCores: 6912
+                      memoryTotal: "42949672960"
+                      name: NVIDIA A100-PCIE-40GB
+                      uuid: GPU-ccb54930-ce22-c27d-d2b4-75d474bc9bdc
+                    - architecture: Ampere
+                      cudaCores: 6912
+                      memoryTotal: "42949672960"
+                      name: NVIDIA A100-PCIE-40GB
+                      uuid: GPU-509b4091-fc11-3527-5df8-6c5abd021ffa
+                host: srvrocgpu010.uct.ac.za
+                memory:
+                    total: "539923472384"
+                os: Linux-5.14.0-687.29.1.el9_8.x86_64-x86_64-with-glibc2.34
+                program: /scratch/chkkar002/Diffusion_Based_STGNNs/DiffSTG/train.py
+                python: CPython 3.9.25
+                root: /scratch/chkkar002/Diffusion_Based_STGNNs/DiffSTG
+                slurm:
+                    cluster_name: srvrochpc001
+                    conf: /opt/slurm-23.11.5/etc/slurm.conf
+                    cpu_bind: quiet,mask_cpu:0x00000000000100,0x00000000000200
+                    cpu_bind_list: 0x00000000000100,0x00000000000200
+                    cpu_bind_type: 'mask_cpu:'
+                    cpu_bind_verbose: quiet
+                    cpus_on_node: "2"
+                    gpus_on_node: "2"
+                    gtids: 0,1
+                    job_account: a100free
+                    job_cpus_per_node: "2"
+                    job_end_time: "1786352951"
+                    job_gid: "1221947160"
+                    job_group: eresearch_hpc_users
+                    job_id: "1194571"
+                    job_name: bash
+                    job_nodelist: srvrocgpu010
+                    job_num_nodes: "1"
+                    job_partition: a100
+                    job_qos: a100free
+                    job_start_time: "1786136951"
+                    job_uid: "292132302"
+                    job_user: chkkar002
+                    jobid: "1194571"
+                    launch_node_ipaddr: 137.158.158.180
+                    localid: "0"
+                    mpi_type: pmix
+                    nnodes: "1"
+                    nodeid: "0"
+                    nodelist: srvrocgpu010
+                    nprocs: "2"
+                    ntasks: "2"
+                    pmix_mapping_serv: (vector,(0,1,2))
+                    pmixp_abort_agent_port: "37929"
+                    prio_process: "0"
+                    procid: "0"
+                    pty_port: "41719"
+                    pty_win_col: "134"
+                    pty_win_row: "54"
+                    script_context: prolog_task
+                    srun_comm_host: 137.158.158.180
+                    srun_comm_port: "39031"
+                    step_gpus: 1,3
+                    step_id: "0"
+                    step_launcher_port: "39031"
+                    step_nodelist: srvrocgpu010
+                    step_num_nodes: "1"
+                    step_num_tasks: "2"
+                    step_tasks_per_node: "2"
+                    stepid: "0"
+                    submit_dir: /home/chkkar002
+                    submit_host: srvrochpc001
+                    task_pid: "672550"
+                    tasks_per_node: "2"
+                    topology_addr: switch-0.switch-1.srvrocgpu010
+                    topology_addr_pattern: switch.switch.node
+                    umask: "0022"
+                startedAt: "2026-08-07T21:39:52.039967Z"
+                writerId: omc39fvkeejtvu17528qync4srz2mqhs
+        m: []
+        python_version: 3.9.25
+        t:
+            "1":
+                - 1
+            "2":
+                - 1
+            "3":
+                - 13
+                - 16
+                - 41
+            "4": 3.9.25
+            "5": 0.26.1
+            "10":
+                - 20
+            "12": 0.26.1
+            "13": linux-x86_64
+"N":
+    value: 200
+T_h:
+    value: 12
+batch_size:
+    value: 8
+beta_end:
+    value: 0.1
+beta_schedule:
+    value: quad
+data:
+    value: SAWS
+epsilon_theta:
+    value: UGnet
+hidden_size:
+    value: 32
+is_test:
+    value: true
+is_train:
+    value: true
+lr:
+    value: 0.002
+mask_ratio:
+    value: 0
+n_samples:
+    value: 8
+nni:
+    value: false
+sample_steps:
+    value: 200
+ss:
+    value: ddpm
