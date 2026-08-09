@@ -35,6 +35,11 @@ try:
 except:
     pass
 
+try:
+    import optuna
+except ImportError:
+    optuna = None
+
 def get_params():
     parser = argparse.ArgumentParser(description='Entry point of the code')
 
@@ -56,9 +61,13 @@ def get_params():
     parser.add_argument("--data", type=str, default='SAWS')
     parser.add_argument("--mask_ratio", type=float, default=0.0) # mask of history data
     parser.add_argument("--is_test", type=bool, default=False)
-    parser.add_argument("--nni", type=bool, default=True)
+    parser.add_argument("--nni", type=bool, default=False)
     parser.add_argument("--lr", type=float, default=0.002)
     parser.add_argument("--batch_size", type=int, default=8)
+	# optuna-only args (ignored when --nni is True)
+    parser.add_argument("--n_trials", type=int, default=30)
+    parser.add_argument("--study_name", type=str, default="diffstg_saws_tuning")
+    parser.add_argument("--storage", type=str, default=None)
 
     args, _ = parser.parse_known_args()
     return args
@@ -268,9 +277,11 @@ def main(params: dict):
 
     if config.model.sample_steps > config.model.N:
         print('sample steps large than N, exit')
-        nni.report_intermediate_result(50)
-        nni.report_final_result(50)
-        return 0
+        #nni.report_intermediate_result(50)
+        #nni.report_final_result(50)
+		if trial is not None:
+            raise optuna.TrialPruned()
+        return 50
 
 
     config.trial_name = '+'.join([f"{v}" for k, v in params.items()])
@@ -438,28 +449,59 @@ def main(params: dict):
     except:
         pass
 
-    nni.report_final_result(min(metric_lst))
+    #nni.report_final_result(min(metric_lst))
     wandb_utils.log_summary({'best_epoch': metrics_val.best_metrics['epoch'], 'best_mae': metrics_val.best_metrics['mae'], 'best_rmse': metrics_val.best_metrics['rmse'], 'best_crps': metrics_val.best_metrics['crps']})
     wandb_utils.finish()
+    return min(metric_lst)
 
+def suggest_params(trial, base_params):
+    params = dict(base_params)
+    params['T_h']          = trial.suggest_categorical('T_h', [12, 24, 48])
+    params['hidden_size']  = trial.suggest_categorical('hidden_size', [16, 32, 64])
+    params['N']            = trial.suggest_categorical('N', [100, 200, 300])
+    params['beta_schedule']= trial.suggest_categorical('beta_schedule', ['quad', 'uniform'])
+    params['beta_end']     = trial.suggest_categorical('beta_end', [0.1, 0.2, 0.4])
+    params['n_samples']    = trial.suggest_categorical('n_samples', [8, 16])
+    params['mask_ratio']   = trial.suggest_categorical('mask_ratio', [0.0, 0.2, 0.75])
+    params['sample_steps'] = trial.suggest_categorical('sample_steps', [50, 100, 200])
+    return params
+ 
+ 
+def objective(trial, base_params):
+    params = suggest_params(trial, base_params)
+    return main(params, trial=trial)
 
 # data.name	model	model.N	model.epsilon_theta	model.d_h	model.T_h	model.T_p	model.sample_strategy
 # PEMS08	UGnet	200	    UGnet	            32	        12	        12	        ddpm
 
 if __name__ == '__main__':
 
-    import nni
-    import logging
+    #import nni
+    #import logging
+	base_params = vars(get_params())
 
-    logger = logging.getLogger('training')
+    #logger = logging.getLogger('training')
 
     print('GPU:', torch.cuda.current_device())
-    try:
-        tuner_params = nni.get_next_parameter()
-        logger.debug(tuner_params)
-        params = vars(get_params())
-        params.update(tuner_params)
-        main(params)
-    except Exception as exception:
-        logger.exception(exception)
-        raise
+    #try:
+        #tuner_params = nni.get_next_parameter()
+        #logger.debug(tuner_params)
+        #params = vars(get_params())
+        #params.update(tuner_params)
+        #main(params)
+    #except Exception as exception:
+        #logger.exception(exception)
+        #raise
+
+    storage = base_params['storage'] or f"sqlite:///{ws}/output/optuna/{base_params['study_name']}.db"
+    dir_check(storage.replace('sqlite:///', ''))  # ensure output/optuna/ exists
+    study = optuna.create_study(
+    study_name=base_params['study_name'],
+    storage=storage,
+    direction='minimize',
+    sampler=optuna.samplers.TPESampler(),
+    pruner=optuna.pruners.MedianPruner(n_warmup_steps=5),load_if_exists=True)
+    study.optimize(lambda trial: objective(trial, base_params), n_trials=base_params['n_trials'])
+    print('Best trial:', study.best_trial.number, 'mae:', study.best_value)
+    print('Best params:', study.best_params)
+
