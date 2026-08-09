@@ -56,7 +56,7 @@ def get_params():
     parser.add_argument("--data", type=str, default='SAWS')
     parser.add_argument("--mask_ratio", type=float, default=0.0) # mask of history data
     parser.add_argument("--is_test", type=bool, default=False)
-    parser.add_argument("--nni", type=bool, default=False)
+    parser.add_argument("--nni", type=bool, default=True)
     parser.add_argument("--lr", type=float, default=0.002)
     parser.add_argument("--batch_size", type=int, default=8)
 
@@ -98,7 +98,7 @@ def default_config(data='SAWS'):
     # model config
     config.model = edict()
 
-    config.model.T_p = 12
+    config.model.T_p = 48
     config.model.T_h = 12
     config.model.V = config.data.num_vertices
     config.model.F = config.data.num_features
@@ -268,7 +268,7 @@ def main(params: dict):
 
     if config.model.sample_steps > config.model.N:
         print('sample steps large than N, exit')
-        # nni.report_intermediate_result(50)
+        nni.report_intermediate_result(50)
         nni.report_final_result(50)
         return 0
 

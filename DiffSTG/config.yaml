@@ -1,0 +1,15 @@
+experimentName: diffstg_saws_tuning
+trialConcurrency: 2
+maxTrialNumber: 30
+maxExperimentDuration: 48h
+searchSpaceFile: search_space.json
+trialCommand: python train.py
+trialGpuNumber: 1
+trialCodeDirectory: .
+trainingService:
+  platform: local
+  useActiveGpu: true
+tuner:
+  name: TPE
+  classArgs:
+    optimize_mode: minimize
