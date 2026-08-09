@@ -1,0 +1,20 @@
+{"time":"2026-08-08T16:54:10.248713682+02:00","level":"INFO","msg":"wandb-core"}
+{"time":"2026-08-08T16:54:10.248971478+02:00","level":"INFO","msg":"stream: starting","core version":"0.26.1"}
+{"time":"2026-08-08T16:54:10.862566683+02:00","level":"INFO","msg":"stream: created new stream","id":"c9s8mah8"}
+{"time":"2026-08-08T16:54:10.862793029+02:00","level":"INFO","msg":"handler: started"}
+{"time":"2026-08-08T16:54:10.864590333+02:00","level":"INFO","msg":"stream: started"}
+{"time":"2026-08-08T16:54:10.872611641+02:00","level":"INFO","msg":"writer: started","stream_id":"c9s8mah8"}
+{"time":"2026-08-08T16:54:10.872650635+02:00","level":"INFO","msg":"sender: started"}
+{"time":"2026-08-08T16:54:11.645628182+02:00","level":"INFO","msg":"flowcontrol: backed up, offloading to disk","recordNumber":40}
+{"time":"2026-08-08T16:54:11.646348877+02:00","level":"INFO","msg":"filestream: sending request","total_files":1,"console_offset":0,"console_lines":8}
+{"time":"2026-08-08T16:54:11.646507031+02:00","level":"INFO","msg":"flowcontrol: unblocked","totalOffloaded":7}
+{"time":"2026-08-08T16:54:12.174186705+02:00","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-08-08T16:54:26.648494634+02:00","level":"INFO","msg":"filestream: sending request","total_files":2,"events_offset":0,"events_lines":2,"console_offset":7,"console_lines":542,"uploaded_len":2}
+{"time":"2026-08-08T16:54:27.0276984+02:00","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-08-08T16:54:39.113041818+02:00","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2026-08-08T16:54:39.113275608+02:00","level":"INFO","msg":"filestream: sending request","total_files":2,"console_offset":548,"console_lines":9,"uploaded_len":3,"complete":true,"exit_code":255}
+{"time":"2026-08-08T16:54:39.461305071+02:00","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-08-08T16:54:39.461475191+02:00","level":"INFO","msg":"stream: finishing up"}
+{"time":"2026-08-08T16:54:39.461492687+02:00","level":"INFO","msg":"handler: closed"}
+{"time":"2026-08-08T16:54:39.462795117+02:00","level":"INFO","msg":"sender: closed"}
+{"time":"2026-08-08T16:54:39.46280935+02:00","level":"INFO","msg":"stream: all finished"}

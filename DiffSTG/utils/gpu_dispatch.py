@@ -39,10 +39,9 @@ class GPU():
         self.log_file = ws + '/output/gpustat/'
         dir_check(self.log_file)
         self.info_path = self.log_file + '/info.npy'
-        self.info_dict = {}
 
-    def get_nvidia_smi(self,fin):
-	    result = subprocess.run(['nvidia-smi', '--query-gpu=index,memory.used,memory.total', '--format=csv,noheader,nounits'], capture_output=True, text=True, check=True)
+    def get_nvidia_smi(self,fin=None):
+        result = subprocess.run(['nvidia-smi', '--query-gpu=index,memory.used,memory.total', '--format=csv,noheader,nounits'], capture_output=True, text=True, check=True)
         info_dict = {}
         for line in result.stdout.strip().splitlines():
             idx_str, used_str, total_str = [x.strip() for x in line.split(',')]
@@ -58,7 +57,7 @@ class GPU():
         return self.info_dict
 
     def update_info_dict(self):
-	    self.info_dict = self.get_nvidia_smi()
+        self.info_dict = self.get_nvidia_smi()
         self.save()
         return self.info_dict
 
