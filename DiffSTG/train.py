@@ -134,7 +134,7 @@ def default_config(data='SAWS'):
     # training config
     config.model_name = 'DiffSTG'
     config.is_test = False  # Whether run the code in the test mode
-    config.epoch = 300  # Number of max training epoch
+    config.epoch = 30  # Number of max training epoch
     config.optimizer = "adam"
     config.lr = 1e-4
     config.batch_size = 32
@@ -249,7 +249,7 @@ def evals(model, data_loader, epoch, metric, config, clean_data, mode='Test'):
 
 
 from pprint import  pprint
-def main(params: dict):
+def main(params: dict, trial=None):
     # torch.manual_seed(2022)
     setup_seed(2022)
     torch.set_num_threads(2)
@@ -258,13 +258,14 @@ def main(params: dict):
     config.is_test = params['is_test']
     config.nni = params['nni']
     config.lr = params['lr']
+    config.trial = trial
     config.batch_size = params['batch_size']
     config.mask_ratio = params['mask_ratio']
 
     # model
     config.model.N = params['N']
     config.T_h = config.model.T_h = params['T_h']
-    config.T_p = config.model.T_p =  params['T_h']
+    config.T_p = config.model.T_p =  24
     config.model.epsilon_theta =  params['epsilon_theta']
     config.model.sample_steps = params['sample_steps']
     config.model.d_h = params['hidden_size']
@@ -279,10 +280,9 @@ def main(params: dict):
         print('sample steps large than N, exit')
         #nni.report_intermediate_result(50)
         #nni.report_final_result(50)
-		if trial is not None:
+        if trial is not None:
             raise optuna.TrialPruned()
         return 50
-
 
     config.trial_name = '+'.join([f"{v}" for k, v in params.items()])
     config.log_path = f"{config.PATH_LOG}/{config.trial_name}.log"
@@ -456,13 +456,12 @@ def main(params: dict):
 
 def suggest_params(trial, base_params):
     params = dict(base_params)
-    params['T_h']          = trial.suggest_categorical('T_h', [12, 24, 48])
-    params['hidden_size']  = trial.suggest_categorical('hidden_size', [16, 32, 64])
-    params['N']            = trial.suggest_categorical('N', [100, 200, 300])
-    params['beta_schedule']= trial.suggest_categorical('beta_schedule', ['quad', 'uniform'])
-    params['beta_end']     = trial.suggest_categorical('beta_end', [0.1, 0.2, 0.4])
-    params['n_samples']    = trial.suggest_categorical('n_samples', [8, 16])
-    params['mask_ratio']   = trial.suggest_categorical('mask_ratio', [0.0, 0.2, 0.75])
+    params['T_h'] = trial.suggest_categorical('T_h', [12, 24, 48])
+    params['hidden_size'] = trial.suggest_categorical('hidden_size', [16, 32, 64])
+    params['N'] = trial.suggest_categorical('N', [100, 200, 300])
+    params['beta_end'] = trial.suggest_categorical('beta_end', [0.1, 0.2, 0.4])
+    params['n_samples'] = trial.suggest_categorical('n_samples', [8, 16])
+    params['mask_ratio'] = trial.suggest_categorical('mask_ratio', [0.0, 0.2, 0.75])
     params['sample_steps'] = trial.suggest_categorical('sample_steps', [50, 100, 200])
     return params
  
@@ -478,7 +477,7 @@ if __name__ == '__main__':
 
     #import nni
     #import logging
-	base_params = vars(get_params())
+    base_params = vars(get_params())
 
     #logger = logging.getLogger('training')
 
@@ -495,13 +494,44 @@ if __name__ == '__main__':
 
     storage = base_params['storage'] or f"sqlite:///{ws}/output/optuna/{base_params['study_name']}.db"
     dir_check(storage.replace('sqlite:///', ''))  # ensure output/optuna/ exists
-    study = optuna.create_study(
-    study_name=base_params['study_name'],
-    storage=storage,
-    direction='minimize',
-    sampler=optuna.samplers.TPESampler(),
-    pruner=optuna.pruners.MedianPruner(n_warmup_steps=5),load_if_exists=True)
+    study = optuna.create_study(study_name=base_params['study_name'], storage=storage, direction='minimize', sampler=optuna.samplers.TPESampler(multivariate=True, seed=27), pruner=optuna.pruners.MedianPruner(n_warmup_steps=5),load_if_exists=True)
     study.optimize(lambda trial: objective(trial, base_params), n_trials=base_params['n_trials'])
     print('Best trial:', study.best_trial.number, 'mae:', study.best_value)
     print('Best params:', study.best_params)
+    finished_states = (optuna.trial.TrialState.COMPLETE, optuna.trial.TrialState.PRUNED)
+    n_finished = len(study.get_trials(deepcopy=False, states=finished_states))
+    n_remaining = max(0, base_params['n_trials'] - n_finished)
+    n_running = len(study.get_trials(deepcopy=False, states=(optuna.trial.TrialState.RUNNING,)))
+    if n_running:
+        print(f"Note: {n_running} trial(s) stuck in RUNNING state from a previous killed job harmless, but they won't count toward n_trials and won't be resumed.")
+    if n_remaining == 0:
+        print(f"{n_finished} trials already finished, target is {base_params['n_trials']} -- nothing to run.")
+    else:
+        print(f"{n_finished} trials already finished; running {n_remaining} more to reach target of {base_params['n_trials']}.")
+        study.optimize(lambda trial: objective(trial, base_params), n_trials=n_remaining)
+        results_dir = os.path.join(ws, 'output', 'optuna')
+        dir_check(os.path.join(results_dir, 'placeholder'))
+        csv_path = os.path.join(results_dir, f"{base_params['study_name']}_results.csv")
+        study.trials_dataframe().to_csv(csv_path, index=False)
+        print(f"\nAll-trials results written to {csv_path}")
+
+        print('\nBEST TRIAL')
+        best = study.best_trial
+        print(f"mae : {best.value:.4f}")
+        for k, v in best.params.items():
+            print(f" {k:15s}: {v}")
+
+        print('\n TOP 5 (by mae, ascending)')
+        completed = [t for t in study.trials if t.value is not None]
+        for t in sorted(completed, key=lambda t: t.value)[:5]:
+            print(f"  #{t.number:<3} mae={t.value:.4f}  {t.params}")
+
+        print('\n PARAM IMPORTANCES')
+        try:
+            importances = optuna.importance.get_param_importances(study)
+            for param, importance in importances.items():
+                print(f"{param:15s}: {importance:.3f}")
+        except Exception as e:
+            print(f"(could not compute: {e})")
+
 
