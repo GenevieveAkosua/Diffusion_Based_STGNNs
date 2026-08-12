@@ -10,4 +10,4 @@
 #SBATCH --mem=64G
 
 source ~/envs/diffstg/bin/activate
-python train.py --n_trials 30 --study_name diffstg_saws_tuning
+python train.py --n_trials 30 --study_name diffstg_saws_tuning_v2

@@ -460,7 +460,6 @@ def suggest_params(trial, base_params):
     params['hidden_size'] = trial.suggest_categorical('hidden_size', [16, 32, 64])
     params['N'] = trial.suggest_categorical('N', [100, 200, 300])
     params['beta_end'] = trial.suggest_categorical('beta_end', [0.1, 0.2, 0.4])
-    params['n_samples'] = trial.suggest_categorical('n_samples', [8, 16])
     params['mask_ratio'] = trial.suggest_categorical('mask_ratio', [0.0, 0.2, 0.75])
     params['sample_steps'] = trial.suggest_categorical('sample_steps', [50, 100, 200])
     return params
