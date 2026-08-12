@@ -120,7 +120,7 @@ class Metric(object):
         self.best_metrics['rmse'], rmse_state = self.get_best_metric(self.best_metrics['rmse'], self.metrics['rmse'])
         self.best_metrics['mape'], mape_state = self.get_best_metric(self.best_metrics['mape'], self.metrics['mape'])
         self.best_metrics['crps'], crps_state = self.get_best_metric(self.best_metrics['crps'], self.metrics['crps'])
-        self.best_metrics['mis'], mis_state = self.get_best_metric(self.best_metrics['mis'], self.metrics['mis'])
+        self.best_metrics['mis'], mis_state = self.get_best_metric(self.best_metrics['mis'], self.metrics['mis'], higher_best=True)
         self.best_metrics['vpt'], _ = self.get_best_metric(self.best_metrics['vpt'], self.metrics['vpt'], higher_best=True)
 
         if mae_state:
