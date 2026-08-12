@@ -26,8 +26,8 @@ class SAWSDataset(BaseDataset):
         self.target_channel = 0
         self.opt = opt
         self.time_division = {'train': [0.0, 0.6], 'val': [0.6, 0.8],'test': [0.8, 1.0]}
-        self.A = np.load("dataset/saws/adj.npy")
-        self.raw_data = self.load_feature("dataset/saws/flow.npy", self.time_division[opt.phase])
+        self.A = np.load('dataset/saws/adj.npy')
+        self.raw_data = self.load_feature('dataset/saws/flow.npy', self.time_division[opt.phase])
         # get data division index
         self.opt.__dict__.update({'num_nodes': self.A.shape[0]})
         self.test_node_index = np.array([], dtype=np.int64)          # no nodes held out spatially
@@ -40,7 +40,7 @@ class SAWSDataset(BaseDataset):
         flow = np.load(data_path).astype(np.float32) # T, V, D
         X = np.transpose(flow, (1, 0, 2)).copy() # V, T, D
         num_nodes, num_time, num_channels = X.shape
-		X = X[:, :, self.target_channel:self.target_channel + 1] # V, T, 1
+        X = X[:, :, self.target_channel:self.target_channel + 1] # V, T, 1
         self.opt.__dict__.update({'y_dim': 1})
 
         train_start = int(self.time_division['train'][0] * num_time)
@@ -49,7 +49,7 @@ class SAWSDataset(BaseDataset):
         channel_mean = np.mean(X_train_slice, axis=(0, 1)).astype(np.float32)
         channel_std = np.std(X_train_slice, axis=(0, 1)).astype(np.float32)
         channel_std[channel_std == 0] = 1.0
-		self.add_norm_info(channel_mean, channel_std)
+        self.add_norm_info(channel_mean, channel_std)
         X = (X - self.opt.mean) / self.opt.scale
         missing = np.zeros_like(X, dtype=np.float32)
         start_time = np.datetime64('2016-01-01T01:00:00')

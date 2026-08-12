@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/train.py", line 17, in <module>
+    dataset = create_dataset(opt)  # create a dataset given opt.dataset_mode and other options
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/data/__init__.py", line 52, in create_dataset
+    data_loader = CustomDatasetDataLoader(opt)
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/data/__init__.py", line 67, in __init__
+    self.dataset = dataset_class(opt)
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/data/PEMS03_dataset.py", line 18, in __init__
+    super().__init__(opt, dist_path, data_path, test_nodes_path)
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/data/PEMSbase_dataset.py", line 38, in __init__
+    self.raw_data = self.load_feature(data_path, self.time_division[opt.phase])
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/data/PEMSbase_dataset.py", line 53, in load_feature
+    df = pd.read_hdf(data_path)
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/pandas/io/pytables.py", line 437, in read_hdf
+    raise FileNotFoundError(f"File {path_or_buf} does not exist")
+FileNotFoundError: File dataset/pems/PEMS03/pems-03.h5 does not exist

@@ -1,0 +1,30 @@
+/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/torch/utils/data/dataloader.py:627: UserWarning: This DataLoader will create 4 worker processes in total. Our suggested max number of worker in current system is 1, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(
+wandb: WARNING Using a boolean value for 'reinit' is deprecated. Use 'return_previous' or 'finish_previous' instead.
+wandb: Tracking run with wandb version 0.26.1
+wandb: W&B syncing is set to `offline` in this directory. Run `wandb online` or set WANDB_MODE=online to enable cloud syncing.
+wandb: Run data is saved locally in /scratch/chkkar002/Diffusion_Based_STGNNs/USTD/wandb/offline-run-20260813_010429-71kahkt1
+/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/torch/utils/data/dataloader.py:627: UserWarning: This DataLoader will create 4 worker processes in total. Our suggested max number of worker in current system is 1, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(
+/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/models/base_model.py:162: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:835.)
+  errors_ret[name] = float(getattr(self, 'loss_' + name))  # float(...) works for both scalar tensor and float number
+  0%|          | 0/136 [00:00<?, ?it/s]  0%|          | 0/136 [00:01<?, ?it/s]
+wandb: 
+wandb: Run summary:
+wandb:     epoch 4500
+wandb: train/mae 0.23034
+wandb: 
+wandb: You can sync this run to the cloud by running:
+wandb: wandb sync /scratch/chkkar002/Diffusion_Based_STGNNs/USTD/wandb/offline-run-20260813_010429-71kahkt1
+wandb: Find logs at: ./wandb/offline-run-20260813_010429-71kahkt1/logs
+Traceback (most recent call last):
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/train.py", line 81, in <module>
+    model.cache_results()  # store current batch results
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/models/stdiffusion/gwavenet_model.py", line 95, in cache_results
+    loss = self.mae(self.prediction, self.pred_gt)
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/models/stdiffusion/gwavenet_model.py", line 90, in mae
+    pred = pred * self.opt.scale + self.opt.mean
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/torch/_tensor.py", line 1226, in __array__
+    return self.numpy()
+TypeError: can't convert cuda:0 device type tensor to numpy. Use Tensor.cpu() to copy the tensor to host memory first.
