@@ -128,11 +128,11 @@ class Metric(object):
 
     @staticmethod
     def get_metric(y_true, y_pred):
-        mae = masked_mae_np(y_true, y_pred, 0)
-        mse = masked_mse_np(y_true, y_pred, 0)
-        mape = masked_mape_np(y_true, y_pred, 0)
+        mae = masked_mae_np(y_true, y_pred, np.nan)
+        mse = masked_mse_np(y_true, y_pred, np.nan)
+        mape = masked_mape_np(y_true, y_pred, np.nan)
         rmse = mse ** 0.5
-        vpt = masked_vpt_np(y_true, y_pred, 0, 0.5)['vpt_mean']
+        vpt = masked_vpt_np(y_true, y_pred, np.nan, 0.5)['vpt_mean']
         return mae, rmse, mape, mse, vpt
 
     @staticmethod
