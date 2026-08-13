@@ -457,6 +457,7 @@ def main(params: dict, trial=None):
 def suggest_params(trial, base_params):
     params = dict(base_params)
     params['T_h'] = trial.suggest_categorical('T_h', [12, 24, 48])
+    params['batch_size'] = trial.suggest_categorical('batch_size', [16, 32])
     params['hidden_size'] = trial.suggest_categorical('hidden_size', [16, 32, 64])
     params['N'] = trial.suggest_categorical('N', [100, 200, 300])
     params['beta_end'] = trial.suggest_categorical('beta_end', [0.1, 0.2, 0.4])

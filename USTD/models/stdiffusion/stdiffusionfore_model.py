@@ -228,7 +228,7 @@ class STDiffusionForeModel(BaseModel):
         mae_list, rmse_list, nrmse_list, mape_list, smape_list = [], [], [], [], []
         for i in range(12): # 12 is the prediction hrizon
             mae_list.append(_mae_with_missing(pred[:,:,i], gt[:,:,i], missing_mask[:,:,i]))
-            rmse_list.append(_rmse_with_missing(pred[:,:,i], gt[:,:,i], missing_mask[:,:,i]))i
+            rmse_list.append(_rmse_with_missing(pred[:,:,i], gt[:,:,i], missing_mask[:,:,i]))
             nrmse_list.append(_nrmse_with_missing(pred[:,:,i], gt[:,:,i], missing_mask[:,:,i]))
             mape_list.append(_mape_with_missing(pred[:,:,i], gt[:,:,i], missing_mask[:,:,i]))
             smape_list.append(_smape_with_missing(pred[:,:,i], gt[:,:,i], missing_mask[:,:,i]))
@@ -240,7 +240,7 @@ class STDiffusionForeModel(BaseModel):
             for i in range(12):
                 crps_list.append(_quantile_CRPS_with_missing(sampled_pred[:,:,:,i], gt[:,:,i], missing_mask[:,:,i]))
             self.metric_CRPS = np.mean(crps_list)
-			self.metric_VPT = _vpt_with_missing(pred, gt, missing_mask, threshold=self.opt.vpt_threshold)
+            self.metric_VPT = _vpt_with_missing(pred, gt, missing_mask, threshold=self.opt.vpt_threshold)
 
     def optimize_parameters(self):
         self.set_requires_grad(self.netEncoder, True)

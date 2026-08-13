@@ -1,0 +1,15 @@
+dropout: 0.2
+embed_dim: 96
+encoder_depth: 2
+mlp_ratio: 1
+num_heads: 8
+num_sample: 8
+num_steps: 50
+objective: noise
+pos_dim: 96
+schedule: quad
+wavenet:
+  dropout: 0.2
+  embed_dim: 32
+  end_dim: 64
+  mask_ratio: 0.75
