@@ -116,7 +116,7 @@ def run_once(args, trial=None):
         args.lag = trial.suggest_categorical('lag', [12, 24, 48])       # input window (hours)
         args.num_layers = trial.suggest_int('num_layers', 1, 4)         # stacked AGCRN layers
         args.rnn_units = trial.suggest_categorical('rnn_units', [16, 32, 64])
-        args.embed_dim = trial.suggest_int('embed_dim', 2, 10)          # adaptive node embed size
+        args.embed_dim = trial.suggest_categorical('embed_dim', [1, 2, 3, 5, 8, 10, 15, 20, 30])
  
     #init model
     model = Network(args)
