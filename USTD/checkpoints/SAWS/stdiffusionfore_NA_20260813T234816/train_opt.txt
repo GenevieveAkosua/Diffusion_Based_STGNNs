@@ -1,0 +1,63 @@
+----------------- Options ---------------
+               batch_size: 8                             	[default: 64]
+                     beta: 1.0                           
+          checkpoints_dir: ./checkpoints/SAWS            	[default: ./checkpoints]
+                   config: config_SAWS                   	[default: config1]
+           continue_train: False                         
+            covariate_dim: 0                             
+             dataset_mode: SAWS                          	[default: ]
+        enable_curriculum: False                         
+           enable_neptune: False                         
+               enable_val: True                          	[default: False]
+            enable_visual: False                         
+                    epoch: latest                        
+              epoch_count: 0                             
+          eval_epoch_freq: 10                            	[default: 1]
+                file_time: 20260813T234816               	[default: None]
+                  gpu_ids: 0                             	[default: -1]
+                init_gain: 0.02                          
+                init_type: xavier                        
+                  isTrain: True                          	[default: None]
+                load_iter: 0                             	[default: 0]
+                       lr: 0.001                         
+           lr_decay_iters: 50                            
+                lr_policy: cosine                        
+         max_dataset_size: inf                           
+                    model: stdiffusionfore               	[default: ]
+                 n_epochs: 300                           
+           n_epochs_decay: 0                             
+          n_epochs_target: 100                           
+ n_epochs_target_increase: 150                           
+                     name: stdiffusionfore_NA_20260813T234816	[default: None]
+          neptune_project:                               
+            neptune_token:                               
+              num_threads: 4                             	[default: 0]
+         num_train_target: 3                             
+     num_train_target_end: 6                             
+                    phase: train                         
+                pred_attr: NA                            	[default: PM25_Concentration]
+                 pretrain: gwavenet                      	[default: ]
+               print_freq: 20                            
+                save_best: True                          	[default: False]
+          save_epoch_freq: 100                           
+                     seed: 2031                          	[default: 2023]
+           serial_batches: False                         
+              spatial_dim: 64                            
+                    t_len: 24                            
+              total_iters: 0                             
+                  verbose: False                         
+                    y_dim: 1                             
+----------------- End -------------------
+----------------- Model Configurations ---------------
+                  pos_dim: 96                            
+                embed_dim: 96                            
+                num_heads: 8                             
+            encoder_depth: 2                             
+                mlp_ratio: 1                             
+                  dropout: 0.2                           
+                num_steps: 50                            
+                 schedule: quad                          
+               num_sample: 8                             
+                objective: noise                         
+                  wavenet: {'embed_dim': 32, 'end_dim': 64, 'mask_ratio': 0.75, 'dropout': 0.2}
+----------------- End -------------------

@@ -46,12 +46,12 @@ class SAWSDataset(BaseDataset):
         train_start = int(self.time_division['train'][0] * num_time)
         train_end = int(self.time_division['train'][1] * num_time)
         X_train_slice = X[:, train_start:train_end, :]
-        channel_mean = np.mean(X_train_slice, axis=(0, 1)).astype(np.float32)
-        channel_std = np.std(X_train_slice, axis=(0, 1)).astype(np.float32)
-        channel_std[channel_std == 0] = 1.0
-        self.add_norm_info(channel_mean, channel_std)
+        X_mean = np.mean(X_train_slice)
+        X_std = np.std(X_train_slice)
+        X_std[X_std == 0] = 1.0
+        self.add_norm_info(X_mean, X_std)
         X = (X - self.opt.mean) / self.opt.scale
-        missing = np.zeros_like(X, dtype=np.float32)
+        missing = np.zeros(X.shape)
         start_time = np.datetime64('2016-01-01T01:00:00')
         full_timestamps = start_time + np.arange(num_time, dtype='int64') * np.timedelta64(1, 'h')
         full_time_seconds = ((full_timestamps - np.datetime64('1970-01-01T00:00:00')) / np.timedelta64(1, 's')).astype(np.int64)
@@ -62,4 +62,4 @@ class SAWSDataset(BaseDataset):
         missing = missing[:, start_index:end_index, :]
         time_list = full_time_seconds[start_index:end_index]
 
-        return {'pred': X.astype(np.float32), 'missing': missing.astype(np.float32), 'time': time_list}
+        return {'pred': X, 'missing': missing, 'time': time_list}

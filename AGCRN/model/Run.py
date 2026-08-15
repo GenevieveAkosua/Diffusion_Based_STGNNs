@@ -16,18 +16,18 @@ from model.BasicTrainer import Trainer
 from lib.TrainInits import init_seed
 from lib.dataloader import get_dataloader
 from lib.TrainInits import print_model_parameters
-
+import wandb_utils
 
 #*************************************************************************#
-Mode = 'Train'
-DEBUG = 'True'
+Mode = 'train'
+DEBUG = 'False'
 DATASET = 'SAWS'      #PEMSD4 or PEMSD8
 DEVICE = 'cuda'
 MODEL = 'AGCRN'
 
 #get configuration
 config_file = './{}_{}.conf'.format(DATASET, MODEL)
-#print('Read configuration file: %s' % (config_file))
+print('Read configuration file: %s' % (config_file))
 config = configparser.ConfigParser()
 config.read(config_file)
 
@@ -114,6 +114,7 @@ train_loader, val_loader, test_loader, scaler = get_dataloader(args,
                                                                tod=args.tod, dow=False,
                                                                weather=False, single=False)
 
+print(args.loss_func)
 #init loss function, optimizer
 if args.loss_func == 'mask_mae':
     loss = masked_mae_loss(scaler, mask_value=0.0)
@@ -124,6 +125,7 @@ elif args.loss_func == 'mse':
 else:
     raise ValueError
 
+print("We get here")
 optimizer = torch.optim.Adam(params=model.parameters(), lr=args.lr_init, eps=1.0e-8,
                              weight_decay=0, amsgrad=False)
 #learning rate decay
@@ -141,6 +143,8 @@ current_time = datetime.now().strftime('%Y%m%d%H%M%S')
 current_dir = os.path.dirname(os.path.realpath(__file__))
 log_dir = os.path.join(current_dir,'experiments', args.dataset, current_time)
 args.log_dir = log_dir
+
+run = wandb_utils.init_run(project="stgnn-weather", group="SAWS", job_type="AGCRN", name="AGCRN_SAWS_seed14", config=vars(args))
 
 #start training
 trainer = Trainer(model, loss, optimizer, train_loader, val_loader, test_loader, scaler,

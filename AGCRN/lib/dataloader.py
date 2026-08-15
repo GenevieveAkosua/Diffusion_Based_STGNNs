@@ -69,9 +69,9 @@ def split_data_by_ratio(data, val_ratio, test_ratio):
     test_data = data[-int(data_len*test_ratio):]
     val_data = data[-int(data_len*(test_ratio+val_ratio)):-int(data_len*test_ratio)]
     train_data = data[:-int(data_len*(test_ratio+val_ratio))]
-	print(train_data)
-	print(val_data)
-	print(test_data)
+    print(train_data)
+    print(val_data)
+    print(test_data)
     return train_data, val_data, test_data
 
 def data_loader(X, Y, batch_size, shuffle=True, drop_last=True):

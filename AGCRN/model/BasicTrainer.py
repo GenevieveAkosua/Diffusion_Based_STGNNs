@@ -6,6 +6,7 @@ import copy
 import numpy as np
 from lib.logger import get_logger
 from lib.metrics import All_Metrics
+import wandb_utils
 
 class Trainer(object):
     def __init__(self, model, loss, optimizer, train_loader, val_loader, test_loader,
@@ -52,6 +53,7 @@ class Trainer(object):
                     total_val_loss += loss.item()
         val_loss = total_val_loss / len(val_dataloader)
         self.logger.info('**********Val Epoch {}: average Loss: {:.6f}'.format(epoch, val_loss))
+        wandb_utils.log_metrics({'loss': val_loss}, step=epoch, prefix='val')
         return val_loss
 
     def train_epoch(self, epoch):
@@ -89,6 +91,8 @@ class Trainer(object):
         train_epoch_loss = total_loss/self.train_per_epoch
         self.logger.info('**********Train Epoch {}: averaged Loss: {:.6f}, tf_ratio: {:.6f}'.format(epoch, train_epoch_loss, teacher_forcing_ratio))
 
+        wandb_utils.log_metrics({'loss': train_epoch_loss, 'tf_ratio': teacher_forcing_ratio}, step=epoch, prefix='train')
+        
         #learning rate decay
         if self.args.lr_decay:
             self.lr_scheduler.step()
@@ -150,6 +154,8 @@ class Trainer(object):
         self.model.load_state_dict(best_model)
         #self.val_epoch(self.args.epochs, self.test_loader)
         self.test(self.model, self.args, self.test_loader, self.scaler, self.logger)
+        wandb_utils.log_summary({'best_val_loss': best_loss, 'training_time_min': training_time / 60})
+        wandb_utils.finish()
 
     def save_checkpoint(self):
         state = {

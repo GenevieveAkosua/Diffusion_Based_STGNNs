@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/train.py", line 15, in <module>
+    opt, model_config = TrainOptions().parse()   # get training options
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/options/base_options.py", line 172, in parse
+    torch.cuda.set_device(opt.gpu_ids[0])
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/torch/cuda/__init__.py", line 569, in set_device
+    torch._C._cuda_setDevice(device)
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/torch/cuda/__init__.py", line 412, in _lazy_init
+    torch._C._cuda_init()
+RuntimeError: Found no NVIDIA driver on your system. Please check that you have an NVIDIA GPU and installed a driver from http://www.nvidia.com/Download/index.aspx
