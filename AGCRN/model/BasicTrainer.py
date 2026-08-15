@@ -10,7 +10,7 @@ import wandb_utils
 
 class Trainer(object):
     def __init__(self, model, loss, optimizer, train_loader, val_loader, test_loader,
-                 scaler, args, lr_scheduler=None):
+                 scaler, args, lr_scheduler=None, trial=None):
         super(Trainer, self).__init__()
         self.model = model
         self.loss = loss
@@ -21,6 +21,7 @@ class Trainer(object):
         self.scaler = scaler
         self.args = args
         self.lr_scheduler = lr_scheduler
+        self.trial = trial
         self.train_per_epoch = len(train_loader)
         if val_loader != None:
             self.val_per_epoch = len(val_loader)
@@ -124,6 +125,12 @@ class Trainer(object):
                 break
             #if self.val_loader == None:
             #val_epoch_loss = train_epoch_loss
+            if self.trial is not None:
+                self.trial.report(val_epoch_loss, epoch)
+                if self.trial.should_prune():
+                    wandb_utils.finish()
+                    raise optuna.exceptions.TrialPruned()
+
             if val_epoch_loss < best_loss:
                 best_loss = val_epoch_loss
                 not_improved_count = 0
@@ -144,18 +151,20 @@ class Trainer(object):
 
         training_time = time.time() - start_time
         self.logger.info("Total training time: {:.4f}min, best loss: {:.6f}".format((training_time / 60), best_loss))
-
-        #save the best model to file
-        if not self.args.debug:
-            torch.save(best_model, self.best_path)
-            self.logger.info("Saving current best model to " + self.best_path)
-
-        #test
-        self.model.load_state_dict(best_model)
-        #self.val_epoch(self.args.epochs, self.test_loader)
-        self.test(self.model, self.args, self.test_loader, self.scaler, self.logger)
-        wandb_utils.log_summary({'best_val_loss': best_loss, 'training_time_min': training_time / 60})
-        wandb_utils.finish()
+        try:
+            #save the best model to file
+            if not self.args.debug:
+                torch.save(best_model, self.best_path)
+                self.logger.info("Saving current best model to " + self.best_path)
+ 
+            #test
+            self.model.load_state_dict(best_model)
+            #self.val_epoch(self.args.epochs, self.test_loader)
+            self.test(self.model, self.args, self.test_loader, self.scaler, self.logger)
+            wandb_utils.log_summary({'best_val_loss': best_loss, 'training_time_min': training_time / 60})
+        finally:
+            wandb_utils.finish()
+        return best_loss
 
     def save_checkpoint(self):
         state = {

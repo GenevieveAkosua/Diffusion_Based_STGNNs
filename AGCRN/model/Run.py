@@ -89,71 +89,159 @@ args.add_argument('--mape_thresh', default=config['test']['mape_thresh'], type=f
 args.add_argument('--log_dir', default='./', type=str)
 args.add_argument('--log_step', default=config['log']['log_step'], type=int)
 args.add_argument('--plot', default=config['log']['plot'], type=eval)
+args.add_argument('--n_trials', default=0, type=int, help='0 = single run, >0 = run Optuna HPO for this many trials')
+args.add_argument('--study_name', default='agcrn_full_tuning', type=str)
+args.add_argument('--storage', default=None, type=str)
 args = args.parse_args()
-init_seed(args.seed)
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-args.device = device
+#init_seed(args.seed)
+#device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+#args.device = device
 #if torch.cuda.is_available():
 #    torch.cuda.set_device(int(args.device[5]))
 #else:
 #    args.device = 'cpu'
 
-#init model
-model = Network(args)
-model = model.to(args.device)
-for p in model.parameters():
-    if p.dim() > 1:
-        nn.init.xavier_uniform_(p)
+def run_once(args, trial=None):
+    """One full train+val+test cycle. Returns best val loss. If `trial` is
+    given, the tuned hyperparameters below are overridden by Optuna's
+    suggestions for this trial and pruning/reporting is wired in via the
+    Trainer."""
+    init_seed(args.seed)
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    args.device = device
+ 
+    if trial is not None:
+        args.batch_size = trial.suggest_categorical('batch_size', [32, 64, 128])
+        args.lr_init = trial.suggest_float('lr_init', 1e-4, 5e-2, log=True)
+        args.lag = trial.suggest_categorical('lag', [12, 24, 48])       # input window (hours)
+        args.num_layers = trial.suggest_int('num_layers', 1, 4)         # stacked AGCRN layers
+        args.rnn_units = trial.suggest_categorical('rnn_units', [16, 32, 64])
+        args.embed_dim = trial.suggest_int('embed_dim', 2, 10)          # adaptive node embed size
+ 
+    #init model
+    model = Network(args)
+    model = model.to(args.device)
+    for p in model.parameters():
+        if p.dim() > 1:
+            nn.init.xavier_uniform_(p)
+        else:
+            nn.init.uniform_(p)
+    print_model_parameters(model, only_num=False)
+ 
+    #load dataset
+    train_loader, val_loader, test_loader, scaler = get_dataloader(args,
+                                                                   normalizer=args.normalizer,
+                                                                   tod=args.tod, dow=False,
+                                                                   weather=False, single=False)
+ 
+    print(args.loss_func)
+    #init loss function, optimizer
+    if args.loss_func == 'mask_mae':
+        loss = masked_mae_loss(scaler, mask_value=0.0)
+    elif args.loss_func == 'mae':
+        loss = torch.nn.L1Loss().to(args.device)
+    elif args.loss_func == 'mse':
+        loss = torch.nn.MSELoss().to(args.device)
     else:
-        nn.init.uniform_(p)
-print_model_parameters(model, only_num=False)
+        raise ValueError
+ 
+    optimizer = torch.optim.Adam(params=model.parameters(), lr=args.lr_init, eps=1.0e-8,
+                                 weight_decay=0, amsgrad=False)
+    #learning rate decay
+    lr_scheduler = None
+    if args.lr_decay:
+        print('Applying learning rate decay.')
+        lr_decay_steps = [int(i) for i in list(args.lr_decay_step.split(','))]
+        lr_scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer=optimizer,
+                                                            milestones=lr_decay_steps,
+                                                            gamma=args.lr_decay_rate)
+        #lr_scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer=optimizer, T_max=64)
+ 
+    #config log path
+    current_time = datetime.now().strftime('%Y%m%d%H%M%S')
+    current_dir = os.path.dirname(os.path.realpath(__file__))
+    run_tag = 'trial{}_{}'.format(trial.number, current_time) if trial is not None else current_time
+    log_dir = os.path.join(current_dir,'experiments', args.dataset, run_tag)
+    args.log_dir = log_dir
+ 
+    run = wandb_utils.init_run(
+        project="stgnn-weather",
+        group="{}-HPO".format(args.dataset) if trial is not None else "SAWS",
+        job_type="AGCRN",
+        name="{}_{}".format(args.study_name, run_tag) if trial is not None else "AGCRN_SAWS_Full_Tuning_1",
+        config=vars(args),
+    )
+ 
+    #start training
+    trainer = Trainer(model, loss, optimizer, train_loader, val_loader, test_loader, scaler,
+                      args, lr_scheduler=lr_scheduler, trial=trial)
+    if args.mode == 'train':
+        return trainer.train()
+    elif args.mode == 'test':
+        model.load_state_dict(torch.load('../pre-trained/{}.pth'.format(args.dataset)))
+        print("Load saved model")
+        trainer.test(model, trainer.args, test_loader, scaler, trainer.logger)
+        return None
+    else:
+        raise ValueError
 
-#load dataset
-train_loader, val_loader, test_loader, scaler = get_dataloader(args,
-                                                               normalizer=args.normalizer,
-                                                               tod=args.tod, dow=False,
-                                                               weather=False, single=False)
+if __name__ == '__main__':
+    if args.n_trials <= 0:
+        # ---- normal single run, exactly like before ----
+        run_once(args)
+    else:
+        # ---- Optuna HPO run ----
+        if optuna is None:
+            raise ImportError("optuna is not installed in this environment "
+                               "(pip install optuna) but --n_trials > 0 was passed.")
 
-print(args.loss_func)
-#init loss function, optimizer
-if args.loss_func == 'mask_mae':
-    loss = masked_mae_loss(scaler, mask_value=0.0)
-elif args.loss_func == 'mae':
-    loss = torch.nn.L1Loss().to(args.device)
-elif args.loss_func == 'mse':
-    loss = torch.nn.MSELoss().to(args.device)
-else:
-    raise ValueError
+        storage = args.storage or 'sqlite:///./optuna_studies/{}.db'.format(args.study_name)
+        os.makedirs('./optuna_studies', exist_ok=True)
 
-print("We get here")
-optimizer = torch.optim.Adam(params=model.parameters(), lr=args.lr_init, eps=1.0e-8,
-                             weight_decay=0, amsgrad=False)
-#learning rate decay
-lr_scheduler = None
-if args.lr_decay:
-    print('Applying learning rate decay.')
-    lr_decay_steps = [int(i) for i in list(args.lr_decay_step.split(','))]
-    lr_scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer=optimizer,
-                                                        milestones=lr_decay_steps,
-                                                        gamma=args.lr_decay_rate)
-    #lr_scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer=optimizer, T_max=64)
+        study = optuna.create_study(
+            study_name=args.study_name,
+            storage=storage,
+            direction='minimize',
+            sampler=optuna.samplers.TPESampler(multivariate=True, seed=27),
+            pruner=optuna.pruners.MedianPruner(n_warmup_steps=5),
+            load_if_exists=True,
+        )
 
-#config log path
-current_time = datetime.now().strftime('%Y%m%d%H%M%S')
-current_dir = os.path.dirname(os.path.realpath(__file__))
-log_dir = os.path.join(current_dir,'experiments', args.dataset, current_time)
-args.log_dir = log_dir
+        finished_states = (optuna.trial.TrialState.COMPLETE, optuna.trial.TrialState.PRUNED)
+        n_finished = len(study.get_trials(deepcopy=False, states=finished_states))
+        n_remaining = max(0, args.n_trials - n_finished)
+        n_running = len(study.get_trials(deepcopy=False, states=(optuna.trial.TrialState.RUNNING,)))
+        if n_running:
+            print(f"Note: {n_running} trial(s) stuck in RUNNING state from a previous killed job "
+                  f"-- harmless, but they won't count toward n_trials and won't be resumed.")
 
-run = wandb_utils.init_run(project="stgnn-weather", group="SAWS", job_type="AGCRN", name="AGCRN_SAWS_seed16", config=vars(args))
+        if n_remaining == 0:
+            print(f"{n_finished} trials already finished, target is {args.n_trials} -- nothing to run.")
+        else:
+            print(f"{n_finished} trials already finished; running {n_remaining} more "
+                  f"to reach target of {args.n_trials}.")
+            study.optimize(lambda trial: run_once(args, trial=trial), n_trials=n_remaining)
 
-#start training
-trainer = Trainer(model, loss, optimizer, train_loader, val_loader, test_loader, scaler,
-                  args, lr_scheduler=lr_scheduler)
-if args.mode == 'train':
-    trainer.train()
-elif args.mode == 'test':
-    model.load_state_dict(torch.load('../pre-trained/{}.pth'.format(args.dataset)))
-    print("Load saved model")
-    trainer.test(model, trainer.args, test_loader, scaler, trainer.logger)
-else:
-    raise ValueError
+            csv_path = os.path.join('./optuna_studies', f"{args.study_name}_results.csv")
+            study.trials_dataframe().to_csv(csv_path, index=False)
+            print(f"\nAll-trials results written to {csv_path}")
+
+            print('\nBEST TRIAL')
+            best = study.best_trial
+            print(f"val_loss: {best.value:.4f}")
+            for k, v in best.params.items():
+                print(f"  {k:15s}: {v}")
+
+            print('\nTOP 5 (by val_loss, ascending)')
+            completed = [t for t in study.trials if t.value is not None]
+            for t in sorted(completed, key=lambda t: t.value)[:5]:
+                print(f"  #{t.number:<3} val_loss={t.value:.4f}  {t.params}")
+
+            print('\nPARAM IMPORTANCES')
+            try:
+                importances = optuna.importance.get_param_importances(study)
+                for param, importance in importances.items():
+                    print(f"  {param:15s}: {importance:.3f}")
+            except Exception as e:
+                print(f"(could not compute: {e})")
+
