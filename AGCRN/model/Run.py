@@ -79,9 +79,9 @@ args.add_argument('--early_stop', default=config['train']['early_stop'], type=ev
 args.add_argument('--early_stop_patience', default=config['train']['early_stop_patience'], type=int)
 args.add_argument('--grad_norm', default=config['train']['grad_norm'], type=eval)
 args.add_argument('--max_grad_norm', default=config['train']['max_grad_norm'], type=int)
-args.add_argument('--teacher_forcing', default=False, type=bool)
-#args.add_argument('--tf_decay_steps', default=2000, type=int, help='teacher forcing decay steps')
-args.add_argument('--real_value', default=config['train']['real_value'], type=eval, help = 'use real value for loss calculation')
+args.add_argument('--teacher_forcing', default=True, type=bool)
+args.add_argument('--tf_decay_steps', default=2000, type=int, help='teacher forcing decay steps')
+#args.add_argument('--real_value', default=config['train']['real_value'], type=eval, help = 'use real value for loss calculation')
 #test
 args.add_argument('--mae_thresh', default=config['test']['mae_thresh'], type=eval)
 args.add_argument('--mape_thresh', default=config['test']['mape_thresh'], type=float)
@@ -144,7 +144,7 @@ current_dir = os.path.dirname(os.path.realpath(__file__))
 log_dir = os.path.join(current_dir,'experiments', args.dataset, current_time)
 args.log_dir = log_dir
 
-run = wandb_utils.init_run(project="stgnn-weather", group="SAWS", job_type="AGCRN", name="AGCRN_SAWS_seed14", config=vars(args))
+run = wandb_utils.init_run(project="stgnn-weather", group="SAWS", job_type="AGCRN", name="AGCRN_SAWS_seed16", config=vars(args))
 
 #start training
 trainer = Trainer(model, loss, optimizer, train_loader, val_loader, test_loader, scaler,
