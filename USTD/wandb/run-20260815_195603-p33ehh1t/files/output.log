@@ -1,0 +1,270 @@
+initialize network with xavier
+initialize network with xavier
+model [GWaveNetModel] was created
+---------- Networks initialized -------------
+[Network Encoder] Total number of parameters : 0.096 M
+[Network Decoder] Total number of parameters : 0.066 M
+-----------------------------------------------
+/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/torch/utils/data/dataloader.py:627: UserWarning: This DataLoader will create 4 worker processes in total. Our suggested max number of worker in current system is 1, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(
+/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/models/base_model.py:162: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:835.)
+  errors_ret[name] = float(getattr(self, 'loss_' + name))  # float(...) works for both scalar tensor and float number
+(epoch: 0, iters: 20, time: 0.025, data: 0.116) mae: 6.94196
+(epoch: 0, iters: 40, time: 0.021, data: 0.009) mae: 6.46996
+(epoch: 0, iters: 60, time: 0.021, data: 0.008) mae: 6.46139
+(epoch: 0, iters: 80, time: 0.021, data: 0.008) mae: 6.04913
+(epoch: 0, iters: 100, time: 0.022, data: 0.008) mae: 6.37492
+(epoch: 0, iters: 120, time: 0.022, data: 0.008) mae: 6.30722
+(epoch: 0, iters: 140, time: 0.022, data: 0.008) mae: 6.24336
+(epoch: 0, iters: 160, time: 0.022, data: 0.008) mae: 6.09782
+(epoch: 0, iters: 180, time: 0.021, data: 0.008) mae: 6.17477
+(epoch: 0, iters: 200, time: 0.021, data: 0.008) mae: 6.12273
+(epoch: 0, iters: 220, time: 0.021, data: 0.008) mae: 6.03884
+(epoch: 0, iters: 240, time: 0.021, data: 0.008) mae: 5.62765
+(epoch: 0, iters: 260, time: 0.021, data: 0.008) mae: 5.84940
+(epoch: 0, iters: 280, time: 0.021, data: 0.008) mae: 6.02016
+(epoch: 0, iters: 300, time: 0.022, data: 0.008) mae: 5.87496
+(epoch: 0, iters: 320, time: 0.021, data: 0.008) mae: 5.49255
+(epoch: 0, iters: 340, time: 0.022, data: 0.008) mae: 6.06625
+(epoch: 0, iters: 360, time: 0.021, data: 0.008) mae: 5.83672
+(epoch: 0, iters: 380, time: 0.021, data: 0.008) mae: 5.75674
+(epoch: 0, iters: 400, time: 0.021, data: 0.008) mae: 5.52337
+saving the model at the end of epoch 0, iters 410
+End of epoch 0 / 300 	 Time Taken: 14 sec
+learning rate 0.0010000 -> 0.0010000
+(epoch: 1, iters: 420, time: 0.022, data: 0.008) mae: 5.82866
+(epoch: 1, iters: 440, time: 0.022, data: 0.008) mae: 5.75217
+(epoch: 1, iters: 460, time: 0.021, data: 0.008) mae: 5.58380
+(epoch: 1, iters: 480, time: 0.022, data: 0.008) mae: 6.01658
+(epoch: 1, iters: 500, time: 0.022, data: 0.008) mae: 5.70033
+(epoch: 1, iters: 520, time: 0.021, data: 0.008) mae: 5.41914
+(epoch: 1, iters: 540, time: 0.022, data: 0.008) mae: 5.59285
+(epoch: 1, iters: 560, time: 0.022, data: 0.008) mae: 5.46900
+(epoch: 1, iters: 580, time: 0.021, data: 0.008) mae: 5.47908
+(epoch: 1, iters: 600, time: 0.021, data: 0.008) mae: 5.56842
+(epoch: 1, iters: 620, time: 0.021, data: 0.008) mae: 5.48813
+(epoch: 1, iters: 640, time: 0.021, data: 0.008) mae: 5.30028
+(epoch: 1, iters: 660, time: 0.022, data: 0.008) mae: 4.76662
+(epoch: 1, iters: 680, time: 0.022, data: 0.008) mae: 4.58214
+(epoch: 1, iters: 700, time: 0.022, data: 0.008) mae: 4.56721
+(epoch: 1, iters: 720, time: 0.022, data: 0.008) mae: 4.59763
+(epoch: 1, iters: 740, time: 0.022, data: 0.008) mae: 4.65206
+(epoch: 1, iters: 760, time: 0.022, data: 0.008) mae: 4.49978
+(epoch: 1, iters: 780, time: 0.021, data: 0.008) mae: 4.55000
+(epoch: 1, iters: 800, time: 0.022, data: 0.008) mae: 4.34260
+(epoch: 1, iters: 820, time: 0.021, data: 0.008) mae: 4.19877
+End of epoch 1 / 300 	 Time Taken: 12 sec
+learning rate 0.0010000 -> 0.0009999
+(epoch: 2, iters: 840, time: 0.022, data: 0.122) mae: 4.26412
+(epoch: 2, iters: 860, time: 0.022, data: 0.008) mae: 4.42553
+(epoch: 2, iters: 880, time: 0.021, data: 0.008) mae: 4.47138
+(epoch: 2, iters: 900, time: 0.022, data: 0.008) mae: 4.21942
+(epoch: 2, iters: 920, time: 0.021, data: 0.008) mae: 3.99118
+(epoch: 2, iters: 940, time: 0.021, data: 0.008) mae: 4.16437
+(epoch: 2, iters: 960, time: 0.022, data: 0.008) mae: 4.14057
+(epoch: 2, iters: 980, time: 0.021, data: 0.008) mae: 4.04003
+(epoch: 2, iters: 1000, time: 0.021, data: 0.008) mae: 4.12378
+(epoch: 2, iters: 1020, time: 0.021, data: 0.008) mae: 3.92249
+(epoch: 2, iters: 1040, time: 0.021, data: 0.008) mae: 4.06102
+(epoch: 2, iters: 1060, time: 0.021, data: 0.008) mae: 3.94171
+(epoch: 2, iters: 1080, time: 0.022, data: 0.008) mae: 3.79470
+(epoch: 2, iters: 1100, time: 0.021, data: 0.008) mae: 3.92524
+(epoch: 2, iters: 1120, time: 0.021, data: 0.008) mae: 4.17662
+(epoch: 2, iters: 1140, time: 0.021, data: 0.008) mae: 3.85833
+(epoch: 2, iters: 1160, time: 0.022, data: 0.008) mae: 3.84658
+(epoch: 2, iters: 1180, time: 0.021, data: 0.008) mae: 3.89054
+(epoch: 2, iters: 1200, time: 0.022, data: 0.008) mae: 3.77765
+(epoch: 2, iters: 1220, time: 0.022, data: 0.008) mae: 3.80023
+End of epoch 2 / 300 	 Time Taken: 13 sec
+learning rate 0.0009999 -> 0.0009998
+(epoch: 3, iters: 1240, time: 0.022, data: 0.009) mae: 4.03982
+(epoch: 3, iters: 1260, time: 0.022, data: 0.008) mae: 3.90237
+(epoch: 3, iters: 1280, time: 0.022, data: 0.008) mae: 3.73609
+(epoch: 3, iters: 1300, time: 0.022, data: 0.009) mae: 3.78668
+(epoch: 3, iters: 1320, time: 0.021, data: 0.008) mae: 3.81457
+(epoch: 3, iters: 1340, time: 0.022, data: 0.008) mae: 3.83071
+(epoch: 3, iters: 1360, time: 0.022, data: 0.009) mae: 3.78113
+(epoch: 3, iters: 1380, time: 0.021, data: 0.008) mae: 3.72863
+(epoch: 3, iters: 1400, time: 0.021, data: 0.008) mae: 3.92976
+(epoch: 3, iters: 1420, time: 0.022, data: 0.009) mae: 3.88224
+(epoch: 3, iters: 1440, time: 0.022, data: 0.008) mae: 3.84334
+(epoch: 3, iters: 1460, time: 0.022, data: 0.008) mae: 3.77503
+(epoch: 3, iters: 1480, time: 0.022, data: 0.009) mae: 3.74623
+(epoch: 3, iters: 1500, time: 0.021, data: 0.008) mae: 3.78744
+(epoch: 3, iters: 1520, time: 0.022, data: 0.008) mae: 3.99824
+(epoch: 3, iters: 1540, time: 0.021, data: 0.008) mae: 3.69336
+(epoch: 3, iters: 1560, time: 0.022, data: 0.009) mae: 3.85283
+(epoch: 3, iters: 1580, time: 0.021, data: 0.008) mae: 3.83715
+(epoch: 3, iters: 1600, time: 0.022, data: 0.008) mae: 3.76621
+(epoch: 3, iters: 1620, time: 0.021, data: 0.009) mae: 3.67871
+(epoch: 3, iters: 1640, time: 0.022, data: 0.008) mae: 3.80542
+End of epoch 3 / 300 	 Time Taken: 12 sec
+learning rate 0.0009998 -> 0.0009996
+(epoch: 4, iters: 1660, time: 0.022, data: 0.126) mae: 3.68577
+(epoch: 4, iters: 1680, time: 0.022, data: 0.009) mae: 3.78269
+(epoch: 4, iters: 1700, time: 0.022, data: 0.008) mae: 3.71734
+(epoch: 4, iters: 1720, time: 0.026, data: 0.008) mae: 3.62318
+(epoch: 4, iters: 1740, time: 0.022, data: 0.010) mae: 3.77713
+(epoch: 4, iters: 1760, time: 0.022, data: 0.008) mae: 3.60704
+(epoch: 4, iters: 1780, time: 0.022, data: 0.008) mae: 3.74666
+(epoch: 4, iters: 1800, time: 0.022, data: 0.008) mae: 3.67645
+(epoch: 4, iters: 1820, time: 0.021, data: 0.008) mae: 3.86458
+(epoch: 4, iters: 1840, time: 0.022, data: 0.008) mae: 3.68180
+(epoch: 4, iters: 1860, time: 0.022, data: 0.008) mae: 3.76159
+(epoch: 4, iters: 1880, time: 0.022, data: 0.008) mae: 3.91794
+(epoch: 4, iters: 1900, time: 0.023, data: 0.008) mae: 3.60958
+(epoch: 4, iters: 1920, time: 0.022, data: 0.010) mae: 3.60983
+(epoch: 4, iters: 1940, time: 0.022, data: 0.009) mae: 3.67029
+(epoch: 4, iters: 1960, time: 0.021, data: 0.008) mae: 3.61273
+(epoch: 4, iters: 1980, time: 0.024, data: 0.008) mae: 3.67158
+(epoch: 4, iters: 2000, time: 0.021, data: 0.010) mae: 3.71631
+(epoch: 4, iters: 2020, time: 0.022, data: 0.008) mae: 3.71204
+(epoch: 4, iters: 2040, time: 0.023, data: 0.008) mae: 3.68493
+End of epoch 4 / 300 	 Time Taken: 12 sec
+learning rate 0.0009996 -> 0.0009993
+(epoch: 5, iters: 2060, time: 0.022, data: 0.010) mae: 3.70299
+(epoch: 5, iters: 2080, time: 0.022, data: 0.009) mae: 3.61427
+(epoch: 5, iters: 2100, time: 0.025, data: 0.008) mae: 3.60237
+(epoch: 5, iters: 2120, time: 0.022, data: 0.010) mae: 3.66124
+(epoch: 5, iters: 2140, time: 0.022, data: 0.008) mae: 3.75386
+(epoch: 5, iters: 2160, time: 0.022, data: 0.008) mae: 3.67865
+(epoch: 5, iters: 2180, time: 0.022, data: 0.008) mae: 3.72088
+(epoch: 5, iters: 2200, time: 0.022, data: 0.008) mae: 3.66860
+(epoch: 5, iters: 2220, time: 0.022, data: 0.008) mae: 3.71138
+(epoch: 5, iters: 2240, time: 0.022, data: 0.008) mae: 3.57371
+(epoch: 5, iters: 2260, time: 0.022, data: 0.008) mae: 3.63710
+(epoch: 5, iters: 2280, time: 0.022, data: 0.008) mae: 3.62878
+(epoch: 5, iters: 2300, time: 0.022, data: 0.008) mae: 3.62868
+(epoch: 5, iters: 2320, time: 0.022, data: 0.008) mae: 3.63413
+(epoch: 5, iters: 2340, time: 0.022, data: 0.008) mae: 3.59260
+(epoch: 5, iters: 2360, time: 0.022, data: 0.008) mae: 3.65861
+(epoch: 5, iters: 2380, time: 0.022, data: 0.008) mae: 3.70965
+(epoch: 5, iters: 2400, time: 0.025, data: 0.009) mae: 3.71301
+(epoch: 5, iters: 2420, time: 0.022, data: 0.010) mae: 3.70206
+(epoch: 5, iters: 2440, time: 0.022, data: 0.008) mae: 3.64963
+(epoch: 5, iters: 2460, time: 0.022, data: 0.008) mae: 3.64233
+End of epoch 5 / 300 	 Time Taken: 12 sec
+learning rate 0.0009993 -> 0.0009990
+(epoch: 6, iters: 2480, time: 0.022, data: 0.126) mae: 3.62828
+(epoch: 6, iters: 2500, time: 0.021, data: 0.009) mae: 3.61558
+(epoch: 6, iters: 2520, time: 0.022, data: 0.009) mae: 3.62466
+(epoch: 6, iters: 2540, time: 0.022, data: 0.008) mae: 3.69151
+(epoch: 6, iters: 2560, time: 0.022, data: 0.008) mae: 3.72960
+(epoch: 6, iters: 2580, time: 0.022, data: 0.008) mae: 3.72249
+(epoch: 6, iters: 2600, time: 0.022, data: 0.008) mae: 3.66368
+(epoch: 6, iters: 2620, time: 0.022, data: 0.008) mae: 3.65922
+(epoch: 6, iters: 2640, time: 0.022, data: 0.009) mae: 3.47693
+(epoch: 6, iters: 2660, time: 0.022, data: 0.008) mae: 3.55471
+(epoch: 6, iters: 2680, time: 0.022, data: 0.008) mae: 3.69418
+(epoch: 6, iters: 2700, time: 0.022, data: 0.008) mae: 3.85072
+(epoch: 6, iters: 2720, time: 0.022, data: 0.016) mae: 3.70069
+(epoch: 6, iters: 2740, time: 0.022, data: 0.009) mae: 3.56516
+(epoch: 6, iters: 2760, time: 0.022, data: 0.009) mae: 3.83067
+(epoch: 6, iters: 2780, time: 0.022, data: 0.009) mae: 3.67448
+(epoch: 6, iters: 2800, time: 0.022, data: 0.008) mae: 3.61236
+(epoch: 6, iters: 2820, time: 0.022, data: 0.008) mae: 3.71693
+(epoch: 6, iters: 2840, time: 0.021, data: 0.008) mae: 3.67795
+(epoch: 6, iters: 2860, time: 0.022, data: 0.008) mae: 3.64108
+End of epoch 6 / 300 	 Time Taken: 12 sec
+learning rate 0.0009990 -> 0.0009987
+(epoch: 7, iters: 2880, time: 0.022, data: 0.008) mae: 3.64059
+(epoch: 7, iters: 2900, time: 0.022, data: 0.009) mae: 3.69698
+(epoch: 7, iters: 2920, time: 0.022, data: 0.009) mae: 3.66267
+(epoch: 7, iters: 2940, time: 0.022, data: 0.008) mae: 3.55440
+(epoch: 7, iters: 2960, time: 0.022, data: 0.008) mae: 3.74564
+(epoch: 7, iters: 2980, time: 0.021, data: 0.008) mae: 3.68585
+(epoch: 7, iters: 3000, time: 0.022, data: 0.008) mae: 3.58282
+(epoch: 7, iters: 3020, time: 0.022, data: 0.008) mae: 3.65163
+(epoch: 7, iters: 3040, time: 0.022, data: 0.008) mae: 3.63462
+(epoch: 7, iters: 3060, time: 0.022, data: 0.008) mae: 3.68939
+(epoch: 7, iters: 3080, time: 0.022, data: 0.008) mae: 3.59258
+(epoch: 7, iters: 3100, time: 0.022, data: 0.008) mae: 3.69179
+(epoch: 7, iters: 3120, time: 0.022, data: 0.008) mae: 3.59066
+(epoch: 7, iters: 3140, time: 0.022, data: 0.009) mae: 3.71032
+(epoch: 7, iters: 3160, time: 0.022, data: 0.008) mae: 3.67885
+(epoch: 7, iters: 3180, time: 0.022, data: 0.009) mae: 3.64504
+(epoch: 7, iters: 3200, time: 0.022, data: 0.008) mae: 3.54937
+(epoch: 7, iters: 3220, time: 0.022, data: 0.008) mae: 3.73908
+(epoch: 7, iters: 3240, time: 0.022, data: 0.008) mae: 3.68101
+(epoch: 7, iters: 3260, time: 0.022, data: 0.009) mae: 3.62664
+(epoch: 7, iters: 3280, time: 0.022, data: 0.008) mae: 3.54020
+End of epoch 7 / 300 	 Time Taken: 12 sec
+learning rate 0.0009987 -> 0.0009982
+(epoch: 8, iters: 3300, time: 0.022, data: 0.131) mae: 3.61103
+(epoch: 8, iters: 3320, time: 0.022, data: 0.009) mae: 3.71323
+(epoch: 8, iters: 3340, time: 0.022, data: 0.008) mae: 3.66818
+(epoch: 8, iters: 3360, time: 0.022, data: 0.008) mae: 3.56617
+(epoch: 8, iters: 3380, time: 0.022, data: 0.008) mae: 3.65977
+(epoch: 8, iters: 3400, time: 0.022, data: 0.009) mae: 3.63437
+(epoch: 8, iters: 3420, time: 0.022, data: 0.008) mae: 3.64725
+(epoch: 8, iters: 3440, time: 0.022, data: 0.009) mae: 3.70642
+(epoch: 8, iters: 3460, time: 0.022, data: 0.009) mae: 3.50340
+(epoch: 8, iters: 3480, time: 0.022, data: 0.009) mae: 3.59232
+(epoch: 8, iters: 3500, time: 0.022, data: 0.008) mae: 3.67056
+(epoch: 8, iters: 3520, time: 0.022, data: 0.010) mae: 3.59625
+(epoch: 8, iters: 3540, time: 0.022, data: 0.008) mae: 3.66898
+(epoch: 8, iters: 3560, time: 0.022, data: 0.008) mae: 3.47588
+(epoch: 8, iters: 3580, time: 0.022, data: 0.009) mae: 3.54321
+(epoch: 8, iters: 3600, time: 0.022, data: 0.008) mae: 3.71243
+(epoch: 8, iters: 3620, time: 0.022, data: 0.008) mae: 3.50948
+(epoch: 8, iters: 3640, time: 0.022, data: 0.008) mae: 3.61688
+(epoch: 8, iters: 3660, time: 0.022, data: 0.008) mae: 3.54991
+(epoch: 8, iters: 3680, time: 0.022, data: 0.008) mae: 3.58776
+End of epoch 8 / 300 	 Time Taken: 12 sec
+learning rate 0.0009982 -> 0.0009978
+(epoch: 9, iters: 3700, time: 0.022, data: 0.008) mae: 3.64388
+(epoch: 9, iters: 3720, time: 0.022, data: 0.009) mae: 3.72065
+(epoch: 9, iters: 3740, time: 0.022, data: 0.014) mae: 3.54839
+(epoch: 9, iters: 3760, time: 0.022, data: 0.008) mae: 3.74056
+(epoch: 9, iters: 3780, time: 0.022, data: 0.008) mae: 3.63343
+(epoch: 9, iters: 3800, time: 0.022, data: 0.008) mae: 3.58688
+(epoch: 9, iters: 3820, time: 0.022, data: 0.009) mae: 3.56393
+(epoch: 9, iters: 3840, time: 0.022, data: 0.009) mae: 3.67339
+(epoch: 9, iters: 3860, time: 0.022, data: 0.008) mae: 3.66565
+(epoch: 9, iters: 3880, time: 0.022, data: 0.008) mae: 3.65381
+(epoch: 9, iters: 3900, time: 0.022, data: 0.009) mae: 3.78444
+(epoch: 9, iters: 3920, time: 0.022, data: 0.008) mae: 3.47628
+(epoch: 9, iters: 3940, time: 0.022, data: 0.008) mae: 3.57408
+(epoch: 9, iters: 3960, time: 0.022, data: 0.008) mae: 3.54151
+(epoch: 9, iters: 3980, time: 0.022, data: 0.008) mae: 3.77662
+(epoch: 9, iters: 4000, time: 0.022, data: 0.008) mae: 3.53618
+(epoch: 9, iters: 4020, time: 0.022, data: 0.008) mae: 3.63098
+(epoch: 9, iters: 4040, time: 0.022, data: 0.008) mae: 3.55706
+(epoch: 9, iters: 4060, time: 0.022, data: 0.008) mae: 3.55010
+(epoch: 9, iters: 4080, time: 0.022, data: 0.009) mae: 3.53197
+(epoch: 9, iters: 4100, time: 0.022, data: 0.008) mae: 3.56886
+End of epoch 9 / 300 	 Time Taken: 12 sec
+learning rate 0.0009978 -> 0.0009973
+(epoch: 10, iters: 4120, time: 0.022, data: 0.128) mae: 3.78123
+(epoch: 10, iters: 4140, time: 0.022, data: 0.009) mae: 3.65944
+(epoch: 10, iters: 4160, time: 0.022, data: 0.008) mae: 3.67193
+(epoch: 10, iters: 4180, time: 0.022, data: 0.008) mae: 3.69660
+(epoch: 10, iters: 4200, time: 0.022, data: 0.008) mae: 3.67653
+(epoch: 10, iters: 4220, time: 0.022, data: 0.009) mae: 3.65197
+(epoch: 10, iters: 4240, time: 0.022, data: 0.009) mae: 3.70654
+(epoch: 10, iters: 4260, time: 0.022, data: 0.008) mae: 3.56262
+(epoch: 10, iters: 4280, time: 0.022, data: 0.009) mae: 3.55347
+(epoch: 10, iters: 4300, time: 0.022, data: 0.008) mae: 3.75885
+(epoch: 10, iters: 4320, time: 0.022, data: 0.009) mae: 3.57000
+(epoch: 10, iters: 4340, time: 0.022, data: 0.008) mae: 3.43665
+(epoch: 10, iters: 4360, time: 0.022, data: 0.008) mae: 3.55084
+(epoch: 10, iters: 4380, time: 0.022, data: 0.009) mae: 3.64316
+(epoch: 10, iters: 4400, time: 0.022, data: 0.008) mae: 3.55503
+(epoch: 10, iters: 4420, time: 0.022, data: 0.008) mae: 3.71495
+(epoch: 10, iters: 4440, time: 0.022, data: 0.009) mae: 3.68210
+(epoch: 10, iters: 4460, time: 0.022, data: 0.008) mae: 3.56482
+(epoch: 10, iters: 4480, time: 0.022, data: 0.008) mae: 3.57503
+(epoch: 10, iters: 4500, time: 0.022, data: 0.009) mae: 3.55722
+100%|##########| 136/136 [00:12<00:00, 10.58it/s]
+(epoch: 10, iters: 4510, time: 12.862) MAE: 22.27998
+saving the best model at the end of epoch 10, iters 4510
+End of epoch 10 / 300 	 Time Taken: 12 sec
+learning rate 0.0009973 -> 0.0009967
+(epoch: 11, iters: 4520, time: 0.022, data: 0.009) mae: 3.48558
+(epoch: 11, iters: 4540, time: 0.022, data: 0.009) mae: 3.60631
+(epoch: 11, iters: 4560, time: 0.022, data: 0.008) mae: 3.53353
+(epoch: 11, iters: 4580, time: 0.022, data: 0.008) mae: 3.55293
+(epoch: 11, iters: 4600, time: 0.022, data: 0.009) mae: 3.59567
+(epoch: 11, iters: 4620, time: 0.022, data: 0.008) mae: 3.54808
+(epoch: 11, iters: 4640, time: 0.022, data: 0.009) mae: 3.57759

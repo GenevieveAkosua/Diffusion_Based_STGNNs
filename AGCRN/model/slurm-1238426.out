@@ -1,0 +1,6 @@
+/scratch/chkkar002/Diffusion_Based_STGNNs/AGCRN
+Read configuration file: ./SAWS_AGCRN.conf
+Traceback (most recent call last):
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/AGCRN/model/Run.py", line 194, in <module>
+    if optuna is None:
+NameError: name 'optuna' is not defined

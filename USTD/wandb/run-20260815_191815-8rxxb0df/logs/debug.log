@@ -1,0 +1,24 @@
+2026-08-15 19:18:15,073 INFO    MainThread:798679 [wandb_setup.py:_flush():81] Current SDK version is 0.26.1
+2026-08-15 19:18:15,074 INFO    MainThread:798679 [wandb_setup.py:_flush():81] Configure stats pid to 798679
+2026-08-15 19:18:15,074 INFO    MainThread:798679 [wandb_setup.py:_flush():81] Loading settings from environment variables
+2026-08-15 19:18:15,074 INFO    MainThread:798679 [wandb_init.py:setup_run_log_directory():723] Logging user logs to /scratch/chkkar002/Diffusion_Based_STGNNs/USTD/wandb/run-20260815_191815-8rxxb0df/logs/debug.log
+2026-08-15 19:18:15,074 INFO    MainThread:798679 [wandb_init.py:setup_run_log_directory():724] Logging internal logs to /scratch/chkkar002/Diffusion_Based_STGNNs/USTD/wandb/run-20260815_191815-8rxxb0df/logs/debug-internal.log
+2026-08-15 19:18:15,074 INFO    MainThread:798679 [wandb_init.py:init():850] calling init triggers
+2026-08-15 19:18:15,074 INFO    MainThread:798679 [wandb_init.py:init():855] wandb.init called with sweep_config: {}
+config: {'gpu_ids': [0], 'checkpoints_dir': './checkpoints/SAWS', 'model': 'gwavenet', 'config': 'config1', 'init_type': 'xavier', 'init_gain': 0.02, 'pretrain': 'NA', 'pred_attr': 'NA', 'dataset_mode': 'SAWS', 't_len': 24, 'serial_batches': False, 'num_threads': 4, 'batch_size': 64, 'max_dataset_size': inf, 'epoch': 'latest', 'load_iter': 0, 'verbose': False, 'seed': 2030, 'enable_visual': False, 'enable_neptune': False, 'neptune_project': '', 'neptune_token': '', 'print_freq': 20, 'save_epoch_freq': 100, 'continue_train': False, 'save_best': True, 'eval_epoch_freq': 10, 'epoch_count': 0, 'total_iters': 0, 'phase': 'train', 'enable_curriculum': False, 'num_train_target': 3, 'num_train_target_end': 6, 'n_epochs_target': 100, 'n_epochs_target_increase': 150, 'enable_val': True, 'n_epochs': 300, 'n_epochs_decay': 0, 'lr': 0.001, 'beta': 1.0, 'lr_policy': 'cosine', 'lr_decay_iters': 50, 'delete_col': ['u_speed', 'v_speed', 'latitude', 'longitude'], 'use_adj': True, 'y_dim': 1, 'covariate_dim': 0, 'spatial_dim': 64, 'isTrain': True, 'name': 'gwavenet_NA_20260815T191813', 'file_time': '20260815T191813', 'mean': np.float32(17.288782), 'scale': np.float32(6.896628), 'num_nodes': 32, 'embed_dim': 32, 'end_dim': 64, 'mask_ratio': 0.75, 'dropout': 0.2, '_wandb': {}}
+2026-08-15 19:18:15,075 INFO    MainThread:798679 [wandb_init.py:init():898] starting backend
+2026-08-15 19:18:15,348 INFO    MainThread:798679 [wandb_init.py:init():913] sending inform_init request
+2026-08-15 19:18:15,986 INFO    MainThread:798679 [wandb_init.py:init():918] backend started and connected
+2026-08-15 19:18:15,995 INFO    MainThread:798679 [wandb_init.py:init():988] updated telemetry
+2026-08-15 19:18:16,028 INFO    MainThread:798679 [wandb_init.py:init():1011] communicating run to backend with 90.0 second timeout
+2026-08-15 19:18:16,521 INFO    MainThread:798679 [wandb_init.py:init():1056] starting run threads in backend
+2026-08-15 19:18:16,742 INFO    MainThread:798679 [wandb_run.py:_console_start():2554] atexit reg
+2026-08-15 19:18:16,742 INFO    MainThread:798679 [wandb_run.py:_redirect():2403] redirect: wrap_raw
+2026-08-15 19:18:16,742 INFO    MainThread:798679 [wandb_run.py:_redirect():2472] Wrapping output streams.
+2026-08-15 19:18:16,742 INFO    MainThread:798679 [wandb_run.py:_redirect():2495] Redirects installed.
+2026-08-15 19:18:16,746 INFO    MainThread:798679 [wandb_init.py:init():1094] run started, returning control to user process
+2026-08-15 19:19:40,988 INFO    MainThread:798679 [wandb_run.py:_finish():2321] finishing run chkkar002-university-of-cape-town/gwavenet-stgnn-weather/8rxxb0df
+2026-08-15 19:19:40,989 INFO    MainThread:798679 [wandb_run.py:_atexit_cleanup():2520] got exitcode: 0
+2026-08-15 19:19:40,990 INFO    MainThread:798679 [wandb_run.py:_restore():2502] restore
+2026-08-15 19:19:40,990 INFO    MainThread:798679 [wandb_run.py:_restore():2508] restore done
+2026-08-15 19:19:42,612 INFO    MainThread:798679 [wandb_run.py:_footer_sync_info():3889] logging synced files

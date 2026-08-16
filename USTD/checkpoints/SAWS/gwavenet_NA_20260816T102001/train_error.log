@@ -1,0 +1,13 @@
+wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from /home/chkkar002/.netrc.
+wandb: Currently logged in as: chkkar002 (chkkar002-university-of-cape-town) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: WARNING Using a boolean value for 'reinit' is deprecated. Use 'return_previous' or 'finish_previous' instead.
+wandb: setting up run bbv0js19
+wandb: Tracking run with wandb version 0.26.1
+wandb: Run data is saved locally in /scratch/chkkar002/Diffusion_Based_STGNNs/USTD/wandb/run-20260816_102002-bbv0js19
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run 20260816T102001
+wandb: ⭐️ View project at https://wandb.ai/chkkar002-university-of-cape-town/gwavenet-stgnn-weather
+wandb: 🚀 View run at https://wandb.ai/chkkar002-university-of-cape-town/gwavenet-stgnn-weather/runs/bbv0js19
+/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/models/base_model.py:162: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:835.)
+  errors_ret[name] = float(getattr(self, 'loss_' + name))  # float(...) works for both scalar tensor and float number

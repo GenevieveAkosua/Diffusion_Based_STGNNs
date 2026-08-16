@@ -30,8 +30,8 @@ class SAWSDataset(BaseDataset):
         self.raw_data = self.load_feature('dataset/saws/flow.npy', self.time_division[opt.phase])
         # get data division index
         self.opt.__dict__.update({'num_nodes': self.A.shape[0]})
-        self.test_node_index = np.array([], dtype=np.int64)          # no nodes held out spatially
-        self.train_node_index = np.arange(self.raw_data['pred'].shape[0])  # all stations used
+        self.test_node_index = self.get_node_division("", num_nodes=self.raw_data['pred'].shape[0])
+        self.train_node_index = np.setdiff1d(np.arange(self.raw_data['pred'].shape[0]), self.test_node_index)  # all stations used
 
         # data format check
         self._data_format_check()
@@ -47,11 +47,15 @@ class SAWSDataset(BaseDataset):
         train_end = int(self.time_division['train'][1] * num_time)
         X_train_slice = X[:, train_start:train_end, :]
         X_mean = np.mean(X_train_slice)
+        print("MEAN", X_mean)
         X_std = np.std(X_train_slice)
-        X_std[X_std == 0] = 1.0
+        print("STD", X_std)
+        if np.ndim(X_std) == 0:
+            X_std = np.float32(1.0) if X_std == 0 else X_std
         self.add_norm_info(X_mean, X_std)
         X = (X - self.opt.mean) / self.opt.scale
         missing = np.zeros(X.shape)
+        print(missing.shape)
         start_time = np.datetime64('2016-01-01T01:00:00')
         full_timestamps = start_time + np.arange(num_time, dtype='int64') * np.timedelta64(1, 'h')
         full_time_seconds = ((full_timestamps - np.datetime64('1970-01-01T00:00:00')) / np.timedelta64(1, 's')).astype(np.int64)

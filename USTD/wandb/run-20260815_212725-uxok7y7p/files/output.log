@@ -1,0 +1,19 @@
+initialize network with xavier
+initialize network with xavier
+loading the model from ./checkpoints/SAWS/gwavenet_NA_20260815T200107/best_net_Encoder.pth
+Traceback (most recent call last):
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/train.py", line 40, in <module>
+    model = create_model(opt, model_config)      # create a model given opt.model and other options
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/models/__init__.py", line 70, in create_model
+    instance = model(opt, model_config)
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/models/stdiffusion/stdiffusionfore_model.py", line 78, in __init__
+    self.load_networks()  # only load pre-trained model
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/models/stdiffusion/stdiffusionfore_model.py", line 283, in load_networks
+    state_dict = torch.load(load_path, map_location=self.device)
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/torch/serialization.py", line 1484, in load
+    with _open_file_like(f, "rb") as opened_file:
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/torch/serialization.py", line 759, in _open_file_like
+    return _open_file(name_or_buffer, mode)
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/torch/serialization.py", line 740, in __init__
+    super().__init__(open(name, mode))
+FileNotFoundError: [Errno 2] No such file or directory: './checkpoints/SAWS/gwavenet_NA_20260815T200107/best_net_Encoder.pth'

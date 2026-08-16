@@ -1,0 +1,40 @@
+initialize network with xavier
+initialize network with xavier
+model [GWaveNetModel] was created
+---------- Networks initialized -------------
+[Network Encoder] Total number of parameters : 0.096 M
+[Network Decoder] Total number of parameters : 0.066 M
+-----------------------------------------------
+/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/torch/utils/data/dataloader.py:627: UserWarning: This DataLoader will create 4 worker processes in total. Our suggested max number of worker in current system is 1, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(
+/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/models/base_model.py:162: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:835.)
+  errors_ret[name] = float(getattr(self, 'loss_' + name))  # float(...) works for both scalar tensor and float number
+(epoch: 0, iters: 20, time: 0.025, data: 0.117) mae: 6.94198
+(epoch: 0, iters: 40, time: 0.022, data: 0.008) mae: 6.46483
+(epoch: 0, iters: 60, time: 0.022, data: 0.008) mae: 6.45495
+(epoch: 0, iters: 80, time: 0.022, data: 0.008) mae: 6.03587
+(epoch: 0, iters: 100, time: 0.021, data: 0.008) mae: 6.19916
+(epoch: 0, iters: 120, time: 0.022, data: 0.008) mae: 5.71959
+(epoch: 0, iters: 140, time: 0.022, data: 0.008) mae: 5.42589
+(epoch: 0, iters: 160, time: 0.022, data: 0.008) mae: 5.41147
+(epoch: 0, iters: 180, time: 0.022, data: 0.008) mae: 5.52813
+(epoch: 0, iters: 200, time: 0.021, data: 0.008) mae: 5.49123
+(epoch: 0, iters: 220, time: 0.021, data: 0.008) mae: 5.32497
+(epoch: 0, iters: 240, time: 0.021, data: 0.008) mae: 5.13373
+(epoch: 0, iters: 260, time: 0.022, data: 0.008) mae: 5.19082
+(epoch: 0, iters: 280, time: 0.022, data: 0.008) mae: 5.34433
+(epoch: 0, iters: 300, time: 0.021, data: 0.008) mae: 5.38020
+(epoch: 0, iters: 320, time: 0.022, data: 0.008) mae: 5.10387
+(epoch: 0, iters: 340, time: 0.022, data: 0.008) mae: 5.41331
+(epoch: 0, iters: 360, time: 0.022, data: 0.008) mae: 5.30385
+(epoch: 0, iters: 380, time: 0.022, data: 0.008) mae: 5.18375
+(epoch: 0, iters: 400, time: 0.022, data: 0.008) mae: 5.02817
+saving the model at the end of epoch 0, iters 410
+End of epoch 0 / 300 	 Time Taken: 14 sec
+learning rate 0.0010000 -> 0.0010000
+(epoch: 1, iters: 420, time: 0.022, data: 0.008) mae: 5.33631
+(epoch: 1, iters: 440, time: 0.022, data: 0.008) mae: 5.17586
+(epoch: 1, iters: 460, time: 0.022, data: 0.008) mae: 5.08829
+(epoch: 1, iters: 480, time: 0.022, data: 0.008) mae: 5.56363
+(epoch: 1, iters: 500, time: 0.022, data: 0.008) mae: 5.22653

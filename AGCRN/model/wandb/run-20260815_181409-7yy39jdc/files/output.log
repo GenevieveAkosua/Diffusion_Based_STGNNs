@@ -1,0 +1,12 @@
+Creat Log File in:  /scratch/chkkar002/Diffusion_Based_STGNNs/AGCRN/model/experiments/SAWS/20260815181359/run.log
+2026-08-15 18:14: Experiment log path in: /scratch/chkkar002/Diffusion_Based_STGNNs/AGCRN/model/experiments/SAWS/20260815181359
+Traceback (most recent call last):
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/AGCRN/model/Run.py", line 191, in <module>
+    run_once(args)
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/AGCRN/model/Run.py", line 179, in run_once
+    return trainer.train()
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/AGCRN/model/BasicTrainer.py", line 111, in train
+    train_epoch_loss = self.train_epoch(epoch)
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/AGCRN/model/BasicTrainer.py", line 77, in train_epoch
+    if self.args.real_value:
+AttributeError: 'Namespace' object has no attribute 'real_value'

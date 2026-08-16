@@ -1,0 +1,26 @@
+initialize network with xavier
+initialize network with xavier
+model [GWaveNetModel] was created
+---------- Networks initialized -------------
+[Network Encoder] Total number of parameters : 0.096 M
+[Network Decoder] Total number of parameters : 0.066 M
+-----------------------------------------------
+/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/torch/utils/data/dataloader.py:627: UserWarning: This DataLoader will create 4 worker processes in total. Our suggested max number of worker in current system is 1, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(
+/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/models/base_model.py:162: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:835.)
+  errors_ret[name] = float(getattr(self, 'loss_' + name))  # float(...) works for both scalar tensor and float number
+(epoch: 0, iters: 20, time: 0.025, data: 0.115) mae: 6.94196
+(epoch: 0, iters: 40, time: 0.022, data: 0.010) mae: 6.47327
+(epoch: 0, iters: 60, time: 0.022, data: 0.009) mae: 6.46581
+(epoch: 0, iters: 80, time: 0.021, data: 0.008) mae: 6.05234
+(epoch: 0, iters: 100, time: 0.022, data: 0.008) mae: 6.37600
+(epoch: 0, iters: 120, time: 0.022, data: 0.008) mae: 6.30747
+(epoch: 0, iters: 140, time: 0.022, data: 0.008) mae: 6.24309
+(epoch: 0, iters: 160, time: 0.022, data: 0.008) mae: 6.10078
+(epoch: 0, iters: 180, time: 0.022, data: 0.008) mae: 6.17610
+(epoch: 0, iters: 200, time: 0.022, data: 0.008) mae: 6.12434
+(epoch: 0, iters: 220, time: 0.021, data: 0.008) mae: 6.04123
+(epoch: 0, iters: 240, time: 0.021, data: 0.008) mae: 5.62874
+(epoch: 0, iters: 260, time: 0.022, data: 0.008) mae: 5.85039
+(epoch: 0, iters: 280, time: 0.021, data: 0.008) mae: 6.02090

@@ -17,6 +17,7 @@ from lib.TrainInits import init_seed
 from lib.dataloader import get_dataloader
 from lib.TrainInits import print_model_parameters
 import wandb_utils
+import optuna
 
 #*************************************************************************#
 Mode = 'train'
@@ -79,9 +80,9 @@ args.add_argument('--early_stop', default=config['train']['early_stop'], type=ev
 args.add_argument('--early_stop_patience', default=config['train']['early_stop_patience'], type=int)
 args.add_argument('--grad_norm', default=config['train']['grad_norm'], type=eval)
 args.add_argument('--max_grad_norm', default=config['train']['max_grad_norm'], type=int)
-args.add_argument('--teacher_forcing', default=True, type=bool)
+args.add_argument('--teacher_forcing', default=False, type=bool)
 args.add_argument('--tf_decay_steps', default=2000, type=int, help='teacher forcing decay steps')
-#args.add_argument('--real_value', default=config['train']['real_value'], type=eval, help = 'use real value for loss calculation')
+args.add_argument('--real_value', default=config['train']['real_value'], type=eval, help = 'use real value for loss calculation')
 #test
 args.add_argument('--mae_thresh', default=config['test']['mae_thresh'], type=eval)
 args.add_argument('--mape_thresh', default=config['test']['mape_thresh'], type=float)
@@ -166,9 +167,9 @@ def run_once(args, trial=None):
  
     run = wandb_utils.init_run(
         project="stgnn-weather",
-        group="{}-HPO".format(args.dataset) if trial is not None else "SAWS",
+        group="SAWS",
         job_type="AGCRN",
-        name="{}_{}".format(args.study_name, run_tag) if trial is not None else "AGCRN_SAWS_Full_Tuning_1",
+        name='AGCRN_Hyperparam_{}'.format(trial.number),
         config=vars(args),
     )
  

@@ -1,0 +1,48 @@
+initialize network with xavier
+initialize network with xavier
+Traceback (most recent call last):
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/train.py", line 40, in <module>
+    model = create_model(opt, model_config)      # create a model given opt.model and other options
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/models/__init__.py", line 70, in create_model
+    instance = model(opt, model_config)
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/models/stdiffusion/gwavenet_model.py", line 43, in __init__
+    self.optimizer = torch.optim.Adam(list(self.netEncoder.parameters())
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/torch/optim/adam.py", line 101, in __init__
+    super().__init__(params, defaults)
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/torch/optim/optimizer.py", line 400, in __init__
+    self.add_param_group(cast(dict, param_group))
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/torch/_compile.py", line 46, in inner
+    import torch._dynamo
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/torch/_dynamo/__init__.py", line 13, in <module>
+    from . import config, convert_frame, eval_frame, resume_execution
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/torch/_dynamo/convert_frame.py", line 53, in <module>
+    from torch._dynamo.symbolic_convert import TensorifyState
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/torch/_dynamo/symbolic_convert.py", line 52, in <module>
+    from torch._dynamo.exc import TensorifyScalarRestartAnalysis
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/torch/_dynamo/exc.py", line 41, in <module>
+    from .utils import counters
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/torch/_dynamo/utils.py", line 2341, in <module>
+    if has_triton_package():
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/torch/utils/_triton.py", line 9, in has_triton_package
+    from triton.compiler.compiler import triton_key
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/triton/__init__.py", line 25, in <module>
+    from . import language
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/triton/language/__init__.py", line 121, in <module>
+    from .random import (
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/triton/language/random.py", line 191, in <module>
+    def randn(seed, offset, n_rounds: tl.constexpr = N_ROUNDS_DEFAULT):
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/triton/runtime/jit.py", line 844, in jit
+    return decorator(fn)
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/triton/runtime/jit.py", line 832, in decorator
+    return JITFunction(
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/triton/runtime/jit.py", line 647, in __init__
+    src = textwrap.dedent(inspect.getsource(fn))
+  File "/usr/lib64/python3.9/inspect.py", line 1024, in getsource
+    lines, lnum = getsourcelines(object)
+  File "/usr/lib64/python3.9/inspect.py", line 1016, in getsourcelines
+    return getblock(lines[lnum:]), lnum + 1
+  File "/usr/lib64/python3.9/inspect.py", line 992, in getblock
+    blockfinder.tokeneater(*_token)
+  File "/usr/lib64/python3.9/inspect.py", line 936, in tokeneater
+    def tokeneater(self, type, token, srowcol, erowcol, line):
+KeyboardInterrupt

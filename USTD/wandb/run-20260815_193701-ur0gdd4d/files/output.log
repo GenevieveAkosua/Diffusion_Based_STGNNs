@@ -1,0 +1,67 @@
+initialize network with xavier
+initialize network with xavier
+model [GWaveNetModel] was created
+---------- Networks initialized -------------
+[Network Encoder] Total number of parameters : 0.096 M
+[Network Decoder] Total number of parameters : 0.066 M
+-----------------------------------------------
+/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/torch/utils/data/dataloader.py:627: UserWarning: This DataLoader will create 4 worker processes in total. Our suggested max number of worker in current system is 1, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(
+/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/models/base_model.py:162: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:835.)
+  errors_ret[name] = float(getattr(self, 'loss_' + name))  # float(...) works for both scalar tensor and float number
+(epoch: 0, iters: 20, time: 0.025, data: 0.117) mae: 6.94196
+(epoch: 0, iters: 40, time: 0.021, data: 0.010) mae: 6.46965
+(epoch: 0, iters: 60, time: 0.022, data: 0.008) mae: 6.46185
+(epoch: 0, iters: 80, time: 0.022, data: 0.008) mae: 6.04925
+(epoch: 0, iters: 100, time: 0.021, data: 0.008) mae: 6.37460
+(epoch: 0, iters: 120, time: 0.021, data: 0.008) mae: 6.30691
+(epoch: 0, iters: 140, time: 0.022, data: 0.008) mae: 6.24180
+(epoch: 0, iters: 160, time: 0.022, data: 0.008) mae: 6.09648
+(epoch: 0, iters: 180, time: 0.021, data: 0.008) mae: 6.17458
+(epoch: 0, iters: 200, time: 0.021, data: 0.008) mae: 6.12158
+(epoch: 0, iters: 220, time: 0.022, data: 0.008) mae: 6.03762
+(epoch: 0, iters: 240, time: 0.021, data: 0.008) mae: 5.62692
+(epoch: 0, iters: 260, time: 0.021, data: 0.008) mae: 5.84990
+(epoch: 0, iters: 280, time: 0.022, data: 0.008) mae: 6.02030
+(epoch: 0, iters: 300, time: 0.022, data: 0.008) mae: 5.87530
+(epoch: 0, iters: 320, time: 0.021, data: 0.008) mae: 5.49382
+(epoch: 0, iters: 340, time: 0.022, data: 0.008) mae: 6.06630
+(epoch: 0, iters: 360, time: 0.022, data: 0.008) mae: 5.83681
+(epoch: 0, iters: 380, time: 0.021, data: 0.008) mae: 5.75628
+(epoch: 0, iters: 400, time: 0.022, data: 0.008) mae: 5.52423
+saving the model at the end of epoch 0, iters 410
+End of epoch 0 / 300 	 Time Taken: 14 sec
+learning rate 0.0010000 -> 0.0010000
+(epoch: 1, iters: 420, time: 0.022, data: 0.008) mae: 5.82959
+(epoch: 1, iters: 440, time: 0.022, data: 0.008) mae: 5.75269
+(epoch: 1, iters: 460, time: 0.022, data: 0.008) mae: 5.58569
+(epoch: 1, iters: 480, time: 0.022, data: 0.008) mae: 6.01909
+(epoch: 1, iters: 500, time: 0.022, data: 0.008) mae: 5.70221
+(epoch: 1, iters: 520, time: 0.022, data: 0.008) mae: 5.42114
+(epoch: 1, iters: 540, time: 0.021, data: 0.008) mae: 5.59404
+(epoch: 1, iters: 560, time: 0.021, data: 0.008) mae: 5.47007
+(epoch: 1, iters: 580, time: 0.022, data: 0.008) mae: 5.47876
+(epoch: 1, iters: 600, time: 0.022, data: 0.008) mae: 5.56753
+(epoch: 1, iters: 620, time: 0.022, data: 0.008) mae: 5.47696
+(epoch: 1, iters: 640, time: 0.022, data: 0.008) mae: 5.16623
+(epoch: 1, iters: 660, time: 0.022, data: 0.008) mae: 4.75025
+(epoch: 1, iters: 680, time: 0.022, data: 0.008) mae: 4.56533
+(epoch: 1, iters: 700, time: 0.022, data: 0.008) mae: 4.56381
+(epoch: 1, iters: 720, time: 0.022, data: 0.008) mae: 4.62844
+(epoch: 1, iters: 740, time: 0.022, data: 0.008) mae: 4.66125
+(epoch: 1, iters: 760, time: 0.022, data: 0.008) mae: 4.50203
+(epoch: 1, iters: 780, time: 0.022, data: 0.008) mae: 4.55788
+(epoch: 1, iters: 800, time: 0.022, data: 0.008) mae: 4.36846
+(epoch: 1, iters: 820, time: 0.022, data: 0.008) mae: 4.19389
+End of epoch 1 / 300 	 Time Taken: 12 sec
+learning rate 0.0010000 -> 0.0009999
+(epoch: 2, iters: 840, time: 0.022, data: 0.124) mae: 4.26612
+(epoch: 2, iters: 860, time: 0.022, data: 0.008) mae: 4.41566
+(epoch: 2, iters: 880, time: 0.022, data: 0.008) mae: 4.45474
+(epoch: 2, iters: 900, time: 0.022, data: 0.008) mae: 4.23266
+Exception ignored in: <function WeakSet.__init__.<locals>._remove at 0x7f409b7f4a60>
+Traceback (most recent call last):
+  File "/usr/lib64/python3.9/_weakrefset.py", line 39, in _remove
+    def _remove(item, selfref=ref(self)):
+KeyboardInterrupt:

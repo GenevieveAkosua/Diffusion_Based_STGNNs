@@ -1,0 +1,78 @@
+{
+  "os":  "Linux-5.14.0-687.29.1.el9_8.x86_64-x86_64-with-glibc2.34",
+  "python":  "CPython 3.9.25",
+  "startedAt":  "2026-08-15T16:07:56.182425Z",
+  "program":  "/scratch/chkkar002/Diffusion_Based_STGNNs/AGCRN/model/Run.py",
+  "codePath":  "AGCRN/model/Run.py",
+  "codePathLocal":  "Run.py",
+  "git":  {
+    "remote":  "git@github.com:GenevieveAkosua/Diffusion_Based_STGNNs.git",
+    "commit":  "e20e014157dadb3b691e7b45fcd26a421ebe9108"
+  },
+  "email":  "chkkar002@myuct.ac.za",
+  "root":  "/scratch/chkkar002/Diffusion_Based_STGNNs/AGCRN/model",
+  "host":  "srvrocgpu010.uct.ac.za",
+  "executable":  "/home/chkkar002/envs/diffstg/bin/python",
+  "cpu_count":  56,
+  "cpu_count_logical":  56,
+  "gpu":  "NVIDIA A100-PCIE-40GB",
+  "gpu_count":  1,
+  "disk":  {
+    "/":  {
+      "total":  "943439200256",
+      "used":  "41032646656"
+    }
+  },
+  "memory":  {
+    "total":  "539923484672"
+  },
+  "gpu_nvidia":  [
+    {
+      "name":  "NVIDIA A100-PCIE-40GB",
+      "memoryTotal":  "42949672960",
+      "cudaCores":  6912,
+      "architecture":  "Ampere",
+      "uuid":  "GPU-e820ab77-d893-d4c3-5b32-6106e0ca3661"
+    }
+  ],
+  "cudaVersion":  "13.2",
+  "slurm":  {
+    "cluster_name":  "srvrochpc001",
+    "conf":  "/opt/slurm-23.11.5/etc/slurm.conf",
+    "cpus_on_node":  "4",
+    "gpus_on_node":  "1",
+    "gtids":  "0",
+    "job_account":  "a100free",
+    "job_cpus_per_node":  "4",
+    "job_end_time":  "1786817271",
+    "job_gid":  "1221947160",
+    "job_gpus":  "0",
+    "job_id":  "1238364",
+    "job_name":  "AGCRN_tune_TeachForce",
+    "job_nodelist":  "srvrocgpu010",
+    "job_num_nodes":  "1",
+    "job_partition":  "a100",
+    "job_qos":  "a100free",
+    "job_start_time":  "1786810071",
+    "job_uid":  "292132302",
+    "job_user":  "chkkar002",
+    "jobid":  "1238364",
+    "localid":  "0",
+    "mem_per_node":  "65536",
+    "nnodes":  "1",
+    "nodeid":  "0",
+    "nodelist":  "srvrocgpu010",
+    "nprocs":  "4",
+    "ntasks":  "4",
+    "prio_process":  "0",
+    "procid":  "0",
+    "script_context":  "prolog_task",
+    "submit_dir":  "/scratch/chkkar002/Diffusion_Based_STGNNs/AGCRN/model",
+    "submit_host":  "srvrochpc001",
+    "task_pid":  "763475",
+    "tasks_per_node":  "4",
+    "topology_addr":  "switch-0.switch-1.srvrocgpu010",
+    "topology_addr_pattern":  "switch.switch.node"
+  },
+  "writerId":  "qnujrah84468dobgo0csoy0wooyivksf"
+}

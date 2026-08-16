@@ -1,0 +1,24 @@
+2026-08-15 21:38:18,552 INFO    MainThread:869284 [wandb_setup.py:_flush():81] Current SDK version is 0.26.1
+2026-08-15 21:38:18,552 INFO    MainThread:869284 [wandb_setup.py:_flush():81] Configure stats pid to 869284
+2026-08-15 21:38:18,553 INFO    MainThread:869284 [wandb_setup.py:_flush():81] Loading settings from environment variables
+2026-08-15 21:38:18,553 INFO    MainThread:869284 [wandb_init.py:setup_run_log_directory():723] Logging user logs to /scratch/chkkar002/Diffusion_Based_STGNNs/AGCRN/model/wandb/run-20260815_213818-6ely6wal/logs/debug.log
+2026-08-15 21:38:18,553 INFO    MainThread:869284 [wandb_init.py:setup_run_log_directory():724] Logging internal logs to /scratch/chkkar002/Diffusion_Based_STGNNs/AGCRN/model/wandb/run-20260815_213818-6ely6wal/logs/debug-internal.log
+2026-08-15 21:38:18,553 INFO    MainThread:869284 [wandb_init.py:init():850] calling init triggers
+2026-08-15 21:38:18,553 INFO    MainThread:869284 [wandb_init.py:init():855] wandb.init called with sweep_config: {}
+config: {'dataset': 'SAWS', 'mode': 'train', 'device': device(type='cuda'), 'debug': False, 'model': 'AGCRN', 'cuda': True, 'val_ratio': 0.2, 'test_ratio': 0.2, 'lag': 12, 'horizon': 24, 'num_nodes': 32, 'tod': False, 'normalizer': 'std', 'column_wise': True, 'default_graph': True, 'input_dim': 1, 'output_dim': 1, 'embed_dim': 2, 'rnn_units': 64, 'num_layers': 2, 'cheb_k': 2, 'loss_func': 'mae', 'seed': 12, 'batch_size': 64, 'epochs': 40, 'lr_init': 0.01, 'lr_decay': True, 'lr_decay_rate': 0.3, 'lr_decay_step': '5,20,40,70', 'early_stop': True, 'early_stop_patience': 15, 'grad_norm': False, 'max_grad_norm': 5, 'teacher_forcing': True, 'tf_decay_steps': 2000, 'real_value': True, 'mae_thresh': None, 'mape_thresh': 0.0, 'log_dir': '/scratch/chkkar002/Diffusion_Based_STGNNs/AGCRN/model/experiments/SAWS/20260815213817', 'log_step': 20, 'plot': False, 'n_trials': 0, 'study_name': 'agcrn_TF2', 'storage': None, '_wandb': {}}
+2026-08-15 21:38:18,553 INFO    MainThread:869284 [wandb_init.py:init():898] starting backend
+2026-08-15 21:38:18,828 INFO    MainThread:869284 [wandb_init.py:init():913] sending inform_init request
+2026-08-15 21:38:19,461 INFO    MainThread:869284 [wandb_init.py:init():918] backend started and connected
+2026-08-15 21:38:19,497 INFO    MainThread:869284 [wandb_init.py:init():988] updated telemetry
+2026-08-15 21:38:19,537 INFO    MainThread:869284 [wandb_init.py:init():1011] communicating run to backend with 90.0 second timeout
+2026-08-15 21:38:19,987 INFO    MainThread:869284 [wandb_init.py:init():1056] starting run threads in backend
+2026-08-15 21:38:20,255 INFO    MainThread:869284 [wandb_run.py:_console_start():2554] atexit reg
+2026-08-15 21:38:20,255 INFO    MainThread:869284 [wandb_run.py:_redirect():2403] redirect: wrap_raw
+2026-08-15 21:38:20,255 INFO    MainThread:869284 [wandb_run.py:_redirect():2472] Wrapping output streams.
+2026-08-15 21:38:20,255 INFO    MainThread:869284 [wandb_run.py:_redirect():2495] Redirects installed.
+2026-08-15 21:38:20,261 INFO    MainThread:869284 [wandb_init.py:init():1094] run started, returning control to user process
+2026-08-15 22:17:15,051 INFO    MainThread:869284 [wandb_run.py:_finish():2321] finishing run chkkar002-university-of-cape-town/stgnn-weather/6ely6wal
+2026-08-15 22:17:15,052 INFO    MainThread:869284 [wandb_run.py:_atexit_cleanup():2520] got exitcode: 0
+2026-08-15 22:17:15,052 INFO    MainThread:869284 [wandb_run.py:_restore():2502] restore
+2026-08-15 22:17:15,052 INFO    MainThread:869284 [wandb_run.py:_restore():2508] restore done
+2026-08-15 22:17:17,482 INFO    MainThread:869284 [wandb_run.py:_footer_sync_info():3889] logging synced files
