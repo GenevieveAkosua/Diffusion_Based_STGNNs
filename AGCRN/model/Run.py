@@ -169,7 +169,7 @@ def run_once(args, trial=None):
         project="stgnn-weather",
         group="SAWS",
         job_type="AGCRN",
-        name='AGCRN_Hyperparam_{}'.format(trial.number),
+        name='AGCRN_Hyperparam_{}'.format(trial.number) if trial is not None else 'AGCRN_realval',
         config=vars(args),
     )
  

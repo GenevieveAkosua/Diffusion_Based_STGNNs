@@ -8,6 +8,7 @@ def get_logger(root, name=None, debug=True):
     #INFO will always be in screen
     # create a logger
     logger = logging.getLogger(name)
+    logger.handlers.clear()
     #critical > error > warning > info > debug > notset
     logger.setLevel(logging.DEBUG)
 

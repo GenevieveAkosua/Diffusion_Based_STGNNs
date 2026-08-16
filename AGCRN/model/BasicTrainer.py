@@ -7,6 +7,7 @@ import numpy as np
 from lib.logger import get_logger
 from lib.metrics import All_Metrics
 import wandb_utils
+import optuna
 
 class Trainer(object):
     def __init__(self, model, loss, optimizer, train_loader, val_loader, test_loader,
