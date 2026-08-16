@@ -10,5 +10,5 @@
 #SBATCH --mem=64G
 
 source ~/envs/diffstg/bin/activate
-./train.sh gwavenet SAWS NA 24 NA config1 128 0 2030
-#./train.sh stdiffusionfore SAWS NA 24 gwavenet_NA_20260815T200107 config_SAWS 64 0 2030
+#./train.sh gwavenet SAWS NA 24 NA config1 128 0 2030
+./train.sh stdiffusionfore SAWS NA 24 gwavenet_NA_20260816T101341 config_SAWS 64 0 2030

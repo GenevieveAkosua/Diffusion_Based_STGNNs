@@ -17,3 +17,8 @@ config: {'gpu_ids': [0], 'checkpoints_dir': './checkpoints/SAWS', 'model': 'gwav
 2026-08-16 10:20:04,551 INFO    MainThread:1250128 [wandb_run.py:_redirect():2472] Wrapping output streams.
 2026-08-16 10:20:04,551 INFO    MainThread:1250128 [wandb_run.py:_redirect():2495] Redirects installed.
 2026-08-16 10:20:04,557 INFO    MainThread:1250128 [wandb_init.py:init():1094] run started, returning control to user process
+2026-08-16 10:26:11,629 INFO    MainThread:1250128 [wandb_run.py:_finish():2321] finishing run chkkar002-university-of-cape-town/gwavenet-stgnn-weather/bbv0js19
+2026-08-16 10:26:11,630 INFO    MainThread:1250128 [wandb_run.py:_atexit_cleanup():2520] got exitcode: 0
+2026-08-16 10:26:11,630 INFO    MainThread:1250128 [wandb_run.py:_restore():2502] restore
+2026-08-16 10:26:11,630 INFO    MainThread:1250128 [wandb_run.py:_restore():2508] restore done
+2026-08-16 10:26:13,908 INFO    MainThread:1250128 [wandb_run.py:_footer_sync_info():3889] logging synced files
