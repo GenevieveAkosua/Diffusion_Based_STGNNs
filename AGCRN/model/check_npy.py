@@ -1,3 +1,4 @@
+import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -57,3 +58,70 @@ for step in range(len(true_sequence)):
     t_val = true_sequence[step]
     p_val = pred_sequence[step]
     print(f"Step {step+1:<10} | {t_val:<15.4f} | {p_val:<15.4f}")
+
+node_idx = 0
+feature_idx = 0
+horizon = 48
+num_blocks = 5 # Number of 48-hour blocks to stack (5 blocks = 10 days)
+
+# ---------------------------------------------------------
+# Option 1: Stack non-overlapping 48-hour blocks
+# ---------------------------------------------------------
+stacked_true = []
+stacked_pred = []
+
+for i in range(num_blocks):
+    sample_idx = i * horizon
+    stacked_true.append(y_true[sample_idx, :, node_idx, feature_idx])
+    stacked_pred.append(y_pred[sample_idx, :, node_idx, feature_idx])
+
+# Flatten the lists into continuous 1D arrays
+continuous_true_blocks = np.concatenate(stacked_true)
+continuous_pred_blocks = np.concatenate(stacked_pred)
+
+# ---------------------------------------------------------
+# Option 2: 1-Step-Ahead predictions (immediate next hour)
+# ---------------------------------------------------------
+# Slice the first time step from the number of hours we want to view
+total_hours = horizon * num_blocks
+step_true = y_true[:total_hours, 0, node_idx, feature_idx]
+step_pred = y_pred[:total_hours, 0, node_idx, feature_idx]
+
+# ---------------------------------------------------------
+# Plotting both comparisons
+# ---------------------------------------------------------
+fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 8), sharex=True)
+
+# Plot 1: Stacked 48-hour blocks
+ax1.plot(continuous_true_blocks, label='True Values', color='black')
+ax1.plot(continuous_pred_blocks, label='48h Block Forecasts', color='red', alpha=0.7)
+ax1.set_title(f'Stacked 48-Hour Forecasts (Node {node_idx})')
+ax1.set_ylabel('Temperature (Normalized)')
+ax1.legend()
+ax1.grid(True)
+
+# Plot 2: Continuous 1-step-ahead
+ax2.plot(step_true, label='True Values', color='black')
+ax2.plot(step_pred, label='1-Hour-Ahead Forecast', color='blue', alpha=0.7)
+ax2.set_title(f'Continuous 1-Hour-Ahead Forecast (Node {node_idx})')
+ax2.set_xlabel('Hours')
+ax2.set_ylabel('Temperature (Normalized)')
+ax2.legend()
+ax2.grid(True)
+
+plt.tight_layout()
+plt.savefig('trajectory_comparison.png')
+print("Saved trajectory comparison to 'trajectory_comparison.png'")
+
+df_trajectory = pd.DataFrame({
+    'Hour': range(1, len(continuous_true_blocks) + 1),
+    'True_Normalized': continuous_true_blocks,
+    'Predicted_Normalized': continuous_pred_blocks
+})
+
+csv_filename = f'trajectory_node{node_idx}_10days.csv'
+
+# Save it without the pandas index column to keep it clean
+df_trajectory.to_csv(csv_filename, index=False)
+
+print(f"Saved readable trajectory to '{csv_filename}'")
