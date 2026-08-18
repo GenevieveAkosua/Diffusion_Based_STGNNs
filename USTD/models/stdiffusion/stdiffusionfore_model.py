@@ -216,17 +216,17 @@ class STDiffusionForeModel(BaseModel):
 
     def cache_results(self):
         self._add_to_cache('missing_mask', self.missing_mask[:, :, self.t_his:])
-        self._add_to_cache('pred', self.pred, reverse_norm=True)
-        self._add_to_cache('gt', self.pred_gt[:, :, self.t_his:], reverse_norm=True)
+        self._add_to_cache('pred', self.pred, reverse_norm=False)
+        self._add_to_cache('gt', self.pred_gt[:, :, self.t_his:], reverse_norm=False)
         if self.opt.phase == 'test':
-            self._add_to_cache('sampled_pred', self.sampled_pred, reverse_norm=True)
+            self._add_to_cache('sampled_pred', self.sampled_pred, reverse_norm=False)
 
     def compute_metrics(self):
         pred = self.results['pred']  # [B, N, L, D] -- batch, nodes, time, features
         gt = self.results['gt']  # [B, N, L, D]
         missing_mask = self.results['missing_mask']  # [B, N, L, D]
         mae_list, rmse_list, nrmse_list, mape_list, smape_list = [], [], [], [], []
-        for i in range(12): # 12 is the prediction hrizon
+        for i in range(48): # 12 is the prediction hrizon
             mae_list.append(_mae_with_missing(pred[:,:,i], gt[:,:,i], missing_mask[:,:,i]))
             rmse_list.append(_rmse_with_missing(pred[:,:,i], gt[:,:,i], missing_mask[:,:,i]))
             nrmse_list.append(_nrmse_with_missing(pred[:,:,i], gt[:,:,i], missing_mask[:,:,i]))
@@ -237,7 +237,7 @@ class STDiffusionForeModel(BaseModel):
         if self.opt.phase == 'test':
             sampled_pred = self.results['sampled_pred']  # [B, num_sample, N, L, D]
             crps_list = []
-            for i in range(12):
+            for i in range(48):
                 crps_list.append(_quantile_CRPS_with_missing(sampled_pred[:,:,:,i], gt[:,:,i], missing_mask[:,:,i]))
             self.metric_CRPS = np.mean(crps_list)
             self.metric_VPT = _vpt_with_missing(pred, gt, missing_mask, threshold=self.opt.vpt_threshold)

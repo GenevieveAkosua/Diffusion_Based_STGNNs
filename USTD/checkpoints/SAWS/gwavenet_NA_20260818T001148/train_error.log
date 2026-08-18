@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/train.py", line 17, in <module>
+    dataset = create_dataset(opt)  # create a dataset given opt.dataset_mode and other options
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/data/__init__.py", line 52, in create_dataset
+    data_loader = CustomDatasetDataLoader(opt)
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/data/__init__.py", line 67, in __init__
+    self.dataset = dataset_class(opt)
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/data/SAWS_dataset.py", line 30, in __init__
+    self.raw_data = self.load_feature('dataset/saws/flow.npy', self.time_division[opt.phase], add_time_in_day=True, add_time_of_year=True, add_height=True)
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/data/SAWS_dataset.py", line 77, in load_feature
+    station_heights = np.load('dataset/saws/station_heights.npy').astype(np.float32)  # (V,), meters
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/numpy/lib/_npyio_impl.py", line 455, in load
+    fid = stack.enter_context(open(os.fspath(file), "rb"))
+FileNotFoundError: [Errno 2] No such file or directory: 'dataset/saws/station_heights.npy'

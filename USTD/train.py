@@ -33,7 +33,7 @@ if __name__ == '__main__':
         project=f'{opt.model}-stgnn-weather',
         group=opt.dataset_mode,
         job_type='train',
-        name=opt.file_time,
+        name=f'stfore_covar_{opt.file_time}',
         config=wandb_config,
     )
 

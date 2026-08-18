@@ -4,7 +4,7 @@
 #SBATCH --partition=a100
 #SBATCH --nodes=1 --ntasks=4 --gres=gpu:ampere:1
 #SBATCH --time=48:00:00
-#SBATCH --job-name="DiffSTGBatch"
+#SBATCH --job-name="DiffSTGHyperparamB"
 #SBATCH --mail-user=chkkar002@myuct.ac.za
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mem=64G

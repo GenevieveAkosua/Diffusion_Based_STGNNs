@@ -92,9 +92,9 @@ class GWaveNetModel(BaseModel):
         return torch.sum(torch.abs(pred - gt) * node_mask) / node_mask.sum()
 
     def cache_results(self):
-        loss = self.mae(self.prediction, self.pred_gt)
-        self._add_to_cache('pred', self.prediction, reverse_norm=True)
-        self._add_to_cache('gt', self.pred_gt, reverse_norm=True)
+        loss = self.mae_loss(self.prediction, self.pred_gt)
+        self._add_to_cache('pred', self.prediction, reverse_norm=False)
+        self._add_to_cache('gt', self.pred_gt, reverse_norm=False)
         self._add_to_cache('MAE', loss.unsqueeze(0))
 
     def compute_metrics(self):

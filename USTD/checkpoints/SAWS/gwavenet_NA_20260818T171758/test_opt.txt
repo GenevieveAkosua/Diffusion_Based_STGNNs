@@ -1,0 +1,37 @@
+----------------- Options ---------------
+               batch_size: 64                            
+          checkpoints_dir: ./checkpoints/SAWS            	[default: ./checkpoints]
+                   config: config1                       
+            covariate_dim: 1                             
+             dataset_mode: SAWS                          	[default: ]
+               delete_col: ['u_speed', 'v_speed', 'latitude', 'longitude']
+            enable_visual: False                         
+                    epoch: best                          	[default: latest]
+                file_time: 20260818T171758               	[default: ]
+                  gpu_ids: 1                             	[default: -1]
+                init_gain: 0.02                          
+                init_type: xavier                        
+                  isTrain: False                         	[default: None]
+                load_iter: 0                             	[default: 0]
+         max_dataset_size: inf                           
+                    model: gwavenet                      	[default: ]
+                     name: gwavenet_NA_20260818T171758   	[default: None]
+              num_threads: 0                             
+                    phase: test                          
+                pred_attr: NA                            	[default: PM25_Concentration]
+                 pretrain:                               
+               print_freq: 10                            
+                     seed: 2023                          
+           serial_batches: True                          
+              spatial_dim: 64                            
+                    t_len: 48                            	[default: 24]
+                  use_adj: True                          
+                  verbose: False                         
+                    y_dim: 1                             
+----------------- End -------------------
+----------------- Model Configurations ---------------
+                  dropout: 0.2                           
+                embed_dim: 32                            
+                  end_dim: 64                            
+               mask_ratio: 0.75                          
+----------------- End -------------------

@@ -1,0 +1,207 @@
+_wandb:
+    value:
+        cli_version: 0.26.1
+        e:
+            qkmscd90v0op378gqcxj122y2xhuamf1:
+                args:
+                    - --n_trials
+                    - "30"
+                    - --study_name
+                    - agcrn_tuning_v7
+                codePath: AGCRN/model/Run.py
+                codePathLocal: Run.py
+                cpu_count: 56
+                cpu_count_logical: 56
+                cudaVersion: "13.2"
+                disk:
+                    /:
+                        total: "943439200256"
+                        used: "41018322944"
+                email: chkkar002@myuct.ac.za
+                executable: /home/chkkar002/envs/diffstg/bin/python
+                git:
+                    commit: dacad8dd7e69511c49f5073854700d89485dd7d4
+                    remote: git@github.com:GenevieveAkosua/Diffusion_Based_STGNNs.git
+                gpu: NVIDIA A100-PCIE-40GB
+                gpu_count: 1
+                gpu_nvidia:
+                    - architecture: Ampere
+                      cudaCores: 6912
+                      memoryTotal: "42949672960"
+                      name: NVIDIA A100-PCIE-40GB
+                      uuid: GPU-509b4091-fc11-3527-5df8-6c5abd021ffa
+                host: srvrocgpu010.uct.ac.za
+                memory:
+                    total: "539923484672"
+                os: Linux-5.14.0-687.29.1.el9_8.x86_64-x86_64-with-glibc2.34
+                program: /scratch/chkkar002/Diffusion_Based_STGNNs/AGCRN/model/Run.py
+                python: CPython 3.9.25
+                root: /scratch/chkkar002/Diffusion_Based_STGNNs/AGCRN/model
+                slurm:
+                    cluster_name: srvrochpc001
+                    conf: /opt/slurm-23.11.5/etc/slurm.conf
+                    cpu_bind: quiet,mask_cpu:0x000040000000
+                    cpu_bind_list: "0x000040000000"
+                    cpu_bind_type: 'mask_cpu:'
+                    cpu_bind_verbose: quiet
+                    cpus_on_node: "4"
+                    gpus_on_node: "1"
+                    gtids: "0"
+                    job_account: a100free
+                    job_cpus_per_node: "4"
+                    job_end_time: "1787082206"
+                    job_gid: "1221947160"
+                    job_gpus: "3"
+                    job_group: eresearch_hpc_users
+                    job_id: "1241606"
+                    job_name: AGCRN_Hyperparam_v7
+                    job_nodelist: srvrocgpu010
+                    job_num_nodes: "1"
+                    job_partition: a100
+                    job_qos: a100free
+                    job_start_time: "1786909406"
+                    job_uid: "292132302"
+                    job_user: chkkar002
+                    jobid: "1241606"
+                    launch_node_ipaddr: 137.158.158.180
+                    localid: "0"
+                    mem_per_node: "65536"
+                    mpi_type: pmix
+                    nnodes: "1"
+                    nodeid: "0"
+                    nodelist: srvrocgpu010
+                    nprocs: "4"
+                    ntasks: "4"
+                    pmix_mapping_serv: (vector,(0,1,1))
+                    pmixp_abort_agent_port: "38339"
+                    prio_process: "0"
+                    procid: "0"
+                    pty_port: "39781"
+                    pty_win_col: "213"
+                    pty_win_row: "57"
+                    script_context: prolog_task
+                    srun_comm_host: 137.158.158.180
+                    srun_comm_port: "34133"
+                    step_id: "0"
+                    step_launcher_port: "34133"
+                    step_nodelist: srvrochpc100
+                    step_num_nodes: "1"
+                    step_num_tasks: "1"
+                    step_tasks_per_node: "1"
+                    stepid: "0"
+                    submit_dir: /scratch/chkkar002/Diffusion_Based_STGNNs/AGCRN/model
+                    submit_host: srvrochpc100.uct.ac.za
+                    task_pid: "1621960"
+                    tasks_per_node: "4"
+                    topology_addr: switch-0.switch-1.srvrocgpu010
+                    topology_addr_pattern: switch.switch.node
+                startedAt: "2026-08-16T22:51:57.915422Z"
+                writerId: qkmscd90v0op378gqcxj122y2xhuamf1
+        m: []
+        python_version: 3.9.25
+        t:
+            "1":
+                - 1
+                - 35
+            "2":
+                - 1
+                - 35
+            "3":
+                - 2
+                - 13
+                - 16
+                - 62
+            "4": 3.9.25
+            "5": 0.26.1
+            "10":
+                - 20
+            "12": 0.26.1
+            "13": linux-x86_64
+batch_size:
+    value: 64
+cheb_k:
+    value: 2
+column_wise:
+    value: false
+cuda:
+    value: true
+dataset:
+    value: SAWS
+debug:
+    value: false
+default_graph:
+    value: true
+device:
+    value: cuda
+early_stop:
+    value: true
+early_stop_patience:
+    value: 15
+embed_dim:
+    value: 8
+epochs:
+    value: 50
+grad_norm:
+    value: false
+horizon:
+    value: 24
+input_dim:
+    value: 1
+lag:
+    value: 24
+log_dir:
+    value: /scratch/chkkar002/Diffusion_Based_STGNNs/AGCRN/model/experiments/SAWS/trial20_20260817005157
+log_step:
+    value: 20
+loss_func:
+    value: mae
+lr_decay:
+    value: false
+lr_decay_rate:
+    value: 0.3
+lr_decay_step:
+    value: 5,20,40,70
+lr_init:
+    value: 0.00551724791285198
+mae_thresh:
+    value: null
+mape_thresh:
+    value: 0
+max_grad_norm:
+    value: 5
+mode:
+    value: train
+model:
+    value: AGCRN
+n_trials:
+    value: 30
+normalizer:
+    value: std
+num_layers:
+    value: 2
+num_nodes:
+    value: 32
+output_dim:
+    value: 1
+plot:
+    value: false
+real_value:
+    value: true
+rnn_units:
+    value: 16
+seed:
+    value: 12
+storage:
+    value: null
+study_name:
+    value: agcrn_tuning_v7
+teacher_forcing:
+    value: false
+test_ratio:
+    value: 0.2
+tf_decay_steps:
+    value: 2000
+tod:
+    value: false
+val_ratio:
+    value: 0.2

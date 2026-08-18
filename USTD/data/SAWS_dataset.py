@@ -18,7 +18,7 @@ class SAWSDataset(BaseDataset):
 
     @staticmethod
     def modify_commandline_options(parser, is_train):
-        parser.set_defaults(y_dim=1, covariate_dim=0, spatial_dim=64)
+        parser.set_defaults(y_dim=1, covariate_dim=4, spatial_dim=64)
         return parser
 
     def __init__(self, opt):
@@ -27,7 +27,7 @@ class SAWSDataset(BaseDataset):
         self.opt = opt
         self.time_division = {'train': [0.0, 0.6], 'val': [0.6, 0.8],'test': [0.8, 1.0]}
         self.A = np.load('dataset/saws/adj.npy')
-        self.raw_data = self.load_feature('dataset/saws/flow.npy', self.time_division[opt.phase])
+        self.raw_data = self.load_feature('dataset/saws/flow.npy', self.time_division[opt.phase], add_time_in_day=True, add_time_of_year=True, add_height=True)
         # get data division index
         self.opt.__dict__.update({'num_nodes': self.A.shape[0]})
         self.test_node_index = self.get_node_division("", num_nodes=self.raw_data['pred'].shape[0])
@@ -36,7 +36,7 @@ class SAWSDataset(BaseDataset):
         # data format check
         self._data_format_check()
 
-    def load_feature(self, data_path, time_division):
+    def load_feature(self, data_path, time_division, add_time_in_day=True, add_time_of_year=True, add_height=True):
         flow = np.load(data_path).astype(np.float32) # T, V, D
         X = np.transpose(flow, (1, 0, 2)).copy() # V, T, D
         num_nodes, num_time, num_channels = X.shape
@@ -60,10 +60,40 @@ class SAWSDataset(BaseDataset):
         full_timestamps = start_time + np.arange(num_time, dtype='int64') * np.timedelta64(1, 'h')
         full_time_seconds = ((full_timestamps - np.datetime64('1970-01-01T00:00:00')) / np.timedelta64(1, 's')).astype(np.int64)
 
+        feature_list = []
+        if add_time_in_day:
+            day_floor = full_timestamps.astype('datetime64[D]')
+            time_ind = (full_timestamps - day_floor) / np.timedelta64(1, 'D')  # fraction in [0,1), shape (T,)
+            time_in_day = np.tile(time_ind[np.newaxis, :, np.newaxis], (num_nodes, 1, 1))  # V, T, 1
+            feature_list.append(time_in_day)
+        if add_time_of_year:
+            day_of_year = pd.DatetimeIndex(full_timestamps).dayofyear.to_numpy().astype(np.float32)
+            angle = 2 * np.pi * day_of_year / 365.25
+            doy_sin = np.tile(np.sin(angle)[np.newaxis, :, np.newaxis], (num_nodes, 1, 1))  # V, T, 1
+            doy_cos = np.tile(np.cos(angle)[np.newaxis, :, np.newaxis], (num_nodes, 1, 1))  # V, T, 1
+            feature_list.append(doy_sin)
+            feature_list.append(doy_cos)
+        if add_height:
+            station_heights = np.load('dataset/saws/station_heights.npy').astype(np.float32)  # (V,), meters
+            assert station_heights.shape[0] == num_nodes, \
+                    f"station_heights has {station_heights.shape[0]} entries, expected {num_nodes} to match adj/flow node order"
+            # z-score the heights using train-period stats for consistency with X's normalization approach
+            h_mean, h_std = np.mean(station_heights), np.std(station_heights)
+            h_std = np.float32(1.0) if h_std == 0 else h_std
+            heights_norm = (station_heights - h_mean) / h_std
+            height_feat = np.tile(heights_norm[:, np.newaxis, np.newaxis], (1, num_time, 1))  # V, T, 1
+            feature_list.append(height_feat)
+
+        if feature_list:
+            feat = np.concatenate(feature_list, axis=-1).astype(np.float32)  # V, T, C
+        else:
+            feat = np.zeros((num_nodes, num_time, 0), dtype=np.float32)
+
         start_index = int(time_division[0] * num_time)
         end_index = int(time_division[1] * num_time)
         X = X[:, start_index:end_index, :]
+        feat = feat[:, start_index:end_index, :]
         missing = missing[:, start_index:end_index, :]
         time_list = full_time_seconds[start_index:end_index]
 
-        return {'pred': X, 'missing': missing, 'time': time_list}
+        return {'pred': X, 'missing': missing, 'time': time_list, 'feat': feat}
