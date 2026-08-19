@@ -3,11 +3,38 @@
 #SBATCH --account=a100free
 #SBATCH --partition=a100
 #SBATCH --nodes=1 --ntasks=4 --gres=gpu:ampere:1
-#SBATCH --time=36:00:00
-#SBATCH --job-name="AGCRN_Tuning_RV"
+#SBATCH --time=14:00:00
+#SBATCH --job-name="AGCRN"
 #SBATCH --mail-user=chkkar002@myuct.ac.za
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mem=64G
 
 source ~/envs/diffstg/bin/activate
-python Run.py --n_trials 30 --study_name agcrn_tuning_RV
+# Parameters extracted from "Best Trial (number=23).png"
+BATCH_SIZE=32
+LR_INIT=0.0002  # Rounded off from 0.00024218018597619645
+LAG=24
+NUM_LAYERS=2
+RNN_UNITS=64
+EMBED_DIM=30
+
+# Loop through teacher forcing conditions
+for tf in True False; do
+    # Loop through 3 different seeds
+    for seed in 1 2 3; do
+        echo "================================================================="
+        echo "Running Run.py | Seed: $seed | Teacher Forcing: $tf"
+        echo "================================================================="
+        
+        python Run.py \
+            --seed $seed \
+            --teacher_forcing $tf \
+            --batch_size $BATCH_SIZE \
+            --lr_init $LR_INIT \
+            --lag $LAG \
+            --num_layers $NUM_LAYERS \
+            --rnn_units $RNN_UNITS \
+            --embed_dim $EMBED_DIM
+            
+    done
+done

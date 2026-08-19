@@ -14,3 +14,8 @@ config: {'dataset': 'SAWS', 'mode': 'train', 'device': device(type='cuda'), 'deb
 2026-08-18 23:23:55,467 INFO    MainThread:2173667 [wandb_run.py:_redirect():2472] Wrapping output streams.
 2026-08-18 23:23:55,467 INFO    MainThread:2173667 [wandb_run.py:_redirect():2495] Redirects installed.
 2026-08-18 23:23:55,469 INFO    MainThread:2173667 [wandb_init.py:init():1094] run started, returning control to user process
+2026-08-19 01:55:19,814 INFO    MainThread:2173667 [wandb_run.py:_finish():2321] finishing run chkkar002-university-of-cape-town/stgnn-weather/608wgaze
+2026-08-19 01:55:19,815 INFO    MainThread:2173667 [wandb_run.py:_atexit_cleanup():2520] got exitcode: 0
+2026-08-19 01:55:19,816 INFO    MainThread:2173667 [wandb_run.py:_restore():2502] restore
+2026-08-19 01:55:19,816 INFO    MainThread:2173667 [wandb_run.py:_restore():2508] restore done
+2026-08-19 01:55:23,320 INFO    MainThread:2173667 [wandb_run.py:_footer_sync_info():3889] logging synced files
