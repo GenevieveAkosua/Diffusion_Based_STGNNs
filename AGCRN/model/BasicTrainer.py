@@ -5,7 +5,7 @@ import time
 import copy
 import numpy as np
 from lib.logger import get_logger
-from lib.metrics import All_Metrics
+from lib.metrics import All_Metrics, vpt_batch, vpt_from_nrmse_curve
 import wandb_utils
 import optuna
 
@@ -155,7 +155,8 @@ class Trainer(object):
         try:
             #save the best model to file
             if not self.args.debug:
-                torch.save(best_model, self.best_path)
+                checkpoint = {'state_dict': best_model, 'optimizer': self.optimizer.state_dict(), 'config': self.args}
+                torch.save(checkpoint, self.best_path)
                 self.logger.info("Saving current best model to " + self.best_path)
  
             #test
@@ -206,6 +207,120 @@ class Trainer(object):
         mae, rmse, mape, _, _ = All_Metrics(y_pred, y_true, args.mae_thresh, args.mape_thresh)
         logger.info("Average Horizon, MAE: {:.2f}, RMSE: {:.2f}, MAPE: {:.4f}%".format(
                     mae, rmse, mape*100))
+
+		y_true_np = y_true.cpu().numpy()
+        y_pred_np = y_pred.cpu().numpy()
+        if y_true_np.shape[-1] == 1:
+            y_true_np = y_true_np.squeeze(-1)
+            y_pred_np = y_pred_np.squeeze(-1)
+        vpt_threshold = getattr(args, 'vpt_threshold', 0.5)
+        vpt_results = vpt_batch(y_true_np, y_pred_np, threshold=vpt_threshold)
+        logger.info(
+            "VPT (threshold={:.2f}): mean={:.2f} steps, median={:.2f}, "
+            "std={:.2f}, range=[{:.0f}, {:.0f}]".format(
+                vpt_threshold, vpt_results['vpt_mean'], vpt_results['vpt_median'],
+                vpt_results['vpt_std'], vpt_results['vpt_min'], vpt_results['vpt_max']))
+        wandb_utils.log_summary({f'test_{k}': v for k, v in vpt_results.items()})
+
+    @staticmethod
+    def rollout_evaluate(model, args, raw_test_series, scaler, logger, rollout_threshold=0.5):
+        """Closed-loop autoregressive rollout evaluation, ported from
+        ChaosNetBench's `autoregressive_rollout_np` / `_evaluate_autoregressive`.
+
+        Does NOT touch the model architecture -- it just calls the
+        already-trained model repeatedly, feeding each pred_len-step
+        output back in as the next input window, to build a continuous
+        NRMSE(t) curve that extends past a single forward pass's horizon.
+
+        Assumes univariate input (args.input_dim == 1, args.tod == False)
+        so the predicted channel can be fed straight back in as the next
+        window without reconstructing covariates. If you're running with
+        tod=True this needs an extra covariate-reconstruction step before
+        each model call.
+
+        Args:
+            model: trained model (already loaded with best weights)
+            args: same args used for training (needs .lag, .horizon,
+                  .input_dim, .output_dim, .device)
+            raw_test_series: [T_test, N] or [T_test, N, 1] contiguous,
+                  SCALED (normalized) test-split series -- NOT the
+                  windowed dataloader. Pull this from wherever
+                  get_dataloader keeps its chronological test split
+                  before windowing (or reload flow.npy and re-slice
+                  using the same val_ratio/test_ratio you trained with).
+            scaler: same scaler used elsewhere (only needed if you want
+                  to report rollout error in real units too)
+            rollout_threshold: NRMSE threshold for VPT
+
+        Returns:
+            Dict with nrmse_t curve, vpt_steps, and the raw rollout
+            predictions.
+        """
+        model.eval()
+        device = args.device
+        seq_len = args.lag
+        step_size = args.horizon
+
+        raw = raw_test_series
+        if raw.ndim == 2:
+            raw = raw[..., np.newaxis]  # [T, N, 1]
+        T_total, N, D = raw.shape
+        assert D == args.input_dim == args.output_dim, (
+            "rollout_evaluate assumes input_dim == output_dim (univariate, "
+            "no extra covariates). Extend the window-shift logic below if "
+            "you're running with tod=True or multivariate input."
+        )
+
+        x_init = raw[:seq_len]           # [seq_len, N, D]
+        y_true_full = raw[seq_len:]      # [T_total - seq_len, N, D]
+        T_future = y_true_full.shape[0]
+
+        y_pred_full = np.zeros_like(y_true_full)
+        window = x_init.copy()
+
+        # dummy target: only used for shape by the decoder when
+        # teacher_forcing_ratio=0 -- VERIFY this against your AGCRN
+        # model.py before trusting the rollout numbers.
+        dummy_target = torch.zeros(1, step_size, N, args.output_dim, device=device)
+
+        n_done = 0
+        with torch.no_grad():
+            while n_done < T_future:
+                x_t = torch.FloatTensor(window[np.newaxis]).to(device)  # [1, seq_len, N, D]
+                pred = model(x_t, dummy_target, teacher_forcing_ratio=0.)
+                pred_np = pred.cpu().numpy()[0]  # [step_size, N, output_dim]
+
+                end = min(n_done + step_size, T_future)
+                n_to_store = end - n_done
+                y_pred_full[n_done:end] = pred_np[:n_to_store]
+
+                if n_to_store < seq_len:
+                    window = np.concatenate([window[n_to_store:], pred_np[:n_to_store]], axis=0)
+                else:
+                    window = pred_np[-seq_len:]
+
+                n_done = end
+
+        mse_t = np.mean((y_true_full - y_pred_full) ** 2, axis=(1, 2))  # [T_future]
+        std_signal = np.std(y_true_full) + 1e-8
+        nrmse_t = np.sqrt(mse_t) / std_signal
+
+        vpt_info = vpt_from_nrmse_curve(nrmse_t, threshold=rollout_threshold)
+        logger.info(
+            "Rollout VPT (threshold={:.2f}): {} steps out of {} rolled "
+            "(NRMSE curve final={:.4f})".format(
+                rollout_threshold, vpt_info['vpt_steps'], T_future, nrmse_t[-1]))
+        wandb_utils.log_summary({
+            'rollout_vpt_steps': vpt_info['vpt_steps'],
+            'rollout_nrmse_final': float(nrmse_t[-1]),
+        })
+        return {
+            'nrmse_t': nrmse_t,
+            'y_pred_full': y_pred_full,
+            'y_true_full': y_true_full,
+            **vpt_info,
+        }
+
 
     @staticmethod
     def _compute_sampling_threshold(global_step, k):

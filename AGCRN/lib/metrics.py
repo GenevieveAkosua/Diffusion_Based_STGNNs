@@ -215,8 +215,91 @@ def SIGIR_Metrics(pred, true, mask1, mask2):
     corr = CORR_torch(pred, true, 0)
     return rrse, corr
 
+def valid_prediction_time(y_true, y_pred, threshold=0.5, metric="normalized_rmse"):
+    """Compute Valid Prediction Time (VPT) for a single sample.
+ 
+    VPT is the number of horizon steps before the prediction error
+    exceeds `threshold`.
+ 
+    Args:
+        y_true: [pred_len, n_nodes] ground truth (single sample)
+        y_pred: [pred_len, n_nodes] prediction (single sample)
+        threshold: error threshold (relative to signal std when
+            metric='normalized_rmse')
+        metric: "normalized_rmse" or "absolute_rmse"
+ 
+    Returns:
+        VPT: number of valid prediction steps (0 to pred_len)
+    """
+    pred_len = y_true.shape[0]
+ 
+    for t in range(pred_len):
+        if metric == "normalized_rmse":
+            rmse_t = np.sqrt(np.mean((y_true[t] - y_pred[t]) ** 2))
+            std_t = np.std(y_true[: t + 1]) if t > 0 else np.std(y_true)
+            std_t = max(std_t, 1e-8)
+            error = rmse_t / std_t
+        else:
+            error = np.sqrt(np.mean((y_true[t] - y_pred[t]) ** 2))
+ 
+        if error > threshold:
+            return t
+ 
+    return pred_len
+ 
+ 
+def vpt_batch(y_true, y_pred, threshold=0.5):
+    """Compute VPT statistics over a batch of samples.
+ 
+    Args:
+        y_true: [B, pred_len, n_nodes]
+        y_pred: [B, pred_len, n_nodes]
+        threshold: error threshold
+ 
+    Returns:
+        Dict with vpt_mean, vpt_std, vpt_median, vpt_min, vpt_max
+    """
+    B = y_true.shape[0]
+    vpts = np.array(
+        [valid_prediction_time(y_true[i], y_pred[i], threshold) for i in range(B)]
+    )
+    return {
+        "vpt_mean": float(np.mean(vpts)),
+        "vpt_std": float(np.std(vpts)),
+        "vpt_median": float(np.median(vpts)),
+        "vpt_min": float(np.min(vpts)),
+        "vpt_max": float(np.max(vpts)),
+    }
+ 
+ 
+ 
+def vpt_from_nrmse_curve(nrmse_t, threshold=0.5, lambda_max=None):
+    """Extract VPT from a continuous NRMSE(t) curve (e.g. from a
+    closed-loop rollout that extends past a single forward pass's
+    horizon).
+ 
+    Args:
+        nrmse_t: [T] per-step NRMSE
+        threshold: NRMSE threshold for valid prediction
+        lambda_max: if provided, also return VPT in Lyapunov times
+            (not meaningful for weather data -- leave None)
+ 
+    Returns:
+        Dict with vpt_steps, and optionally vpt_lyapunov_times
+    """
+    exceed = np.where(nrmse_t > threshold)[0]
+    vpt_steps = int(exceed[0]) if len(exceed) > 0 else len(nrmse_t)
+ 
+    result = {"vpt_steps": vpt_steps}
+    if lambda_max is not None and lambda_max > 0:
+        result["vpt_lyapunov_times"] = float(vpt_steps * lambda_max)
+        result["lambda_max"] = float(lambda_max)
+    return result
+ 
+ 
 if __name__ == '__main__':
     pred = torch.Tensor([1, 2, 3,4])
     true = torch.Tensor([2, 1, 4,5])
     print(All_Metrics(pred, true, None, None))
+ 
 

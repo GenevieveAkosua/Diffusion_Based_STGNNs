@@ -86,6 +86,7 @@ args.add_argument('--real_value', default=config['train']['real_value'], type=ev
 #test
 args.add_argument('--mae_thresh', default=config['test']['mae_thresh'], type=eval)
 args.add_argument('--mape_thresh', default=config['test']['mape_thresh'], type=float)
+args.add_argument('--vpt_threshold', default=0.5, type=float)
 #log
 args.add_argument('--log_dir', default='./', type=str)
 args.add_argument('--log_step', default=config['log']['log_step'], type=int)
