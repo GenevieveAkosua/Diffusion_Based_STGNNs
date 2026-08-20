@@ -6,7 +6,7 @@
 #SBATCH --time=48:00:00
 #SBATCH --job-name="Run_DiffSTG"
 #SBATCH --mail-user=chkkar002@myuct.ac.za
-#SBATCH --mail-type=BEGIN,END,FAIL
+#SBATCH --mail-type=ALL
 #SBATCH --mem=64G
 #SBATCH --array=0-2
 

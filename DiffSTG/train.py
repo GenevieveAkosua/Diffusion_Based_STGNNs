@@ -46,12 +46,12 @@ def get_params():
     # model
     parser.add_argument("--epsilon_theta", type=str, default='UGnet')
     parser.add_argument("--hidden_size", type=int, default=32)
-    parser.add_argument("--N", type=int, default=200)
+    parser.add_argument("--N", type=int, default=300)
     parser.add_argument("--beta_schedule", type=str, default='quad')  # uniform, quad
     parser.add_argument("--beta_end", type=float, default=0.1)
     parser.add_argument("--sample_steps", type=int, default=200)  # sample_steps
     parser.add_argument("--ss", type=str, default='ddpm') #help='sample strategy', ddpm, multi_diffusion, one_diffusion
-    parser.add_argument("--T_h", type=int, default=12)
+    parser.add_argument("--T_h", type=int, default=24)
 
     # eval
     parser.add_argument('--n_samples', type=int, default=8)
