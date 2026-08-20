@@ -207,8 +207,7 @@ class Trainer(object):
         mae, rmse, mape, _, _ = All_Metrics(y_pred, y_true, args.mae_thresh, args.mape_thresh)
         logger.info("Average Horizon, MAE: {:.2f}, RMSE: {:.2f}, MAPE: {:.4f}%".format(
                     mae, rmse, mape*100))
-
-		y_true_np = y_true.cpu().numpy()
+        y_true_np = y_true.cpu().numpy()
         y_pred_np = y_pred.cpu().numpy()
         if y_true_np.shape[-1] == 1:
             y_true_np = y_true_np.squeeze(-1)

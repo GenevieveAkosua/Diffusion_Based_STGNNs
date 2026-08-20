@@ -11,4 +11,4 @@
 
 source ~/envs/diffstg/bin/activate
 #./train.sh gwavenet SAWS NA 48 NA config1 128 0 2030
-./train.sh stdiffusionfore SAWS NA 48 gwavenet_NA_20260818T165807 config_SAWS 64 0 2030
+./train.sh stdiffusionfore SAWS NA 48 gwavenet_NA_20260819T022245 config_SAWS 64 0 2030
