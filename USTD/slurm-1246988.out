@@ -1,0 +1,321 @@
+----------------- Options ---------------
+               batch_size: 64                            
+                     beta: 1.0                           
+          checkpoints_dir: ./checkpoints/SAWS            	[default: ./checkpoints]
+                   config: config_SAWS                   	[default: config1]
+           continue_train: False                         
+            covariate_dim: 4                             
+             dataset_mode: SAWS                          	[default: ]
+        enable_curriculum: False                         
+           enable_neptune: False                         
+               enable_val: True                          	[default: False]
+            enable_visual: False                         
+                    epoch: latest                        
+              epoch_count: 0                             
+          eval_epoch_freq: 10                            	[default: 1]
+                file_time: 20260819T141023               	[default: None]
+                  gpu_ids: 0                             	[default: -1]
+                init_gain: 0.02                          
+                init_type: xavier                        
+                  isTrain: True                          	[default: None]
+                load_iter: 0                             	[default: 0]
+                       lr: 0.001                         
+           lr_decay_iters: 50                            
+                lr_policy: cosine                        
+         max_dataset_size: inf                           
+                    model: stdiffusionfore               	[default: ]
+                 n_epochs: 300                           
+           n_epochs_decay: 0                             
+          n_epochs_target: 100                           
+ n_epochs_target_increase: 150                           
+                     name: stdiffusionfore_NA_20260819T141023	[default: None]
+          neptune_project:                               
+            neptune_token:                               
+              num_threads: 4                             	[default: 0]
+         num_train_target: 3                             
+     num_train_target_end: 6                             
+                    phase: train                         
+                pred_attr: NA                            	[default: PM25_Concentration]
+                 pretrain: gwavenet_NA_20260818T165807   	[default: ]
+               print_freq: 20                            
+                save_best: True                          	[default: False]
+          save_epoch_freq: 100                           
+                     seed: 2030                          	[default: 2023]
+           serial_batches: False                         
+              spatial_dim: 64                            
+                    t_len: 48                            	[default: 24]
+              total_iters: 0                             
+                  verbose: False                         
+                    y_dim: 1                             
+----------------- End -------------------
+----------------- Model Configurations ---------------
+                  pos_dim: 96                            
+                embed_dim: 96                            
+                num_heads: 8                             
+            encoder_depth: 2                             
+                mlp_ratio: 1                             
+                  dropout: 0.2                           
+                num_steps: 50                            
+                 schedule: quad                          
+               num_sample: 8                             
+                objective: noise                         
+                  wavenet: {'embed_dim': 32, 'end_dim': 64, 'mask_ratio': 0.75, 'dropout': 0.2}
+----------------- End -------------------
+MEAN 17.288782
+STD 6.896628
+(32, 87672, 1)
+No testing nodes. Randomly divide nodes for testing!
+Data format check passed!!!
+dataset [SAWSDataset] for [train] was created
+The number of training samples = 821
+MEAN 17.288782
+STD 6.896628
+(32, 87672, 1)
+No testing nodes. Randomly divide nodes for testing!
+Data format check passed!!!
+dataset [SAWSDataset] for [val] was created
+The number of validation samples = 273
+wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from /home/chkkar002/.netrc.
+wandb: Currently logged in as: chkkar002 (chkkar002-university-of-cape-town) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: WARNING Using a boolean value for 'reinit' is deprecated. Use 'return_previous' or 'finish_previous' instead.
+wandb: setting up run 7m8n2b7w
+wandb: Tracking run with wandb version 0.26.1
+wandb: Run data is saved locally in /scratch/chkkar002/Diffusion_Based_STGNNs/USTD/wandb/run-20260819_141024-7m8n2b7w
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run stfore_covar_20260819T141023
+wandb: ⭐️ View project at https://wandb.ai/chkkar002-university-of-cape-town/stdiffusionfore-stgnn-weather
+wandb: 🚀 View run at https://wandb.ai/chkkar002-university-of-cape-town/stdiffusionfore-stgnn-weather/runs/7m8n2b7w
+initialize network with xavier
+initialize network with xavier
+loading the model from ./checkpoints/SAWS/gwavenet_NA_20260818T165807/best_net_Encoder.pth
+[1;34mwandb[0m: 
+[1;34mwandb[0m: 🚀 View run [33mstfore_covar_20260819T141023[0m at: [34mhttps://wandb.ai/chkkar002-university-of-cape-town/stdiffusionfore-stgnn-weather/runs/7m8n2b7w[0m
+[1;34mwandb[0m: Find logs at: [1;35mwandb/run-20260819_141024-7m8n2b7w/logs[0m
+Traceback (most recent call last):
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/train.py", line 40, in <module>
+    model = create_model(opt, model_config)      # create a model given opt.model and other options
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/models/__init__.py", line 70, in create_model
+    instance = model(opt, model_config)
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/models/stdiffusion/stdiffusionfore_model.py", line 78, in __init__
+    self.load_networks()  # only load pre-trained model
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/models/stdiffusion/stdiffusionfore_model.py", line 286, in load_networks
+    net.load_state_dict(state_dict)
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/torch/nn/modules/module.py", line 2624, in load_state_dict
+    raise RuntimeError(
+RuntimeError: Error(s) in loading state_dict for GWaveNetEncoder:
+	size mismatch for empty_token: copying a param with shape torch.Size([2]) from checkpoint, the shape in current model is torch.Size([5]).
+	size mismatch for start_conv.weight: copying a param with shape torch.Size([32, 2, 1, 1]) from checkpoint, the shape in current model is torch.Size([32, 5, 1, 1]).
+----------------- Options ---------------
+               batch_size: 64                            
+                     beta: 1.0                           
+          checkpoints_dir: ./checkpoints/SAWS            	[default: ./checkpoints]
+                   config: config_SAWS                   	[default: config1]
+           continue_train: False                         
+            covariate_dim: 4                             
+             dataset_mode: SAWS                          	[default: ]
+        enable_curriculum: False                         
+           enable_neptune: False                         
+               enable_val: True                          	[default: False]
+            enable_visual: False                         
+                    epoch: latest                        
+              epoch_count: 0                             
+          eval_epoch_freq: 10                            	[default: 1]
+                file_time: 20260819T141035               	[default: None]
+                  gpu_ids: 0                             	[default: -1]
+                init_gain: 0.02                          
+                init_type: xavier                        
+                  isTrain: True                          	[default: None]
+                load_iter: 0                             	[default: 0]
+                       lr: 0.001                         
+           lr_decay_iters: 50                            
+                lr_policy: cosine                        
+         max_dataset_size: inf                           
+                    model: stdiffusionfore               	[default: ]
+                 n_epochs: 300                           
+           n_epochs_decay: 0                             
+          n_epochs_target: 100                           
+ n_epochs_target_increase: 150                           
+                     name: stdiffusionfore_NA_20260819T141035	[default: None]
+          neptune_project:                               
+            neptune_token:                               
+              num_threads: 4                             	[default: 0]
+         num_train_target: 3                             
+     num_train_target_end: 6                             
+                    phase: train                         
+                pred_attr: NA                            	[default: PM25_Concentration]
+                 pretrain: gwavenet_NA_20260818T165807   	[default: ]
+               print_freq: 20                            
+                save_best: True                          	[default: False]
+          save_epoch_freq: 100                           
+                     seed: 2031                          	[default: 2023]
+           serial_batches: False                         
+              spatial_dim: 64                            
+                    t_len: 48                            	[default: 24]
+              total_iters: 0                             
+                  verbose: False                         
+                    y_dim: 1                             
+----------------- End -------------------
+----------------- Model Configurations ---------------
+                  pos_dim: 96                            
+                embed_dim: 96                            
+                num_heads: 8                             
+            encoder_depth: 2                             
+                mlp_ratio: 1                             
+                  dropout: 0.2                           
+                num_steps: 50                            
+                 schedule: quad                          
+               num_sample: 8                             
+                objective: noise                         
+                  wavenet: {'embed_dim': 32, 'end_dim': 64, 'mask_ratio': 0.75, 'dropout': 0.2}
+----------------- End -------------------
+MEAN 17.288782
+STD 6.896628
+(32, 87672, 1)
+No testing nodes. Randomly divide nodes for testing!
+Data format check passed!!!
+dataset [SAWSDataset] for [train] was created
+The number of training samples = 821
+MEAN 17.288782
+STD 6.896628
+(32, 87672, 1)
+No testing nodes. Randomly divide nodes for testing!
+Data format check passed!!!
+dataset [SAWSDataset] for [val] was created
+The number of validation samples = 273
+wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from /home/chkkar002/.netrc.
+wandb: Currently logged in as: chkkar002 (chkkar002-university-of-cape-town) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: WARNING Using a boolean value for 'reinit' is deprecated. Use 'return_previous' or 'finish_previous' instead.
+wandb: setting up run b0wnfjii
+wandb: Tracking run with wandb version 0.26.1
+wandb: Run data is saved locally in /scratch/chkkar002/Diffusion_Based_STGNNs/USTD/wandb/run-20260819_141036-b0wnfjii
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run stfore_covar_20260819T141035
+wandb: ⭐️ View project at https://wandb.ai/chkkar002-university-of-cape-town/stdiffusionfore-stgnn-weather
+wandb: 🚀 View run at https://wandb.ai/chkkar002-university-of-cape-town/stdiffusionfore-stgnn-weather/runs/b0wnfjii
+initialize network with xavier
+initialize network with xavier
+loading the model from ./checkpoints/SAWS/gwavenet_NA_20260818T165807/best_net_Encoder.pth
+[1;34mwandb[0m: 
+[1;34mwandb[0m: 🚀 View run [33mstfore_covar_20260819T141035[0m at: [34mhttps://wandb.ai/chkkar002-university-of-cape-town/stdiffusionfore-stgnn-weather/runs/b0wnfjii[0m
+[1;34mwandb[0m: Find logs at: [1;35mwandb/run-20260819_141036-b0wnfjii/logs[0m
+Traceback (most recent call last):
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/train.py", line 40, in <module>
+    model = create_model(opt, model_config)      # create a model given opt.model and other options
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/models/__init__.py", line 70, in create_model
+    instance = model(opt, model_config)
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/models/stdiffusion/stdiffusionfore_model.py", line 78, in __init__
+    self.load_networks()  # only load pre-trained model
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/models/stdiffusion/stdiffusionfore_model.py", line 286, in load_networks
+    net.load_state_dict(state_dict)
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/torch/nn/modules/module.py", line 2624, in load_state_dict
+    raise RuntimeError(
+RuntimeError: Error(s) in loading state_dict for GWaveNetEncoder:
+	size mismatch for empty_token: copying a param with shape torch.Size([2]) from checkpoint, the shape in current model is torch.Size([5]).
+	size mismatch for start_conv.weight: copying a param with shape torch.Size([32, 2, 1, 1]) from checkpoint, the shape in current model is torch.Size([32, 5, 1, 1]).
+----------------- Options ---------------
+               batch_size: 64                            
+                     beta: 1.0                           
+          checkpoints_dir: ./checkpoints/SAWS            	[default: ./checkpoints]
+                   config: config_SAWS                   	[default: config1]
+           continue_train: False                         
+            covariate_dim: 4                             
+             dataset_mode: SAWS                          	[default: ]
+        enable_curriculum: False                         
+           enable_neptune: False                         
+               enable_val: True                          	[default: False]
+            enable_visual: False                         
+                    epoch: latest                        
+              epoch_count: 0                             
+          eval_epoch_freq: 10                            	[default: 1]
+                file_time: 20260819T141046               	[default: None]
+                  gpu_ids: 0                             	[default: -1]
+                init_gain: 0.02                          
+                init_type: xavier                        
+                  isTrain: True                          	[default: None]
+                load_iter: 0                             	[default: 0]
+                       lr: 0.001                         
+           lr_decay_iters: 50                            
+                lr_policy: cosine                        
+         max_dataset_size: inf                           
+                    model: stdiffusionfore               	[default: ]
+                 n_epochs: 300                           
+           n_epochs_decay: 0                             
+          n_epochs_target: 100                           
+ n_epochs_target_increase: 150                           
+                     name: stdiffusionfore_NA_20260819T141046	[default: None]
+          neptune_project:                               
+            neptune_token:                               
+              num_threads: 4                             	[default: 0]
+         num_train_target: 3                             
+     num_train_target_end: 6                             
+                    phase: train                         
+                pred_attr: NA                            	[default: PM25_Concentration]
+                 pretrain: gwavenet_NA_20260818T165807   	[default: ]
+               print_freq: 20                            
+                save_best: True                          	[default: False]
+          save_epoch_freq: 100                           
+                     seed: 2032                          	[default: 2023]
+           serial_batches: False                         
+              spatial_dim: 64                            
+                    t_len: 48                            	[default: 24]
+              total_iters: 0                             
+                  verbose: False                         
+                    y_dim: 1                             
+----------------- End -------------------
+----------------- Model Configurations ---------------
+                  pos_dim: 96                            
+                embed_dim: 96                            
+                num_heads: 8                             
+            encoder_depth: 2                             
+                mlp_ratio: 1                             
+                  dropout: 0.2                           
+                num_steps: 50                            
+                 schedule: quad                          
+               num_sample: 8                             
+                objective: noise                         
+                  wavenet: {'embed_dim': 32, 'end_dim': 64, 'mask_ratio': 0.75, 'dropout': 0.2}
+----------------- End -------------------
+MEAN 17.288782
+STD 6.896628
+(32, 87672, 1)
+No testing nodes. Randomly divide nodes for testing!
+Data format check passed!!!
+dataset [SAWSDataset] for [train] was created
+The number of training samples = 821
+MEAN 17.288782
+STD 6.896628
+(32, 87672, 1)
+No testing nodes. Randomly divide nodes for testing!
+Data format check passed!!!
+dataset [SAWSDataset] for [val] was created
+The number of validation samples = 273
+wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from /home/chkkar002/.netrc.
+wandb: Currently logged in as: chkkar002 (chkkar002-university-of-cape-town) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: WARNING Using a boolean value for 'reinit' is deprecated. Use 'return_previous' or 'finish_previous' instead.
+wandb: setting up run lojsifb0
+wandb: Tracking run with wandb version 0.26.1
+wandb: Run data is saved locally in /scratch/chkkar002/Diffusion_Based_STGNNs/USTD/wandb/run-20260819_141047-lojsifb0
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run stfore_covar_20260819T141046
+wandb: ⭐️ View project at https://wandb.ai/chkkar002-university-of-cape-town/stdiffusionfore-stgnn-weather
+wandb: 🚀 View run at https://wandb.ai/chkkar002-university-of-cape-town/stdiffusionfore-stgnn-weather/runs/lojsifb0
+initialize network with xavier
+initialize network with xavier
+loading the model from ./checkpoints/SAWS/gwavenet_NA_20260818T165807/best_net_Encoder.pth
+[1;34mwandb[0m: 
+[1;34mwandb[0m: 🚀 View run [33mstfore_covar_20260819T141046[0m at: [34mhttps://wandb.ai/chkkar002-university-of-cape-town/stdiffusionfore-stgnn-weather/runs/lojsifb0[0m
+[1;34mwandb[0m: Find logs at: [1;35mwandb/run-20260819_141047-lojsifb0/logs[0m
+Traceback (most recent call last):
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/train.py", line 40, in <module>
+    model = create_model(opt, model_config)      # create a model given opt.model and other options
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/models/__init__.py", line 70, in create_model
+    instance = model(opt, model_config)
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/models/stdiffusion/stdiffusionfore_model.py", line 78, in __init__
+    self.load_networks()  # only load pre-trained model
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/models/stdiffusion/stdiffusionfore_model.py", line 286, in load_networks
+    net.load_state_dict(state_dict)
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/torch/nn/modules/module.py", line 2624, in load_state_dict
+    raise RuntimeError(
+RuntimeError: Error(s) in loading state_dict for GWaveNetEncoder:
+	size mismatch for empty_token: copying a param with shape torch.Size([2]) from checkpoint, the shape in current model is torch.Size([5]).
+	size mismatch for start_conv.weight: copying a param with shape torch.Size([32, 2, 1, 1]) from checkpoint, the shape in current model is torch.Size([32, 5, 1, 1]).

@@ -1,0 +1,249 @@
+_wandb:
+    value:
+        cli_version: 0.26.1
+        e:
+            sd9ay7oqrmalu5v1ih913qzhnnjw8x8y:
+                args:
+                    - --model
+                    - stdiffusionfore
+                    - --dataset_mode
+                    - SAWS
+                    - --pred_attr
+                    - NA
+                    - --enable_val
+                    - --gpu_ids
+                    - "0"
+                    - --config
+                    - config_SAWS
+                    - --pretrain
+                    - gwavenet_NA_20260818T165807
+                    - --save_best
+                    - --t_len
+                    - "48"
+                    - --seed
+                    - "2031"
+                    - --eval_epoch_freq
+                    - "10"
+                    - --num_train_target
+                    - "3"
+                    - --num_threads
+                    - "4"
+                    - --batch_size
+                    - "64"
+                codePath: USTD/train.py
+                codePathLocal: train.py
+                cpu_count: 56
+                cpu_count_logical: 56
+                cudaVersion: "13.2"
+                disk:
+                    /:
+                        total: "943439200256"
+                        used: "41032638464"
+                email: chkkar002@myuct.ac.za
+                executable: /home/chkkar002/envs/diffstg/bin/python
+                git:
+                    commit: 893680f82cb288e5bc07efb684023bc5437a306e
+                    remote: git@github.com:GenevieveAkosua/Diffusion_Based_STGNNs.git
+                gpu: NVIDIA A100-PCIE-40GB
+                gpu_count: 1
+                gpu_nvidia:
+                    - architecture: Ampere
+                      cudaCores: 6912
+                      memoryTotal: "42949672960"
+                      name: NVIDIA A100-PCIE-40GB
+                      uuid: GPU-ccb54930-ce22-c27d-d2b4-75d474bc9bdc
+                host: srvrocgpu010.uct.ac.za
+                memory:
+                    total: "539923484672"
+                os: Linux-5.14.0-687.29.1.el9_8.x86_64-x86_64-with-glibc2.34
+                program: /scratch/chkkar002/Diffusion_Based_STGNNs/USTD/train.py
+                python: CPython 3.9.25
+                root: /scratch/chkkar002/Diffusion_Based_STGNNs/USTD
+                slurm:
+                    cluster_name: srvrochpc001
+                    conf: /opt/slurm-23.11.5/etc/slurm.conf
+                    cpus_on_node: "4"
+                    gpus_on_node: "1"
+                    gtids: "0"
+                    job_account: a100free
+                    job_cpus_per_node: "4"
+                    job_end_time: "1787148618"
+                    job_gid: "1221947160"
+                    job_gpus: "1"
+                    job_id: "1246988"
+                    job_name: stfore_covar
+                    job_nodelist: srvrocgpu010
+                    job_num_nodes: "1"
+                    job_partition: a100
+                    job_qos: a100free
+                    job_start_time: "1787141418"
+                    job_uid: "292132302"
+                    job_user: chkkar002
+                    jobid: "1246988"
+                    localid: "0"
+                    mem_per_node: "65536"
+                    nnodes: "1"
+                    nodeid: "0"
+                    nodelist: srvrocgpu010
+                    nprocs: "4"
+                    ntasks: "4"
+                    prio_process: "0"
+                    procid: "0"
+                    script_context: prolog_task
+                    submit_dir: /scratch/chkkar002/Diffusion_Based_STGNNs/USTD
+                    submit_host: srvrochpc001
+                    task_pid: "3691135"
+                    tasks_per_node: "4"
+                    topology_addr: switch-0.switch-1.srvrocgpu010
+                    topology_addr_pattern: switch.switch.node
+                startedAt: "2026-08-19T12:10:36.516086Z"
+                writerId: sd9ay7oqrmalu5v1ih913qzhnnjw8x8y
+        m: []
+        python_version: 3.9.25
+        t:
+            "1":
+                - 1
+                - 5
+                - 53
+            "2":
+                - 1
+                - 5
+                - 53
+            "3":
+                - 13
+                - 16
+            "4": 3.9.25
+            "5": 0.26.1
+            "10":
+                - 20
+            "12": 0.26.1
+            "13": linux-x86_64
+batch_size:
+    value: 64
+beta:
+    value: 1
+checkpoints_dir:
+    value: ./checkpoints/SAWS
+config:
+    value: config_SAWS
+continue_train:
+    value: false
+covariate_dim:
+    value: 4
+dataset_mode:
+    value: SAWS
+dropout:
+    value: 0.2
+embed_dim:
+    value: 96
+enable_curriculum:
+    value: false
+enable_neptune:
+    value: false
+enable_val:
+    value: true
+enable_visual:
+    value: false
+encoder_depth:
+    value: 2
+epoch:
+    value: latest
+epoch_count:
+    value: 0
+eval_epoch_freq:
+    value: 10
+file_time:
+    value: 20260819T141035
+gpu_ids:
+    value:
+        - 0
+init_gain:
+    value: 0.02
+init_type:
+    value: xavier
+isTrain:
+    value: true
+load_iter:
+    value: 0
+lr:
+    value: 0.001
+lr_decay_iters:
+    value: 50
+lr_policy:
+    value: cosine
+max_dataset_size:
+    value: .inf
+mean:
+    value: 17.288782119750977
+mlp_ratio:
+    value: 1
+model:
+    value: stdiffusionfore
+n_epochs:
+    value: 300
+n_epochs_decay:
+    value: 0
+n_epochs_target:
+    value: 100
+n_epochs_target_increase:
+    value: 150
+name:
+    value: stdiffusionfore_NA_20260819T141035
+neptune_project:
+    value: ""
+neptune_token:
+    value: ""
+num_heads:
+    value: 8
+num_nodes:
+    value: 32
+num_sample:
+    value: 8
+num_steps:
+    value: 50
+num_threads:
+    value: 4
+num_train_target:
+    value: 3
+num_train_target_end:
+    value: 6
+objective:
+    value: noise
+phase:
+    value: train
+pos_dim:
+    value: 96
+pred_attr:
+    value: NA
+pretrain:
+    value: gwavenet_NA_20260818T165807
+print_freq:
+    value: 20
+save_best:
+    value: true
+save_epoch_freq:
+    value: 100
+scale:
+    value: 6.896627902984619
+schedule:
+    value: quad
+seed:
+    value: 2031
+serial_batches:
+    value: false
+spatial_dim:
+    value: 64
+t_len:
+    value: 48
+total_iters:
+    value: 0
+verbose:
+    value: false
+wavenet:
+    value:
+        dropout: 0.2
+        embed_dim: 32
+        end_dim: 64
+        mask_ratio: 0.75
+y_dim:
+    value: 1

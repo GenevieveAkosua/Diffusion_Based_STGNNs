@@ -5,14 +5,10 @@ config_PEMS03:
   encoder_depth: 2
   mlp_ratio: 1
   dropout: 0.2
-
-  # diffusion parameters
   num_steps: 50
-  schedule: "quad"
+  schedule: quad
   num_sample: 8
-  objective: "input" # input or noise
-
-  # wavenet parameters
+  objective: input
   wavenet:
     embed_dim: 32
     end_dim: 64
@@ -20,7 +16,6 @@ config_PEMS03:
     dropout: 0.2
     blocks: 2
     layers: 3
-
 config_PEMSBAY:
   pos_dim: 96
   embed_dim: 96
@@ -28,20 +23,15 @@ config_PEMSBAY:
   encoder_depth: 2
   mlp_ratio: 1
   dropout: 0.2
-
-  # diffusion parameters
   num_steps: 50
-  schedule: "quad"
+  schedule: quad
   num_sample: 8
-  objective: "input" # input or noise
-
-  # wavenet parameters
+  objective: input
   wavenet:
     embed_dim: 32
     end_dim: 64
     mask_ratio: 0.75
     dropout: 0.2
-
 config_BJAir:
   pos_dim: 96
   embed_dim: 96
@@ -49,20 +39,15 @@ config_BJAir:
   encoder_depth: 2
   mlp_ratio: 1
   dropout: 0.2
-
-  # diffusion parameters
   num_steps: 50
-  schedule: "quad"
+  schedule: quad
   num_sample: 8
-  objective: "noise" # input or noise
-
-  # wavenet parameters
+  objective: noise
   wavenet:
     embed_dim: 32
     end_dim: 64
     mask_ratio: 0.75
     dropout: 0.2
-
 config_GZAir:
   pos_dim: 96
   embed_dim: 96
@@ -70,20 +55,15 @@ config_GZAir:
   encoder_depth: 2
   mlp_ratio: 1
   dropout: 0.2
-
-  # diffusion parameters
   num_steps: 50
-  schedule: "quad"
+  schedule: quad
   num_sample: 8
-  objective: "noise" # input or noise
-
-  # wavenet parameters
+  objective: noise
   wavenet:
     embed_dim: 32
     end_dim: 64
     mask_ratio: 0.75
     dropout: 0.2
-
 config_SAWS:
   pos_dim: 96
   embed_dim: 96
@@ -91,14 +71,26 @@ config_SAWS:
   encoder_depth: 2
   mlp_ratio: 1
   dropout: 0.2
-
-  # diffusion parameters
   num_steps: 50
-  schedule: "quad"
+  schedule: quad
   num_sample: 8
-  objective: "noise" # input or noise
-
-  # wavenet parameters
+  objective: noise
+  wavenet:
+    embed_dim: 32
+    end_dim: 64
+    mask_ratio: 0.75
+    dropout: 0.2
+config_SAWS_trial0:
+  pos_dim: 64
+  embed_dim: 192
+  num_heads: 8
+  encoder_depth: 4
+  mlp_ratio: 4
+  dropout: 0.07470233738856523
+  num_steps: 100
+  schedule: quad
+  num_sample: 8
+  objective: noise
   wavenet:
     embed_dim: 32
     end_dim: 64

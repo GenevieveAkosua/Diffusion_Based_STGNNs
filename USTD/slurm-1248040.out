@@ -1,0 +1,76 @@
+/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/optuna/_experimental.py:33: ExperimentalWarning: Argument ``multivariate`` is an experimental feature. The interface can change in the future.
+  optuna_warn(
+[I 2026-08-19 21:38:35,503] A new study created in RDB with name: ustd_stdiffusionfore_tuning
+[W 2026-08-19 21:38:51,240] Trial 0 failed with parameters: {'num_heads': 8, 'embed_dim': 192, 'pos_dim': 64, 'encoder_depth': 4, 'mlp_ratio': 4, 'dropout': 0.07470233738856523, 'num_steps': 100, 'objective': 'noise'} because of the following error: RuntimeError('train.py subprocess failed or did not report save_dir').
+Traceback (most recent call last):
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/optuna/study/_optimize.py", line 206, in _run_trial
+    value_or_values = func(trial)
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/tune_ustd_optuna.py", line 174, in <lambda>
+    lambda trial: objective(trial, full_yaml, base_section,
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/tune_ustd_optuna.py", line 137, in objective
+    val_mae = run_trial_subprocess(trial_key, batch_size, seed, gpu_id)
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/tune_ustd_optuna.py", line 126, in run_trial_subprocess
+    raise RuntimeError('train.py subprocess failed or did not report save_dir')
+RuntimeError: train.py subprocess failed or did not report save_dir
+[W 2026-08-19 21:38:51,241] Trial 0 failed with value None.
+0 trials already finished; running 30 more to reach target of 30.
+---- trial subprocess FAILED ----
+loading wandb-summary.json; uploading config.yaml; uploading wandb-metadata.json; uploading requirements.txt
+wandb: uploading requirements.txt
+wandb: uploading summary, console lines 1-7
+wandb: 🚀 View run stfore_covar_20260819T213840 at: https://wandb.ai/chkkar002-university-of-cape-town/stdiffusionfore-stgnn-weather/runs/uqusgfda
+wandb: ⭐️ View project at: https://wandb.ai/chkkar002-university-of-cape-town/stdiffusionfore-stgnn-weather
+wandb: Synced 5 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./wandb/run-20260819_213841-uqusgfda/logs
+Traceback (most recent call last):
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/train.py", line 64, in <module>
+    model.optimize_parameters()   # calculate loss functions, get gradients, update network weights
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/models/stdiffusion/stdiffusionfore_model.py", line 248, in optimize_parameters
+    self.forward()
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/models/stdiffusion/stdiffusionfore_model.py", line 154, in forward
+    self.pred = self.netSTD(noisy_data, historical_encoding, self.side_info, training)
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/torch/nn/modules/module.py", line 1773, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/torch/nn/modules/module.py", line 1784, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/torch/nn/parallel/data_parallel.py", line 192, in forward
+    return self.module(*inputs[0], **module_kwargs[0])
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/torch/nn/modules/module.py", line 1773, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/torch/nn/modules/module.py", line 1784, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/models/stdiffusion/stformer.py", line 186, in forward
+    encoding = self.encoding(X, condition, side_info, training)
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/models/stdiffusion/stformer.py", line 164, in encoding
+    encoding = layer(encoding, condition, side_info, training)  # B, N, D
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/torch/nn/modules/module.py", line 1773, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/torch/nn/modules/module.py", line 1784, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/models/stdiffusion/transformer_layer.py", line 90, in forward
+    src_attn = src + dpe.unsqueeze(1) + tpe[:, L:L+1, :] + spe
+RuntimeError: The size of tensor a (32) must match the size of tensor b (0) at non-singleton dimension 1
+
+
+Traceback (most recent call last):
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/tune_ustd_optuna.py", line 204, in <module>
+    main()
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/tune_ustd_optuna.py", line 173, in main
+    study.optimize(
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/optuna/study/study.py", line 516, in optimize
+    _optimize(
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/optuna/study/_optimize.py", line 68, in _optimize
+    _optimize_sequential(
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/optuna/study/_optimize.py", line 165, in _optimize_sequential
+    frozen_trial_id = _run_trial(study, func, catch)
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/optuna/study/_optimize.py", line 263, in _run_trial
+    raise func_err
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/optuna/study/_optimize.py", line 206, in _run_trial
+    value_or_values = func(trial)
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/tune_ustd_optuna.py", line 174, in <lambda>
+    lambda trial: objective(trial, full_yaml, base_section,
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/tune_ustd_optuna.py", line 137, in objective
+    val_mae = run_trial_subprocess(trial_key, batch_size, seed, gpu_id)
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/tune_ustd_optuna.py", line 126, in run_trial_subprocess
+    raise RuntimeError('train.py subprocess failed or did not report save_dir')
+RuntimeError: train.py subprocess failed or did not report save_dir

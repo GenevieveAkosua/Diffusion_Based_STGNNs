@@ -1,0 +1,390 @@
+----------------- Options ---------------
+               batch_size: 64                            
+                     beta: 1.0                           
+          checkpoints_dir: ./checkpoints/SAWS            	[default: ./checkpoints]
+                   config: config_SAWS                   	[default: config1]
+           continue_train: False                         
+            covariate_dim: 4                             
+             dataset_mode: SAWS                          	[default: ]
+        enable_curriculum: False                         
+           enable_neptune: False                         
+               enable_val: True                          	[default: False]
+            enable_visual: False                         
+                    epoch: latest                        
+              epoch_count: 0                             
+          eval_epoch_freq: 10                            	[default: 1]
+                file_time: 20260819T141129               	[default: None]
+                  gpu_ids: 0                             	[default: -1]
+                init_gain: 0.02                          
+                init_type: xavier                        
+                  isTrain: True                          	[default: None]
+                load_iter: 0                             	[default: 0]
+                       lr: 0.001                         
+           lr_decay_iters: 50                            
+                lr_policy: cosine                        
+         max_dataset_size: inf                           
+                    model: stdiffusionfore               	[default: ]
+                 n_epochs: 300                           
+           n_epochs_decay: 0                             
+          n_epochs_target: 100                           
+ n_epochs_target_increase: 150                           
+                     name: stdiffusionfore_NA_20260819T141129	[default: None]
+          neptune_project:                               
+            neptune_token:                               
+              num_threads: 4                             	[default: 0]
+         num_train_target: 3                             
+     num_train_target_end: 6                             
+                    phase: train                         
+                pred_attr: NA                            	[default: PM25_Concentration]
+                 pretrain: gwavenet_NA_20260819T022245   	[default: ]
+               print_freq: 20                            
+                save_best: True                          	[default: False]
+          save_epoch_freq: 100                           
+                     seed: 2030                          	[default: 2023]
+           serial_batches: False                         
+              spatial_dim: 64                            
+                    t_len: 48                            	[default: 24]
+              total_iters: 0                             
+                  verbose: False                         
+                    y_dim: 1                             
+----------------- End -------------------
+----------------- Model Configurations ---------------
+                  pos_dim: 96                            
+                embed_dim: 96                            
+                num_heads: 8                             
+            encoder_depth: 2                             
+                mlp_ratio: 1                             
+                  dropout: 0.2                           
+                num_steps: 50                            
+                 schedule: quad                          
+               num_sample: 8                             
+                objective: noise                         
+                  wavenet: {'embed_dim': 32, 'end_dim': 64, 'mask_ratio': 0.75, 'dropout': 0.2}
+----------------- End -------------------
+MEAN 17.288782
+STD 6.896628
+(32, 87672, 1)
+No testing nodes. Randomly divide nodes for testing!
+Data format check passed!!!
+dataset [SAWSDataset] for [train] was created
+The number of training samples = 821
+MEAN 17.288782
+STD 6.896628
+(32, 87672, 1)
+No testing nodes. Randomly divide nodes for testing!
+Data format check passed!!!
+dataset [SAWSDataset] for [val] was created
+The number of validation samples = 273
+wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from /home/chkkar002/.netrc.
+wandb: Currently logged in as: chkkar002 (chkkar002-university-of-cape-town) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: WARNING Using a boolean value for 'reinit' is deprecated. Use 'return_previous' or 'finish_previous' instead.
+wandb: setting up run cbtq49sk
+wandb: Tracking run with wandb version 0.26.1
+wandb: Run data is saved locally in /scratch/chkkar002/Diffusion_Based_STGNNs/USTD/wandb/run-20260819_141131-cbtq49sk
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run stfore_covar_20260819T141129
+wandb: ⭐️ View project at https://wandb.ai/chkkar002-university-of-cape-town/stdiffusionfore-stgnn-weather
+wandb: 🚀 View run at https://wandb.ai/chkkar002-university-of-cape-town/stdiffusionfore-stgnn-weather/runs/cbtq49sk
+initialize network with xavier
+initialize network with xavier
+loading the model from ./checkpoints/SAWS/gwavenet_NA_20260819T022245/best_net_Encoder.pth
+model [STDiffusionForeModel] was created
+---------- Networks initialized -------------
+[Network STD] Total number of parameters : 0.385 M
+[Network Encoder] Total number of parameters : 0.096 M
+-----------------------------------------------
+wandb: updating run metadata
+wandb: uploading config.yaml; uploading wandb-metadata.json; uploading requirements.txt; uploading output.log; uploading wandb-summary.json
+wandb: uploading summary, console lines 1-7
+wandb: 🚀 View run stfore_covar_20260819T141129 at: https://wandb.ai/chkkar002-university-of-cape-town/stdiffusionfore-stgnn-weather/runs/cbtq49sk
+wandb: ⭐️ View project at: https://wandb.ai/chkkar002-university-of-cape-town/stdiffusionfore-stgnn-weather
+wandb: Synced 5 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./wandb/run-20260819_141131-cbtq49sk/logs
+Traceback (most recent call last):
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/train.py", line 64, in <module>
+    model.optimize_parameters()   # calculate loss functions, get gradients, update network weights
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/models/stdiffusion/stdiffusionfore_model.py", line 248, in optimize_parameters
+    self.forward()
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/models/stdiffusion/stdiffusionfore_model.py", line 154, in forward
+    self.pred = self.netSTD(noisy_data, historical_encoding, self.side_info, training)
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/torch/nn/modules/module.py", line 1773, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/torch/nn/modules/module.py", line 1784, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/torch/nn/parallel/data_parallel.py", line 192, in forward
+    return self.module(*inputs[0], **module_kwargs[0])
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/torch/nn/modules/module.py", line 1773, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/torch/nn/modules/module.py", line 1784, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/models/stdiffusion/stformer.py", line 186, in forward
+    encoding = self.encoding(X, condition, side_info, training)
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/models/stdiffusion/stformer.py", line 164, in encoding
+    encoding = layer(encoding, condition, side_info, training)  # B, N, D
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/torch/nn/modules/module.py", line 1773, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/torch/nn/modules/module.py", line 1784, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/models/stdiffusion/transformer_layer.py", line 90, in forward
+    src_attn = src + dpe.unsqueeze(1) + tpe[:, L:L+1, :] + spe
+RuntimeError: The size of tensor a (32) must match the size of tensor b (0) at non-singleton dimension 1
+----------------- Options ---------------
+               batch_size: 64                            
+                     beta: 1.0                           
+          checkpoints_dir: ./checkpoints/SAWS            	[default: ./checkpoints]
+                   config: config_SAWS                   	[default: config1]
+           continue_train: False                         
+            covariate_dim: 4                             
+             dataset_mode: SAWS                          	[default: ]
+        enable_curriculum: False                         
+           enable_neptune: False                         
+               enable_val: True                          	[default: False]
+            enable_visual: False                         
+                    epoch: latest                        
+              epoch_count: 0                             
+          eval_epoch_freq: 10                            	[default: 1]
+                file_time: 20260819T141142               	[default: None]
+                  gpu_ids: 0                             	[default: -1]
+                init_gain: 0.02                          
+                init_type: xavier                        
+                  isTrain: True                          	[default: None]
+                load_iter: 0                             	[default: 0]
+                       lr: 0.001                         
+           lr_decay_iters: 50                            
+                lr_policy: cosine                        
+         max_dataset_size: inf                           
+                    model: stdiffusionfore               	[default: ]
+                 n_epochs: 300                           
+           n_epochs_decay: 0                             
+          n_epochs_target: 100                           
+ n_epochs_target_increase: 150                           
+                     name: stdiffusionfore_NA_20260819T141142	[default: None]
+          neptune_project:                               
+            neptune_token:                               
+              num_threads: 4                             	[default: 0]
+         num_train_target: 3                             
+     num_train_target_end: 6                             
+                    phase: train                         
+                pred_attr: NA                            	[default: PM25_Concentration]
+                 pretrain: gwavenet_NA_20260819T022245   	[default: ]
+               print_freq: 20                            
+                save_best: True                          	[default: False]
+          save_epoch_freq: 100                           
+                     seed: 2031                          	[default: 2023]
+           serial_batches: False                         
+              spatial_dim: 64                            
+                    t_len: 48                            	[default: 24]
+              total_iters: 0                             
+                  verbose: False                         
+                    y_dim: 1                             
+----------------- End -------------------
+----------------- Model Configurations ---------------
+                  pos_dim: 96                            
+                embed_dim: 96                            
+                num_heads: 8                             
+            encoder_depth: 2                             
+                mlp_ratio: 1                             
+                  dropout: 0.2                           
+                num_steps: 50                            
+                 schedule: quad                          
+               num_sample: 8                             
+                objective: noise                         
+                  wavenet: {'embed_dim': 32, 'end_dim': 64, 'mask_ratio': 0.75, 'dropout': 0.2}
+----------------- End -------------------
+MEAN 17.288782
+STD 6.896628
+(32, 87672, 1)
+No testing nodes. Randomly divide nodes for testing!
+Data format check passed!!!
+dataset [SAWSDataset] for [train] was created
+The number of training samples = 821
+MEAN 17.288782
+STD 6.896628
+(32, 87672, 1)
+No testing nodes. Randomly divide nodes for testing!
+Data format check passed!!!
+dataset [SAWSDataset] for [val] was created
+The number of validation samples = 273
+wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from /home/chkkar002/.netrc.
+wandb: Currently logged in as: chkkar002 (chkkar002-university-of-cape-town) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: WARNING Using a boolean value for 'reinit' is deprecated. Use 'return_previous' or 'finish_previous' instead.
+wandb: setting up run 318pripj
+wandb: Tracking run with wandb version 0.26.1
+wandb: Run data is saved locally in /scratch/chkkar002/Diffusion_Based_STGNNs/USTD/wandb/run-20260819_141144-318pripj
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run stfore_covar_20260819T141142
+wandb: ⭐️ View project at https://wandb.ai/chkkar002-university-of-cape-town/stdiffusionfore-stgnn-weather
+wandb: 🚀 View run at https://wandb.ai/chkkar002-university-of-cape-town/stdiffusionfore-stgnn-weather/runs/318pripj
+initialize network with xavier
+initialize network with xavier
+loading the model from ./checkpoints/SAWS/gwavenet_NA_20260819T022245/best_net_Encoder.pth
+model [STDiffusionForeModel] was created
+---------- Networks initialized -------------
+[Network STD] Total number of parameters : 0.385 M
+[Network Encoder] Total number of parameters : 0.096 M
+-----------------------------------------------
+wandb: updating run metadata
+wandb: uploading requirements.txt; uploading output.log; uploading wandb-summary.json; uploading config.yaml; uploading wandb-metadata.json
+wandb: uploading summary, console lines 1-7
+wandb: 🚀 View run stfore_covar_20260819T141142 at: https://wandb.ai/chkkar002-university-of-cape-town/stdiffusionfore-stgnn-weather/runs/318pripj
+wandb: ⭐️ View project at: https://wandb.ai/chkkar002-university-of-cape-town/stdiffusionfore-stgnn-weather
+wandb: Synced 5 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./wandb/run-20260819_141144-318pripj/logs
+Traceback (most recent call last):
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/train.py", line 64, in <module>
+    model.optimize_parameters()   # calculate loss functions, get gradients, update network weights
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/models/stdiffusion/stdiffusionfore_model.py", line 248, in optimize_parameters
+    self.forward()
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/models/stdiffusion/stdiffusionfore_model.py", line 154, in forward
+    self.pred = self.netSTD(noisy_data, historical_encoding, self.side_info, training)
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/torch/nn/modules/module.py", line 1773, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/torch/nn/modules/module.py", line 1784, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/torch/nn/parallel/data_parallel.py", line 192, in forward
+    return self.module(*inputs[0], **module_kwargs[0])
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/torch/nn/modules/module.py", line 1773, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/torch/nn/modules/module.py", line 1784, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/models/stdiffusion/stformer.py", line 186, in forward
+    encoding = self.encoding(X, condition, side_info, training)
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/models/stdiffusion/stformer.py", line 164, in encoding
+    encoding = layer(encoding, condition, side_info, training)  # B, N, D
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/torch/nn/modules/module.py", line 1773, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/torch/nn/modules/module.py", line 1784, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/models/stdiffusion/transformer_layer.py", line 90, in forward
+    src_attn = src + dpe.unsqueeze(1) + tpe[:, L:L+1, :] + spe
+RuntimeError: The size of tensor a (32) must match the size of tensor b (0) at non-singleton dimension 1
+----------------- Options ---------------
+               batch_size: 64                            
+                     beta: 1.0                           
+          checkpoints_dir: ./checkpoints/SAWS            	[default: ./checkpoints]
+                   config: config_SAWS                   	[default: config1]
+           continue_train: False                         
+            covariate_dim: 4                             
+             dataset_mode: SAWS                          	[default: ]
+        enable_curriculum: False                         
+           enable_neptune: False                         
+               enable_val: True                          	[default: False]
+            enable_visual: False                         
+                    epoch: latest                        
+              epoch_count: 0                             
+          eval_epoch_freq: 10                            	[default: 1]
+                file_time: 20260819T141155               	[default: None]
+                  gpu_ids: 0                             	[default: -1]
+                init_gain: 0.02                          
+                init_type: xavier                        
+                  isTrain: True                          	[default: None]
+                load_iter: 0                             	[default: 0]
+                       lr: 0.001                         
+           lr_decay_iters: 50                            
+                lr_policy: cosine                        
+         max_dataset_size: inf                           
+                    model: stdiffusionfore               	[default: ]
+                 n_epochs: 300                           
+           n_epochs_decay: 0                             
+          n_epochs_target: 100                           
+ n_epochs_target_increase: 150                           
+                     name: stdiffusionfore_NA_20260819T141155	[default: None]
+          neptune_project:                               
+            neptune_token:                               
+              num_threads: 4                             	[default: 0]
+         num_train_target: 3                             
+     num_train_target_end: 6                             
+                    phase: train                         
+                pred_attr: NA                            	[default: PM25_Concentration]
+                 pretrain: gwavenet_NA_20260819T022245   	[default: ]
+               print_freq: 20                            
+                save_best: True                          	[default: False]
+          save_epoch_freq: 100                           
+                     seed: 2032                          	[default: 2023]
+           serial_batches: False                         
+              spatial_dim: 64                            
+                    t_len: 48                            	[default: 24]
+              total_iters: 0                             
+                  verbose: False                         
+                    y_dim: 1                             
+----------------- End -------------------
+----------------- Model Configurations ---------------
+                  pos_dim: 96                            
+                embed_dim: 96                            
+                num_heads: 8                             
+            encoder_depth: 2                             
+                mlp_ratio: 1                             
+                  dropout: 0.2                           
+                num_steps: 50                            
+                 schedule: quad                          
+               num_sample: 8                             
+                objective: noise                         
+                  wavenet: {'embed_dim': 32, 'end_dim': 64, 'mask_ratio': 0.75, 'dropout': 0.2}
+----------------- End -------------------
+MEAN 17.288782
+STD 6.896628
+(32, 87672, 1)
+No testing nodes. Randomly divide nodes for testing!
+Data format check passed!!!
+dataset [SAWSDataset] for [train] was created
+The number of training samples = 821
+MEAN 17.288782
+STD 6.896628
+(32, 87672, 1)
+No testing nodes. Randomly divide nodes for testing!
+Data format check passed!!!
+dataset [SAWSDataset] for [val] was created
+The number of validation samples = 273
+wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from /home/chkkar002/.netrc.
+wandb: Currently logged in as: chkkar002 (chkkar002-university-of-cape-town) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: WARNING Using a boolean value for 'reinit' is deprecated. Use 'return_previous' or 'finish_previous' instead.
+wandb: setting up run 5u38abxo
+wandb: Tracking run with wandb version 0.26.1
+wandb: Run data is saved locally in /scratch/chkkar002/Diffusion_Based_STGNNs/USTD/wandb/run-20260819_141156-5u38abxo
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run stfore_covar_20260819T141155
+wandb: ⭐️ View project at https://wandb.ai/chkkar002-university-of-cape-town/stdiffusionfore-stgnn-weather
+wandb: 🚀 View run at https://wandb.ai/chkkar002-university-of-cape-town/stdiffusionfore-stgnn-weather/runs/5u38abxo
+initialize network with xavier
+initialize network with xavier
+loading the model from ./checkpoints/SAWS/gwavenet_NA_20260819T022245/best_net_Encoder.pth
+model [STDiffusionForeModel] was created
+---------- Networks initialized -------------
+[Network STD] Total number of parameters : 0.385 M
+[Network Encoder] Total number of parameters : 0.096 M
+-----------------------------------------------
+wandb: updating run metadata
+wandb: uploading requirements.txt; uploading output.log; uploading wandb-summary.json; uploading config.yaml; uploading wandb-metadata.json
+wandb: uploading summary, console lines 1-7
+wandb: 🚀 View run stfore_covar_20260819T141155 at: https://wandb.ai/chkkar002-university-of-cape-town/stdiffusionfore-stgnn-weather/runs/5u38abxo
+wandb: ⭐️ View project at: https://wandb.ai/chkkar002-university-of-cape-town/stdiffusionfore-stgnn-weather
+wandb: Synced 5 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./wandb/run-20260819_141156-5u38abxo/logs
+Traceback (most recent call last):
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/train.py", line 64, in <module>
+    model.optimize_parameters()   # calculate loss functions, get gradients, update network weights
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/models/stdiffusion/stdiffusionfore_model.py", line 248, in optimize_parameters
+    self.forward()
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/models/stdiffusion/stdiffusionfore_model.py", line 154, in forward
+    self.pred = self.netSTD(noisy_data, historical_encoding, self.side_info, training)
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/torch/nn/modules/module.py", line 1773, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/torch/nn/modules/module.py", line 1784, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/torch/nn/parallel/data_parallel.py", line 192, in forward
+    return self.module(*inputs[0], **module_kwargs[0])
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/torch/nn/modules/module.py", line 1773, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/torch/nn/modules/module.py", line 1784, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/models/stdiffusion/stformer.py", line 186, in forward
+    encoding = self.encoding(X, condition, side_info, training)
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/models/stdiffusion/stformer.py", line 164, in encoding
+    encoding = layer(encoding, condition, side_info, training)  # B, N, D
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/torch/nn/modules/module.py", line 1773, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/torch/nn/modules/module.py", line 1784, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/models/stdiffusion/transformer_layer.py", line 90, in forward
+    src_attn = src + dpe.unsqueeze(1) + tpe[:, L:L+1, :] + spe
+RuntimeError: The size of tensor a (32) must match the size of tensor b (0) at non-singleton dimension 1

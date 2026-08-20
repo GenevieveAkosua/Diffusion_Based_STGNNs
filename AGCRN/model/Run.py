@@ -92,7 +92,7 @@ args.add_argument('--log_dir', default='./', type=str)
 args.add_argument('--log_step', default=config['log']['log_step'], type=int)
 args.add_argument('--plot', default=config['log']['plot'], type=eval)
 args.add_argument('--n_trials', default=0, type=int, help='0 = single run, >0 = run Optuna HPO for this many trials')
-args.add_argument('--study_name', default='agcrn_tuning_RV', type=str)
+args.add_argument('--study_name', default='agcrn_pressure', type=str)
 args.add_argument('--storage', default=None, type=str)
 args = args.parse_args()
 #init_seed(args.seed)
@@ -170,7 +170,7 @@ def run_once(args, trial=None):
         project="stgnn-weather",
         group="SAWS",
         job_type="AGCRN",
-        name='AGCRN_Tune_{}'.format(trial.number) if trial is not None else 'AGCRN_realval',
+        name='AGCRN_Tune_{}'.format(trial.number) if trial is not None else 'AGCRN_pressure',
         config=vars(args),
     )
  

@@ -1,0 +1,17 @@
+initialize network with xavier
+initialize network with xavier
+loading the model from ./checkpoints/SAWS/gwavenet_NA_20260818T165807/best_net_Encoder.pth
+Traceback (most recent call last):
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/train.py", line 40, in <module>
+    model = create_model(opt, model_config)      # create a model given opt.model and other options
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/models/__init__.py", line 70, in create_model
+    instance = model(opt, model_config)
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/models/stdiffusion/stdiffusionfore_model.py", line 78, in __init__
+    self.load_networks()  # only load pre-trained model
+  File "/scratch/chkkar002/Diffusion_Based_STGNNs/USTD/models/stdiffusion/stdiffusionfore_model.py", line 286, in load_networks
+    net.load_state_dict(state_dict)
+  File "/home/chkkar002/envs/diffstg/lib64/python3.9/site-packages/torch/nn/modules/module.py", line 2624, in load_state_dict
+    raise RuntimeError(
+RuntimeError: Error(s) in loading state_dict for GWaveNetEncoder:
+	size mismatch for empty_token: copying a param with shape torch.Size([2]) from checkpoint, the shape in current model is torch.Size([5]).
+	size mismatch for start_conv.weight: copying a param with shape torch.Size([32, 2, 1, 1]) from checkpoint, the shape in current model is torch.Size([32, 5, 1, 1]).

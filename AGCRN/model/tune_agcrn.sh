@@ -4,7 +4,7 @@
 #SBATCH --partition=a100
 #SBATCH --nodes=1 --ntasks=4 --gres=gpu:ampere:1
 #SBATCH --time=14:00:00
-#SBATCH --job-name="AGCRN"
+#SBATCH --job-name="AGCRN_Pressure"
 #SBATCH --mail-user=chkkar002@myuct.ac.za
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mem=64G
@@ -17,24 +17,19 @@ LAG=24
 NUM_LAYERS=2
 RNN_UNITS=64
 EMBED_DIM=30
-
-# Loop through teacher forcing conditions
-for tf in True False; do
-    # Loop through 3 different seeds
-    for seed in 1 2 3; do
-        echo "================================================================="
-        echo "Running Run.py | Seed: $seed | Teacher Forcing: $tf"
-        echo "================================================================="
+# Loop through 3 different seeds
+for seed in 1 2 3; do
+    echo "================================================================="
+    echo "Running Run.py | Seed: $seed"
+    echo "================================================================="
         
-        python Run.py \
-            --seed $seed \
-            --teacher_forcing $tf \
-            --batch_size $BATCH_SIZE \
-            --lr_init $LR_INIT \
-            --lag $LAG \
-            --num_layers $NUM_LAYERS \
-            --rnn_units $RNN_UNITS \
-            --embed_dim $EMBED_DIM
+    python Run.py \
+        --seed $seed \
+        --batch_size $BATCH_SIZE \
+        --lr_init $LR_INIT \
+        --lag $LAG \
+        --num_layers $NUM_LAYERS \
+        --rnn_units $RNN_UNITS \
+        --embed_dim $EMBED_DIM
             
-    done
 done
