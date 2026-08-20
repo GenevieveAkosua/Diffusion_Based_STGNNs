@@ -61,6 +61,47 @@ def masked_vpt_np(y_true, y_pred, null_val=np.nan, threshold=0.5):
 
     return {'vpt_mean': float(np.mean(vpts)), 'vpt_std': float(np.std(vpts)), 'vpt_median': float(np.median(vpts)), 'vpt_min': float(np.min(vpts)), 'vpt_max': float(np.max(vpts)), 'vpt_dist': vpts}
 
+def log_horizon_metrics(y_true, y_pred, logger=None, null_val=np.nan, vpt_threshold=0.5, print_fn=print):
+    """
+    Per-horizon MAE/RMSE/MAPE + a VPT summary block, ported to match the
+    style of AGCRN's BasicTrainer.test() horizon loop.
+
+    y_true: (B, T_p, V, D)
+    y_pred: (B, n_samples, T_p, V, D) or (B, T_p, V, D)
+    logger: an object with a .write(msg, is_terminal=True) method, e.g.
+            config.logger (utils.common_utils.Logger). If None, just prints.
+    """
+    if y_pred.ndim == y_true.ndim + 1:
+        y_pred = np.mean(y_pred, axis=1)  # collapse n_samples -> (B, T_p, V, D)
+
+    def emit(msg):
+        if logger is not None:
+            logger.write(msg + '\n', is_terminal=True)
+        else:
+            print_fn(msg)
+
+    T_p = y_true.shape[1]
+    for t in range(T_p):
+        mae = masked_mae_np(y_true[:, t], y_pred[:, t], null_val)
+        rmse = masked_rmse_np(y_true[:, t], y_pred[:, t], null_val)
+        mape = masked_mape_np(y_true[:, t], y_pred[:, t], null_val)
+        emit(f"Horizon {t + 1:02d}, MAE: {mae:.2f}, RMSE: {rmse:.2f}, MAPE: {mape:.2f}%")
+
+    mae = masked_mae_np(y_true, y_pred, null_val)
+    rmse = masked_rmse_np(y_true, y_pred, null_val)
+    mape = masked_mape_np(y_true, y_pred, null_val)
+    emit(f"Average Horizon, MAE: {mae:.2f}, RMSE: {rmse:.2f}, MAPE: {mape:.2f}%")
+
+    vpt_results = masked_vpt_np(y_true, y_pred, null_val, threshold=vpt_threshold)
+    emit(
+        "VPT (threshold={:.2f}): mean={:.2f} steps, median={:.2f}, "
+        "std={:.2f}, range=[{:.0f}, {:.0f}]".format(
+            vpt_threshold, vpt_results['vpt_mean'], vpt_results['vpt_median'],
+            vpt_results['vpt_std'], vpt_results['vpt_min'], vpt_results['vpt_max'])
+    )
+    return vpt_results
+
+
 def time_to_str(t, mode='min'):
     """Formats time t as hours & mins OR mins & secs from seconds"""
 

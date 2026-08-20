@@ -62,7 +62,7 @@ class CleanDataset():
 
     def read_data(self):
         if 'SAWS' in self.data_name:
-            data = np.expand_dims(np.load(self.feature_file)[:, :, 0], -1) # Loads in 1 feature at a time to train on
+            data = np.expand_dims(np.load(self.feature_file)[:, :, 1], -1) # Loads in 1 feature at a time to train on
             data = np.nan_to_num(data, nan=0)
         elif 'AIR' in self.data_name:
             data = np.expand_dims(np.load(self.feature_file)[:, :, 0], -1)

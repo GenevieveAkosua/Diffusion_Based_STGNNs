@@ -12,7 +12,7 @@ import torch.utils.data
 from easydict import EasyDict as edict
 from timeit import default_timer as timer
 import wandb_utils
-from utils.eval import Metric
+from utils.eval import Metric, log_horizon_metrics
 from utils.gpu_dispatch import GPU
 from utils.common_utils import dir_check, to_device, ws, unfold_dict, dict_merge, GpuId2CudaId, Logger
 
@@ -59,13 +59,13 @@ def get_params():
     # train
     parser.add_argument("--is_train", type=bool, default=True) # train or evaluate
     parser.add_argument("--data", type=str, default='SAWS')
-    parser.add_argument("--mask_ratio", type=float, default=0.0) # mask of history data
+    parser.add_argument("--mask_ratio", type=float, default=0.2) # mask of history data
     parser.add_argument("--is_test", type=bool, default=False)
     parser.add_argument("--nni", type=bool, default=False)
     parser.add_argument("--lr", type=float, default=0.002)
     parser.add_argument("--batch_size", type=int, default=8)
 	# optuna-only args (ignored when --nni is True)
-    parser.add_argument("--n_trials", type=int, default=30)
+    parser.add_argument("--n_trials", type=int, default=0)
     parser.add_argument("--study_name", type=str, default="diffstg_saws_tuning")
     parser.add_argument("--storage", type=str, default=None)
 
@@ -108,7 +108,7 @@ def default_config(data='SAWS'):
     config.model = edict()
 
     config.model.T_p = 48
-    config.model.T_h = 12
+    config.model.T_h = 24
     config.model.V = config.data.num_vertices
     config.model.F = config.data.num_features
     config.model.week_len = 7
@@ -117,11 +117,11 @@ def default_config(data='SAWS'):
     config.model.d_h = 32
 
     # config for diffusion model
-    config.model.N = 200
+    config.model.N = 300
     config.model.sample_steps = 200
     config.model.epsilon_theta = 'UGnet'
     config.model.is_label_condition = True
-    config.model.beta_end = 0.02
+    config.model.beta_end = 0.1
     config.model.beta_schedule = 'quad'
     config.model.sample_strategy = 'ddpm'
 
@@ -134,10 +134,10 @@ def default_config(data='SAWS'):
     # training config
     config.model_name = 'DiffSTG'
     config.is_test = False  # Whether run the code in the test mode
-    config.epoch = 30  # Number of max training epoch
+    config.epoch = 300  # Number of max training epoch
     config.optimizer = "adam"
     config.lr = 1e-4
-    config.batch_size = 32
+    config.batch_size = 8
     config.wd = 1e-5
     config.early_stop = 10
     config.start_epoch = 0
@@ -183,13 +183,16 @@ def evals(model, data_loader, epoch, metric, config, clean_data, mode='Test'):
         # assert x.shape == x_hat.shape, f"shape of x ({x.shape}) does not equal to shape of x_hat ({x_hat.shape})"
 
         time_lst.append((timer() - time_start))
-        x, x_hat= clean_data.reverse_normalization(x), clean_data.reverse_normalization(x_hat)
         x_hat = x_hat.detach()
+        # Kept in normalized (model-output) scale to match AGCRN's Trainer.test(),
+        # which never calls scaler.inverse_transform before computing metrics.
+        # No np.clip either: normalized values can legitimately be negative
+        # (e.g. under z-score normalization), so clipping to [0, inf) would
+        # be a real-unit assumption leaking into normalized-scale metrics.
         f_x, f_x_hat = x[:,:,:,-config.model.T_p:], x_hat[:,:,:,:,-config.model.T_p:] # future
 
         _y_true_ = f_x.transpose(1, 3).cpu().numpy()  # y_true: (B, T_p, V, D)
         _y_pred_ = f_x_hat.transpose(2, 4).cpu().numpy() # y_pred: (B, n_samples, T_p, V, D)
-        _y_pred_ = np.clip(_y_pred_, 0, np.inf)
         metrics_future.update_metrics(_y_true_, _y_pred_)
 
         y_pred.append(_y_pred_)
@@ -198,7 +201,6 @@ def evals(model, data_loader, epoch, metric, config, clean_data, mode='Test'):
         h_x, h_x_hat = x[:, :, :, :config.model.T_h], x_hat[:, :, :, :,  :config.model.T_h]
         _y_true_ = h_x.transpose(1, 3).cpu().numpy()  # y_true: (B, T_p, V, D)
         _y_pred_ = h_x_hat.transpose(2, 4).cpu().numpy()
-        _y_pred_ = np.clip(_y_pred_, 0, np.inf)
         metrics_history.update_metrics(_y_true_, _y_pred_)
 
     y_true = np.concatenate(y_true, axis=0)
@@ -212,6 +214,19 @@ def evals(model, data_loader, epoch, metric, config, clean_data, mode='Test'):
     wandb_utils.log_metrics({'mae': metric.metrics['mae'], 'rmse': metric.metrics['rmse'], 'mape': metric.metrics['mape'], 'vpt': metric.metrics['vpt'], 'crps': metric.metrics['crps'], 'mis': metric.metrics['mis']}, step=epoch, prefix=mode.lower())
 
     if mode == 'test': # save the prediction result to file
+        log_horizon_metrics(y_true, y_pred, logger=config.logger, vpt_threshold=metric.vpt_threshold)
+
+        # flat .npy dump to mirror AGCRN's BasicTrainer.test() (which saves
+        # '{dataset}_true.npy' / '{dataset}_pred.npy'). y_pred here still
+        # carries the n_samples axis (B, n_samples, T_p, V, D), so it's
+        # averaged down to a single point forecast (B, T_p, V, D) first --
+        # same collapse log_horizon_metrics does internally -- for a
+        # like-for-like shape against AGCRN's y_pred. Full sample spread
+        # (for CRPS/MIS etc.) still lives in the pickle saved just below.
+        y_pred_mean = np.mean(y_pred, axis=1) if y_pred.ndim == y_true.ndim + 1 else y_pred
+        np.save(os.path.join(config.PATH_FORECAST, f'{config.data.name}_true.npy'), y_true)
+        np.save(os.path.join(config.PATH_FORECAST, f'{config.data.name}_pred.npy'), y_pred_mean)
+
         samples = torch.cat(samples, dim=0)[:50]
         targets = torch.cat(targets, dim=0)[:50]
         observed_flag = torch.ones_like(targets) #(B, T, V, F)
@@ -456,13 +471,6 @@ def main(params: dict, trial=None):
 
 def suggest_params(trial, base_params):
     params = dict(base_params)
-    params['T_h'] = trial.suggest_categorical('T_h', [12, 24, 48])
-    params['batch_size'] = trial.suggest_categorical('batch_size', [16, 32])
-    params['hidden_size'] = trial.suggest_categorical('hidden_size', [16, 32, 64])
-    params['N'] = trial.suggest_categorical('N', [100, 200, 300])
-    params['beta_end'] = trial.suggest_categorical('beta_end', [0.1, 0.2, 0.4])
-    params['mask_ratio'] = trial.suggest_categorical('mask_ratio', [0.0, 0.2, 0.75])
-    params['sample_steps'] = trial.suggest_categorical('sample_steps', [50, 100, 200])
     return params
  
  
@@ -533,5 +541,3 @@ if __name__ == '__main__':
                 print(f"{param:15s}: {importance:.3f}")
         except Exception as e:
             print(f"(could not compute: {e})")
-
-
