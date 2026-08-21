@@ -195,10 +195,12 @@ class Trainer(object):
                 output = model(data, target, teacher_forcing_ratio=0)
                 y_true.append(label)
                 y_pred.append(output)
-        y_true = scaler.inverse_transform(torch.cat(y_true, dim=0))
-        y_pred = scaler.inverse_transform(torch.cat(y_pred, dim=0))
-        np.save('./{}_true.npy'.format(args.dataset), y_true.cpu().numpy())
-        np.save('./{}_pred.npy'.format(args.dataset), y_pred.cpu().numpy())
+        
+		# Print out normalised values
+        y_true = torch.cat(y_true, dim=0)
+        y_pred = torch.cat(y_pred, dim=0)
+        np.save('./wd_true_norm_{}.npy'.format(args.seed), y_true.cpu().numpy())
+        np.save('./wd_pred_norm_{}.npy'.format(args.seed), y_pred.cpu().numpy())
         for t in range(y_true.shape[1]):
             mae, rmse, mape, _, _ = All_Metrics(y_pred[:, t, ...], y_true[:, t, ...],
                                                 args.mae_thresh, args.mape_thresh)
@@ -207,6 +209,22 @@ class Trainer(object):
         mae, rmse, mape, _, _ = All_Metrics(y_pred, y_true, args.mae_thresh, args.mape_thresh)
         logger.info("Average Horizon, MAE: {:.2f}, RMSE: {:.2f}, MAPE: {:.4f}%".format(
                     mae, rmse, mape*100))
+
+        # Print out real value results
+        y_true = scaler.inverse_transform(y_true)
+        y_pred = scaler.inverse_transform(y_pred)
+        np.save('./wd_true_{}.npy'.format(args.seed), y_true.cpu().numpy())
+        np.save('./wd_pred_{}.npy'.format(args.seed), y_pred.cpu().numpy())
+        for t in range(y_true.shape[1]):
+            mae, rmse, mape, _, _ = All_Metrics(y_pred[:, t, ...], y_true[:, t, ...],
+                                                args.mae_thresh, args.mape_thresh)
+            logger.info("Horizon {:02d}, MAE: {:.2f}, RMSE: {:.2f}, MAPE: {:.4f}%".format(
+                t + 1, mae, rmse, mape*100))
+        mae, rmse, mape, _, _ = All_Metrics(y_pred, y_true, args.mae_thresh, args.mape_thresh)
+        logger.info("Average Horizon, MAE: {:.2f}, RMSE: {:.2f}, MAPE: {:.4f}%".format(
+                    mae, rmse, mape*100))
+
+		# Get vpt
         y_true_np = y_true.cpu().numpy()
         y_pred_np = y_pred.cpu().numpy()
         if y_true_np.shape[-1] == 1:
