@@ -157,6 +157,7 @@ def evals(model, data_loader, epoch, metric, config, clean_data, mode='Test'):
     setup_seed(2022)
 
     y_pred, y_true, time_lst = [], [], []
+    y_true_real, y_pred_real = [], []  # only populated at test time
     metrics_future = Metric(T_p=config.model.T_p)
     metrics_history = Metric(T_p=config.model.T_h)
     model.eval()
@@ -166,42 +167,44 @@ def evals(model, data_loader, epoch, metric, config, clean_data, mode='Test'):
         if i > 0 and config.is_test: break
         time_start = timer()
 
-        future, history, pos_w, pos_d = to_device(batch, config.device) # target:(B,T,V,1), history:(B,T,V,1), pos_w: (B,1), pos_d:(B,T,1)
+        future, history, pos_w, pos_d = to_device(batch, config.device)
 
-        x = torch.cat((history, future), dim=1).to(config.device)  # in cpu (B, T, V, F), T =  T_h + T_p
-        x_masked = torch.cat((history, torch.zeros_like(future)), dim=1).to(config.device)  # (B, T, V, F)
+        x = torch.cat((history, future), dim=1).to(config.device)
+        x_masked = torch.cat((history, torch.zeros_like(future)), dim=1).to(config.device)
         targets.append(x.cpu())
-        x = x.transpose(1, 3)  # (B, F, V, T)
-        x_masked = x_masked.transpose(1, 3)  # (B, F, V, T)
+        x = x.transpose(1, 3)
+        x_masked = x_masked.transpose(1, 3)
 
         n_samples = 1 if mode == 'Val' else config.n_samples
-        # n_samples = config.n_samples
-        x_hat = model((x_masked, pos_w, pos_d), n_samples) # (B, n_samples, F, V, T)
-        samples.append(x_hat.transpose(2,4).cpu())
+        x_hat = model((x_masked, pos_w, pos_d), n_samples)
+        samples.append(x_hat.transpose(2, 4).cpu())
 
-        if x_hat.shape[-1] != (config.model.T_h + config.model.T_p): x_hat = x_hat.transpose(2,4)
-        # assert x.shape == x_hat.shape, f"shape of x ({x.shape}) does not equal to shape of x_hat ({x_hat.shape})"
+        if x_hat.shape[-1] != (config.model.T_h + config.model.T_p): x_hat = x_hat.transpose(2, 4)
 
         time_lst.append((timer() - time_start))
         x_hat = x_hat.detach()
-        # Kept in normalized (model-output) scale to match AGCRN's Trainer.test(),
-        # which never calls scaler.inverse_transform before computing metrics.
-        # No np.clip either: normalized values can legitimately be negative
-        # (e.g. under z-score normalization), so clipping to [0, inf) would
-        # be a real-unit assumption leaking into normalized-scale metrics.
-        f_x, f_x_hat = x[:,:,:,-config.model.T_p:], x_hat[:,:,:,:,-config.model.T_p:] # future
 
-        _y_true_ = f_x.transpose(1, 3).cpu().numpy()  # y_true: (B, T_p, V, D)
-        _y_pred_ = f_x_hat.transpose(2, 4).cpu().numpy() # y_pred: (B, n_samples, T_p, V, D)
+        # --- normalized scale (unchanged: matches AGCRN Trainer.test(), feeds scheduler/early-stop) ---
+        f_x, f_x_hat = x[:, :, :, -config.model.T_p:], x_hat[:, :, :, :, -config.model.T_p:]
+        _y_true_ = f_x.transpose(1, 3).cpu().numpy()
+        _y_pred_ = f_x_hat.transpose(2, 4).cpu().numpy()
         metrics_future.update_metrics(_y_true_, _y_pred_)
-
         y_pred.append(_y_pred_)
         y_true.append(_y_true_)
 
-        h_x, h_x_hat = x[:, :, :, :config.model.T_h], x_hat[:, :, :, :,  :config.model.T_h]
-        _y_true_ = h_x.transpose(1, 3).cpu().numpy()  # y_true: (B, T_p, V, D)
-        _y_pred_ = h_x_hat.transpose(2, 4).cpu().numpy()
-        metrics_history.update_metrics(_y_true_, _y_pred_)
+        h_x, h_x_hat = x[:, :, :, :config.model.T_h], x_hat[:, :, :, :, :config.model.T_h]
+        _y_true_h = h_x.transpose(1, 3).cpu().numpy()
+        _y_pred_h = h_x_hat.transpose(2, 4).cpu().numpy()
+        metrics_history.update_metrics(_y_true_h, _y_pred_h)
+
+        # --- real-unit scale, only computed for test mode (skip the extra inverse_transform cost every epoch) ---
+        if mode == 'test':
+            x_real = clean_data.reverse_normalization(x)
+            x_hat_real = clean_data.reverse_normalization(x_hat)
+            f_x_r = x_real[:, :, :, -config.model.T_p:]
+            f_x_hat_r = x_hat_real[:, :, :, :, -config.model.T_p:]
+            y_true_real.append(f_x_r.transpose(1, 3).cpu().numpy())
+            y_pred_real.append(f_x_hat_r.transpose(2, 4).cpu().numpy())
 
     y_true = np.concatenate(y_true, axis=0)
     y_pred = np.concatenate(y_pred, axis=0)
@@ -213,35 +216,35 @@ def evals(model, data_loader, epoch, metric, config, clean_data, mode='Test'):
 
     wandb_utils.log_metrics({'mae': metric.metrics['mae'], 'rmse': metric.metrics['rmse'], 'mape': metric.metrics['mape'], 'vpt': metric.metrics['vpt'], 'crps': metric.metrics['crps'], 'mis': metric.metrics['mis']}, step=epoch, prefix=mode.lower())
 
-    if mode == 'test': # save the prediction result to file
-        log_horizon_metrics(y_true, y_pred, logger=config.logger, vpt_threshold=metric.vpt_threshold)
+    if mode == 'test':
+        y_true_real = np.concatenate(y_true_real, axis=0)
+        y_pred_real = np.concatenate(y_pred_real, axis=0)
 
-        # flat .npy dump to mirror AGCRN's BasicTrainer.test() (which saves
-        # '{dataset}_true.npy' / '{dataset}_pred.npy'). y_pred here still
-        # carries the n_samples axis (B, n_samples, T_p, V, D), so it's
-        # averaged down to a single point forecast (B, T_p, V, D) first --
-        # same collapse log_horizon_metrics does internally -- for a
-        # like-for-like shape against AGCRN's y_pred. Full sample spread
-        # (for CRPS/MIS etc.) still lives in the pickle saved just below.
         y_pred_mean = np.mean(y_pred, axis=1) if y_pred.ndim == y_true.ndim + 1 else y_pred
-        np.save(os.path.join(config.PATH_FORECAST, f'{config.data.name}_true.npy'), y_true)
-        np.save(os.path.join(config.PATH_FORECAST, f'{config.data.name}_pred.npy'), y_pred_mean)
+        y_pred_mean_real = np.mean(y_pred_real, axis=1) if y_pred_real.ndim == y_true_real.ndim + 1 else y_pred_real
+
+        config.logger.info("=== Per-horizon metrics: NORMALIZED scale ===")
+        log_horizon_metrics(y_true, y_pred, logger=config.logger, vpt_threshold=metric.vpt_threshold)
+        np.save(os.path.join(config.PATH_FORECAST, f'WD_true_norm.npy'), y_true)
+        np.save(os.path.join(config.PATH_FORECAST, f'WD_pred_norm.npy'), y_pred_mean)
+
+        config.logger.info("=== Per-horizon metrics: REAL-UNIT scale ===")
+        log_horizon_metrics(y_true_real, y_pred_real, logger=config.logger, vpt_threshold=metric.vpt_threshold)
+        np.save(os.path.join(config.PATH_FORECAST, f'WD_true_real.npy'), y_true_real)
+        np.save(os.path.join(config.PATH_FORECAST, f'WD_pred_real.npy'), y_pred_mean_real)
 
         samples = torch.cat(samples, dim=0)[:50]
         targets = torch.cat(targets, dim=0)[:50]
-        observed_flag = torch.ones_like(targets) #(B, T, V, F)
+        observed_flag = torch.ones_like(targets)
         evaluate_flag = observed_flag
         evaluate_flag[:, -config.model.T_p:, :, :] = 1
         import pickle
-        with open (config.forecast_path, 'wb') as f:
+        with open(config.forecast_path, 'wb') as f:
             pickle.dump([samples, targets, observed_flag, evaluate_flag], f)
 
         message = f"predict_path = '{config.forecast_path}'"
         config.logger.message_buffer += f"{message}\n"
         config.logger.write_message_buffer()
-
-
-    if config.nni: nni.report_intermediate_result(metric.metrics['mae'])
 
     # log of performance in future prediction
     if metric.best_metrics['epoch'] == epoch:
@@ -280,7 +283,7 @@ def main(params: dict, trial=None):
     # model
     config.model.N = params['N']
     config.T_h = config.model.T_h = params['T_h']
-    config.T_p = config.model.T_p =  24
+    config.T_p = config.model.T_p =  48
     config.model.epsilon_theta =  params['epsilon_theta']
     config.model.sample_steps = params['sample_steps']
     config.model.d_h = params['hidden_size']

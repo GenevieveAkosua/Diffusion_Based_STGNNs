@@ -4,7 +4,7 @@
 #SBATCH --partition=a100
 #SBATCH --nodes=1 --ntasks=4 --gres=gpu:ampere:1
 #SBATCH --time=48:00:00
-#SBATCH --job-name="Run_DiffSTG"
+#SBATCH --job-name="DiffSTG_WD"
 #SBATCH --mail-user=chkkar002@myuct.ac.za
 #SBATCH --mail-type=ALL
 #SBATCH --mem=64G
@@ -15,4 +15,4 @@ source ~/envs/diffstg/bin/activate
 SEEDS=(2024 2025 2026)
 SEED=${SEEDS[$SLURM_ARRAY_TASK_ID]}
 
-python train.py --n_trials 1 --study_name diffstg_run_seed${SEED} --seed ${SEED}
+python train.py --n_trials 1 --study_name diffstg_WD_seed${SEED} --seed ${SEED}
