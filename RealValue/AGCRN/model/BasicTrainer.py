@@ -199,8 +199,8 @@ class Trainer(object):
 		# Print out normalised values
         y_true = torch.cat(y_true, dim=0)
         y_pred = torch.cat(y_pred, dim=0)
-        np.save('./wd_true_norm_{}.npy'.format(args.seed), y_true.cpu().numpy())
-        np.save('./wd_pred_norm_{}.npy'.format(args.seed), y_pred.cpu().numpy())
+        np.save('./pres_true_norm_{}.npy'.format(args.seed), y_true.cpu().numpy())
+        np.save('./pres_pred_norm_{}.npy'.format(args.seed), y_pred.cpu().numpy())
         for t in range(y_true.shape[1]):
             mae, rmse, mape, _, _ = All_Metrics(y_pred[:, t, ...], y_true[:, t, ...],
                                                 args.mae_thresh, args.mape_thresh)
@@ -213,8 +213,8 @@ class Trainer(object):
         # Print out real value results
         y_true = scaler.inverse_transform(y_true)
         y_pred = scaler.inverse_transform(y_pred)
-        np.save('./wd_true_{}.npy'.format(args.seed), y_true.cpu().numpy())
-        np.save('./wd_pred_{}.npy'.format(args.seed), y_pred.cpu().numpy())
+        np.save('./pres_true_{}.npy'.format(args.seed), y_true.cpu().numpy())
+        np.save('./pres_pred_{}.npy'.format(args.seed), y_pred.cpu().numpy())
         for t in range(y_true.shape[1]):
             mae, rmse, mape, _, _ = All_Metrics(y_pred[:, t, ...], y_true[:, t, ...],
                                                 args.mae_thresh, args.mape_thresh)

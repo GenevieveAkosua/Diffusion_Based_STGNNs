@@ -43,12 +43,12 @@ def masked_nrmse_np(y_true, y_pred, null_val=np.nan, epsilon=1e-7):
     valid_mask_bool = mask_np(y_true, null_val).astype(bool)
     std = np.nanstd(y_true[valid_mask_bool])
     return rmse / (std + epsilon)
-
+"""
 def masked_vpt_np(y_true, y_pred, null_val=np.nan, threshold=0.5):
-    """
-    y_true, y_pred: (B, T_p, V, D)
-    Returns dict of VPT summary stats over the batch, analogous to Henok's vpt_batch.
-    """
+    
+    #y_true, y_pred: (B, T_p, V, D)
+    #Returns dict of VPT summary stats over the batch, analogous to Henok's vpt_batch.
+    
     B, T_p = y_true.shape[0], y_true.shape[1]
     vpts = np.full(B, T_p, dtype=float)
 
@@ -56,6 +56,22 @@ def masked_vpt_np(y_true, y_pred, null_val=np.nan, threshold=0.5):
         for t in range(T_p):
             step_nrmse = masked_nrmse_np(y_true[b:b+1, t], y_pred[b:b+1, t], null_val)
             if step_nrmse > threshold:
+                vpts[b] = t
+                break
+
+    return {'vpt_mean': float(np.mean(vpts)), 'vpt_std': float(np.std(vpts)), 'vpt_median': float(np.median(vpts)), 'vpt_min': float(np.min(vpts)), 'vpt_max': float(np.max(vpts)), 'vpt_dist': vpts}
+"""
+
+def masked_vpt_np(y_true, y_pred, null_val=np.nan, threshold=0.5, epsilon=1e-7):
+    B, T_p = y_true.shape[0], y_true.shape[1]
+    vpts = np.full(B, T_p, dtype=float)
+
+    for b in range(B):
+        for t in range(T_p):
+            rmse_t = masked_rmse_np(y_true[b:b+1, t], y_pred[b:b+1, t], null_val)
+            hist = y_true[b, :t+1] if t > 0 else y_true[b]
+            std_t = max(np.nanstd(hist), epsilon)
+            if (rmse_t / std_t) > threshold:
                 vpts[b] = t
                 break
 

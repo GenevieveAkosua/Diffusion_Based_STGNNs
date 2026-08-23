@@ -64,6 +64,7 @@ def get_params():
     parser.add_argument("--nni", type=bool, default=False)
     parser.add_argument("--lr", type=float, default=0.002)
     parser.add_argument("--batch_size", type=int, default=8)
+    parser.add_argument("--seed", type=int, default=2024)
 	# optuna-only args (ignored when --nni is True)
     parser.add_argument("--n_trials", type=int, default=0)
     parser.add_argument("--study_name", type=str, default="diffstg_saws_tuning")
@@ -143,6 +144,7 @@ def default_config(data='SAWS'):
     config.start_epoch = 0
     config.device = device
     config.logger = Logger()
+    config.seed = 2024
 
 
     if not os.path.exists(config.PATH_MOD):
@@ -154,7 +156,7 @@ def default_config(data='SAWS'):
     return config
 
 def evals(model, data_loader, epoch, metric, config, clean_data, mode='Test'):
-    setup_seed(2022)
+    setup_seed(config.seed)
 
     y_pred, y_true, time_lst = [], [], []
     y_true_real, y_pred_real = [], []  # only populated at test time
@@ -223,18 +225,16 @@ def evals(model, data_loader, epoch, metric, config, clean_data, mode='Test'):
         y_pred_mean = np.mean(y_pred, axis=1) if y_pred.ndim == y_true.ndim + 1 else y_pred
         y_pred_mean_real = np.mean(y_pred_real, axis=1) if y_pred_real.ndim == y_true_real.ndim + 1 else y_pred_real
 
-        config.logger.info("=== Per-horizon metrics: NORMALIZED scale ===")
         log_horizon_metrics(y_true, y_pred, logger=config.logger, vpt_threshold=metric.vpt_threshold)
-        np.save(os.path.join(config.PATH_FORECAST, f'WD_true_norm.npy'), y_true)
-        np.save(os.path.join(config.PATH_FORECAST, f'WD_pred_norm.npy'), y_pred_mean)
+        np.save(os.path.join(config.PATH_FORECAST, f'WS_true_norm_{config.seed}.npy'), y_true)
+        np.save(os.path.join(config.PATH_FORECAST, f'WS_pred_norm_{config.seed}.npy'), y_pred_mean)
 
-        config.logger.info("=== Per-horizon metrics: REAL-UNIT scale ===")
         log_horizon_metrics(y_true_real, y_pred_real, logger=config.logger, vpt_threshold=metric.vpt_threshold)
-        np.save(os.path.join(config.PATH_FORECAST, f'WD_true_real.npy'), y_true_real)
-        np.save(os.path.join(config.PATH_FORECAST, f'WD_pred_real.npy'), y_pred_mean_real)
+        np.save(os.path.join(config.PATH_FORECAST, f'WS_true_real_{config.seed}.npy'), y_true_real)
+        np.save(os.path.join(config.PATH_FORECAST, f'WS_pred_real_{config.seed}.npy'), y_pred_mean_real)
 
-        samples = torch.cat(samples, dim=0)[:50]
-        targets = torch.cat(targets, dim=0)[:50]
+        samples = torch.cat(samples, dim=0)[:200]
+        targets = torch.cat(targets, dim=0)[:200]
         observed_flag = torch.ones_like(targets)
         evaluate_flag = observed_flag
         evaluate_flag[:, -config.model.T_p:, :, :] = 1
@@ -269,9 +269,10 @@ def evals(model, data_loader, epoch, metric, config, clean_data, mode='Test'):
 from pprint import  pprint
 def main(params: dict, trial=None):
     # torch.manual_seed(2022)
-    setup_seed(2022)
+    setup_seed(params['seed'])
     torch.set_num_threads(2)
     config = default_config(params['data'])
+    config.seed = params['seed']
 
     config.is_test = params['is_test']
     config.nni = params['nni']
@@ -302,7 +303,11 @@ def main(params: dict, trial=None):
             raise optuna.TrialPruned()
         return 50
 
-    config.trial_name = '+'.join([f"{v}" for k, v in params.items()])
+    name_params = dict(params)
+    name_params.pop('seed', None)
+    name_params['is_train'] = True     # always name as if training, so eval-only runs match the trained checkpoint
+    config.trial_name = f"DiffSTG_WS_seed{config.seed}"
+    #config.trial_name = '+'.join([f"{v}" for k, v in params.items()])
     config.log_path = f"{config.PATH_LOG}/{config.trial_name}.log"
 
     wandb_utils.init_run(project="stgnn-weather", group=config.data.name, job_type=config.model_name, name=config.trial_name, config=params)

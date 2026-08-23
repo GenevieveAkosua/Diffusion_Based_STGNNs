@@ -11,7 +11,7 @@ def load_st_dataset(dataset):
         data = np.load(data_path)['data'][:, :, 0]  #onley the first dimension, traffic flow data
     elif dataset == 'SAWS':
         data_path = os.path.join('../data/SAWS/flow.npy')
-        data = np.load(data_path)[:, :, 5]
+        data = np.load(data_path)[:, :, 2]
     else:
         raise ValueError
     if len(data.shape) == 2:

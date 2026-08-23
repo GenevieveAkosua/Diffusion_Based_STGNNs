@@ -1,0 +1,219 @@
+_wandb:
+    value:
+        cli_version: 0.26.1
+        e:
+            i6e4a4788y9vyi84f81snvw7ikbk1f6r:
+                args:
+                    - --seed
+                    - "1"
+                    - --batch_size
+                    - "32"
+                    - --lr_init
+                    - "0.0002"
+                    - --lag
+                    - "24"
+                    - --num_layers
+                    - "2"
+                    - --rnn_units
+                    - "64"
+                    - --embed_dim
+                    - "30"
+                codePath: RealValue/AGCRN/model/Run.py
+                codePathLocal: Run.py
+                cpu_count: 56
+                cpu_count_logical: 56
+                cudaVersion: "13.2"
+                disk:
+                    /:
+                        total: "943439200256"
+                        used: "41039794176"
+                email: chkkar002@myuct.ac.za
+                executable: /home/chkkar002/envs/diffstg/bin/python
+                git:
+                    commit: 64a4f6299b1d629a762dd17096cca8399bcdaf56
+                    remote: git@github.com:GenevieveAkosua/Diffusion_Based_STGNNs.git
+                gpu: NVIDIA A100-PCIE-40GB
+                gpu_count: 1
+                gpu_nvidia:
+                    - architecture: Ampere
+                      cudaCores: 6912
+                      memoryTotal: "42949672960"
+                      name: NVIDIA A100-PCIE-40GB
+                      uuid: GPU-22e48a02-bcf2-fbaa-0201-3c250645be7f
+                host: srvrocgpu010.uct.ac.za
+                memory:
+                    total: "539923484672"
+                os: Linux-5.14.0-687.29.1.el9_8.x86_64-x86_64-with-glibc2.34
+                program: /scratch/chkkar002/Diffusion_Based_STGNNs/RealValue/AGCRN/model/Run.py
+                python: CPython 3.9.25
+                root: /scratch/chkkar002/Diffusion_Based_STGNNs/RealValue/AGCRN/model
+                slurm:
+                    cluster_name: srvrochpc001
+                    conf: /opt/slurm-23.11.5/etc/slurm.conf
+                    cpu_bind: quiet,mask_cpu:0x000008000000
+                    cpu_bind_list: "0x000008000000"
+                    cpu_bind_type: 'mask_cpu:'
+                    cpu_bind_verbose: quiet
+                    cpus_on_node: "4"
+                    gpus_on_node: "1"
+                    gtids: "0"
+                    job_account: a100free
+                    job_cpus_per_node: "4"
+                    job_end_time: "1787391386"
+                    job_gid: "1221947160"
+                    job_gpus: "2"
+                    job_group: eresearch_hpc_users
+                    job_id: "1252018"
+                    job_name: AGCRN_WindDir
+                    job_nodelist: srvrocgpu010
+                    job_num_nodes: "1"
+                    job_partition: a100
+                    job_qos: a100free
+                    job_start_time: "1787340986"
+                    job_uid: "292132302"
+                    job_user: chkkar002
+                    jobid: "1252018"
+                    launch_node_ipaddr: 137.158.158.180
+                    localid: "0"
+                    mem_per_node: "65536"
+                    mpi_type: pmix
+                    nnodes: "1"
+                    nodeid: "0"
+                    nodelist: srvrocgpu010
+                    nprocs: "4"
+                    ntasks: "4"
+                    pmix_mapping_serv: (vector,(0,1,1))
+                    pmixp_abort_agent_port: "39411"
+                    prio_process: "0"
+                    procid: "0"
+                    pty_port: "44275"
+                    pty_win_col: "213"
+                    pty_win_row: "66"
+                    script_context: prolog_task
+                    srun_comm_host: 137.158.158.180
+                    srun_comm_port: "36041"
+                    step_id: "0"
+                    step_launcher_port: "36041"
+                    step_nodelist: srvrochpc103
+                    step_num_nodes: "1"
+                    step_num_tasks: "1"
+                    step_tasks_per_node: "1"
+                    stepid: "0"
+                    submit_dir: /scratch/chkkar002/Diffusion_Based_STGNNs/RealValue/AGCRN/model
+                    submit_host: srvrochpc103.uct.ac.za
+                    task_pid: "1324736"
+                    tasks_per_node: "4"
+                    topology_addr: switch-0.switch-1.srvrocgpu010
+                    topology_addr_pattern: switch.switch.node
+                startedAt: "2026-08-21T19:36:32.049417Z"
+                writerId: i6e4a4788y9vyi84f81snvw7ikbk1f6r
+        m: []
+        python_version: 3.9.25
+        t:
+            "1":
+                - 1
+                - 35
+            "2":
+                - 1
+                - 35
+            "3":
+                - 2
+                - 13
+                - 16
+                - 62
+            "4": 3.9.25
+            "5": 0.26.1
+            "10":
+                - 20
+            "12": 0.26.1
+            "13": linux-x86_64
+batch_size:
+    value: 32
+cheb_k:
+    value: 2
+column_wise:
+    value: false
+cuda:
+    value: true
+dataset:
+    value: SAWS
+debug:
+    value: false
+default_graph:
+    value: true
+device:
+    value: cuda
+early_stop:
+    value: true
+early_stop_patience:
+    value: 15
+embed_dim:
+    value: 30
+epochs:
+    value: 40
+grad_norm:
+    value: false
+horizon:
+    value: 48
+input_dim:
+    value: 1
+lag:
+    value: 24
+log_dir:
+    value: /scratch/chkkar002/Diffusion_Based_STGNNs/RealValue/AGCRN/model/experiments/SAWS/20260821213631
+log_step:
+    value: 20
+loss_func:
+    value: mae
+lr_decay:
+    value: false
+lr_decay_rate:
+    value: 0.3
+lr_decay_step:
+    value: 5,20,40,70
+lr_init:
+    value: 0.0002
+mae_thresh:
+    value: null
+mape_thresh:
+    value: 0
+max_grad_norm:
+    value: 5
+mode:
+    value: train
+model:
+    value: AGCRN
+n_trials:
+    value: 0
+normalizer:
+    value: std
+num_layers:
+    value: 2
+num_nodes:
+    value: 32
+output_dim:
+    value: 1
+plot:
+    value: false
+real_value:
+    value: false
+rnn_units:
+    value: 64
+seed:
+    value: 1
+storage:
+    value: null
+study_name:
+    value: agcrn_RV_WindDir
+teacher_forcing:
+    value: false
+test_ratio:
+    value: 0.2
+tf_decay_steps:
+    value: 2000
+tod:
+    value: false
+val_ratio:
+    value: 0.2
+vpt_threshold:
+    value: 0.5
