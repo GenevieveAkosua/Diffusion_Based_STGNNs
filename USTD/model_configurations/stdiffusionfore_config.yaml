@@ -96,3 +96,51 @@ config_SAWS_trial0:
     end_dim: 64
     mask_ratio: 0.75
     dropout: 0.2
+config_SAWS_trial1:
+  pos_dim: 64
+  embed_dim: 192
+  num_heads: 8
+  encoder_depth: 4
+  mlp_ratio: 4
+  dropout: 0.07470233738856523
+  num_steps: 100
+  schedule: quad
+  num_sample: 8
+  objective: noise
+  wavenet:
+    embed_dim: 32
+    end_dim: 64
+    mask_ratio: 0.75
+    dropout: 0.2
+config_SAWS_trial2:
+  pos_dim: 64
+  embed_dim: 192
+  num_heads: 8
+  encoder_depth: 4
+  mlp_ratio: 4
+  dropout: 0.07470233738856523
+  num_steps: 100
+  schedule: quad
+  num_sample: 8
+  objective: noise
+  wavenet:
+    embed_dim: 32
+    end_dim: 64
+    mask_ratio: 0.75
+    dropout: 0.2
+config_SAWS_trial3:
+  pos_dim: 64
+  embed_dim: 192
+  num_heads: 8
+  encoder_depth: 4
+  mlp_ratio: 4
+  dropout: 0.07470233738856523
+  num_steps: 100
+  schedule: quad
+  num_sample: 8
+  objective: noise
+  wavenet:
+    embed_dim: 32
+    end_dim: 64
+    mask_ratio: 0.75
+    dropout: 0.2

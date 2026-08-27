@@ -35,9 +35,9 @@ class STDiffusionForeModel(BaseModel):
         # specify metrics you want to evaluate the model. The training/test scripts will call functions in order:
         # <BaseModel.compute_metrics> compute metrics for current batch
         # <BaseModel.get_current_metrics> compute and return mean of metrics, clear evaluation cache for next evaluation
-        self.metric_names = ['MAE', 'RMSE', 'NRMSE', 'MAPE', 'SMAPE']
+        self.metric_names = ['MAE', 'RMSE']
         if self.opt.phase == 'test':
-            self.metric_names += ['CRPS', 'VPT']
+            self.metric_names += ['CRPS', 'vpt_mean', 'vpt_median']
 
         # define networks. The model variable name should begin with 'self.net'
         model_config['task'] = 'forecasting'
@@ -101,7 +101,7 @@ class STDiffusionForeModel(BaseModel):
             ## Laplacian eigenvectors as Positional Encodings (PE)
             ## https://arxiv.org/pdf/2003.00982.pdf
             self.pos_enc = laplacian_positional_encoding(adj_max, self.pos_dim)
-            self.tpe = torch.from_numpy(temporal_positional_embedding(8, self.pos_dim)).float()
+            self.tpe = torch.from_numpy(temporal_positional_embedding(self.opt.t_len, self.pos_dim)).float()
             # adjacency matrix
             self.adj = norm_adj(adj.to(self.device)) # [[N, N], [N, N]]
             self.t_his = self.opt.t_len // 2
@@ -216,31 +216,83 @@ class STDiffusionForeModel(BaseModel):
 
     def cache_results(self):
         self._add_to_cache('missing_mask', self.missing_mask[:, :, self.t_his:])
-        self._add_to_cache('pred', self.pred, reverse_norm=False)
-        self._add_to_cache('gt', self.pred_gt[:, :, self.t_his:], reverse_norm=False)
+        self._add_to_cache('pred_norm', self.pred, reverse_norm=False)
+        self._add_to_cache('gt_norm', self.pred_gt[:, :, self.t_his:], reverse_norm=False)
+        self._add_to_cache('pred', self.pred, reverse_norm=True)
+        self._add_to_cache('gt', self.pred_gt[:, :, self.t_his:], reverse_norm=True)
         if self.opt.phase == 'test':
-            self._add_to_cache('sampled_pred', self.sampled_pred, reverse_norm=False)
+            self._add_to_cache('sampled_pred', self.sampled_pred, reverse_norm=True)
+            self._add_to_cache('sampled_pred_norm', self.sampled_pred, reverse_norm=False)
 
     def compute_metrics(self):
         pred = self.results['pred']  # [B, N, L, D] -- batch, nodes, time, features
         gt = self.results['gt']  # [B, N, L, D]
+        pred_norm = self.results['pred_norm']  # Pull the normalized data
+        gt_norm = self.results['gt_norm']
         missing_mask = self.results['missing_mask']  # [B, N, L, D]
-        mae_list, rmse_list, nrmse_list, mape_list, smape_list = [], [], [], [], []
+        mae_list, rmse_list = [], []
+        mae_norm, rmse_norm = [], []
         for i in range(48): # 12 is the prediction hrizon
             mae_list.append(_mae_with_missing(pred[:,:,i], gt[:,:,i], missing_mask[:,:,i]))
             rmse_list.append(_rmse_with_missing(pred[:,:,i], gt[:,:,i], missing_mask[:,:,i]))
-            nrmse_list.append(_nrmse_with_missing(pred[:,:,i], gt[:,:,i], missing_mask[:,:,i]))
-            mape_list.append(_mape_with_missing(pred[:,:,i], gt[:,:,i], missing_mask[:,:,i]))
-            smape_list.append(_smape_with_missing(pred[:,:,i], gt[:,:,i], missing_mask[:,:,i]))
-        self.metric_MAE, self.metric_RMSE, self.metric_NRMSE, self.metric_MAPE, self.metric_SMAPE = np.mean(mae_list), np.mean(rmse_list), np.mean(nrmse_list), np.mean(mape_list), np.mean(smape_list)
+
+            # Normalized calculations
+            mae_norm.append(_mae_with_missing(pred_norm[:,:,i], gt_norm[:,:,i], missing_mask[:,:,i]))
+            rmse_norm.append(_rmse_with_missing(pred_norm[:,:,i], gt_norm[:,:,i], missing_mask[:,:,i]))
+
+        self.metric_MAE, self.metric_RMSE = np.mean(mae_list), np.mean(rmse_list)
 
         if self.opt.phase == 'test':
-            sampled_pred = self.results['sampled_pred']  # [B, num_sample, N, L, D]
+            sampled_pred = self.results['sampled_pred'] # [B, num_sample, N, L, D]
+            sampled_pred_norm = self.results['sampled_pred_norm']
             crps_list = []
+            crps_norm = []
+
             for i in range(48):
                 crps_list.append(_quantile_CRPS_with_missing(sampled_pred[:,:,:,i], gt[:,:,i], missing_mask[:,:,i]))
+                crps_norm.append(_quantile_CRPS_with_missing(sampled_pred_norm[:,:,:,i], gt_norm[:,:,i], missing_mask[:,:,i]))
+
+            # Unnormalised
             self.metric_CRPS = np.mean(crps_list)
-            self.metric_VPT = _vpt_with_missing(pred, gt, missing_mask, threshold=self.opt.vpt_threshold)
+            vpt_results = _vpt_with_missing(pred, gt, self.results['missing_mask'], threshold=0.5)
+            # Add to your metrics dictionary
+            self.metric_vpt_mean= vpt_results['vpt_mean']
+            self.metric_vpt_median = vpt_results['vpt_median']
+
+            print(f"{'Per-horizon metrics: unnormalised scale':^65}")
+            print(f"{'Horizon':<10} | {'MAE':<10} | {'RMSE':<10} | {'CRPS':<10}")
+            for i in range(24):
+                print(f"Step {i+1:<5} | {mae_list[i]:<10.4f} | {rmse_list[i]:<10.4f} | {crps_list[i]:<10.4f}")
+            pred_norm = self.results['pred_norm']
+            gt_norm = self.results['gt_norm']
+
+            # Normalised
+            print(f"{'Per-horizon metrics: Normalised scale':^65}")
+            print(f"{'Horizon':<10} | {'MAE':<10} | {'RMSE':<10} | {'CRPS':<10}")
+            for i in range(24):
+                print(f"Step {i+1:<5} | {mae_norm[i]:<10.4f} | {rmse_norm[i]:<10.4f} | {crps_norm[i]:<10.4f}")
+
+            # The standard pred/gt are already in real-units because of reverse_norm=True
+            pred_real = pred
+            gt_real = gt
+
+            # Create a forecast folder inside your model's save directory
+            forecast_dir = os.path.join(self.save_dir, 'forecast')
+            os.makedirs(forecast_dir, exist_ok=True)
+
+            # Save them exactly like DiffSTG does
+            np.save(os.path.join(forecast_dir, 'WD_true_norm.npy'), gt_norm)
+            np.save(os.path.join(forecast_dir, 'WD_pred_norm.npy'), pred_norm)
+            np.save(os.path.join(forecast_dir, 'WD_true_real.npy'), gt_real)
+            np.save(os.path.join(forecast_dir, 'WD_pred_real.npy'), pred_real)
+
+			# NEW: Slice the massive multi-sample arrays down to 50 dataset samples
+            sampled_pred_light = sampled_pred[:200]
+            sampled_pred_norm_light = sampled_pred_norm[:200]
+
+            # Save the lightweight versions for graphing
+            np.save(os.path.join(forecast_dir, 'WD_sampled_pred_real.npy'), sampled_pred_light)
+            np.save(os.path.join(forecast_dir, 'WD_sampled_pred_norm.npy'), sampled_pred_norm_light)
 
     def optimize_parameters(self):
         self.set_requires_grad(self.netEncoder, True)

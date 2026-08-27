@@ -57,31 +57,26 @@ def load_base_config():
 
 
 def write_trial_config(full_yaml, base_section, trial, trial_key):
-    """Override ONLY top-level stdiffusionfore keys. The nested `wavenet:`
-    block must stay byte-identical to what gwavenet was pretrained with
-    (config1 in gwavenet_config.yaml) -- Optuna must never touch it, or
-    the pretrained checkpoint won't load cleanly into stdiffusionfore's
-    internal wavenet backbone.
-    """
+    """Override ONLY top-level stdiffusionfore keys."""
     section = copy.deepcopy(base_section)
 
-    # num_heads first, then constrain embed_dim/pos_dim to values divisible
-    # by it -- attention will break otherwise.
     num_heads = trial.suggest_categorical('num_heads', [4, 8])
-    valid_dims = [d for d in (64, 96, 128, 192) if d % num_heads == 0]
+
+    # FIX: 64, 96, 128, and 192 are all divisible by both 4 and 8.
+    # Use a static list to avoid Optuna categorical space distribution errors.
+    static_valid_dims = [64, 96, 128, 192]
+
     section['num_heads'] = num_heads
-    section['embed_dim'] = trial.suggest_categorical('embed_dim', valid_dims)
-    section['pos_dim'] = trial.suggest_categorical('pos_dim', valid_dims)
+    section['embed_dim'] = trial.suggest_categorical('embed_dim', static_valid_dims)
+    section['pos_dim'] = trial.suggest_categorical('pos_dim', static_valid_dims)
 
     section['encoder_depth'] = trial.suggest_int('encoder_depth', 1, 4)
     section['mlp_ratio'] = trial.suggest_categorical('mlp_ratio', [1, 2, 4])
     section['dropout'] = trial.suggest_float('dropout', 0.0, 0.4)
 
-    section['num_steps'] = trial.suggest_categorical('num_steps', [25, 50, 100])
+    section['num_steps'] = trial.suggest_categorical('num_steps', [50, 100, 200])
     section['objective'] = trial.suggest_categorical('objective', ['input', 'noise'])
 
-    # wavenet block: deliberately NOT touched, stays pinned to base_section's
-    # values (which must match gwavenet_config.yaml's config1).
     assert section['wavenet'] == base_section['wavenet'], \
         'wavenet block drifted from pretrain config -- do not tune this.'
 

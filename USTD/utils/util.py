@@ -179,13 +179,38 @@ def _quantile_CRPS_with_missing(y, label, missing_mask):
         CRPS += q_loss / denom
     return CRPS / len(quantiles)
 
-def _vpt_with_missing(y, label, missing_mask, threshold=0.5):
-    L = label.shape[2]
-    for t in range(L):
-        step_nrmse = _nrmse_with_missing(y[:, :, t], label[:, :, t], missing_mask[:, :, t])
-        if step_nrmse > threshold:
-            return t
-    return L
+def _vpt_with_missing(y, label, missing_mask, threshold=0.5, epsilon=1e-7):
+    """
+    Args:
+        y, label, missing_mask: nd.array [B, N, L, D] or [B, N, L]
+    Returns dict of VPT summary stats over the batch.
+    """
+    if len(missing_mask.shape) != len(label.shape) and missing_mask.shape == y.shape[:-1]:
+        missing_mask = missing_mask[..., np.newaxis]
+
+    B = label.shape[0]
+    L = label.shape[2] 
+    vpts = np.full(B, L, dtype=float)
+
+    for b in range(B):
+        for t in range(L):
+            rmse_t = _rmse_with_missing(y[b:b+1, :, t], label[b:b+1, :, t], missing_mask[b:b+1, :, t])
+            if t > 0:
+                hist_label, hist_mask = label[b:b+1, :, :t+1], missing_mask[b:b+1, :, :t+1]
+            else:
+                hist_label, hist_mask = label[b:b+1], missing_mask[b:b+1]
+
+            valid_mask = 1 - hist_mask
+            valid_count = np.sum(valid_mask * np.ones_like(hist_label))
+            mean = (hist_label * valid_mask).sum() / valid_count
+            var = (((hist_label - mean) ** 2) * valid_mask).sum() / valid_count
+            std_t = max(np.sqrt(var), epsilon)
+
+            if (rmse_t / std_t) > threshold:
+                vpts[b] = t
+                break
+
+    return {'vpt_mean': float(np.mean(vpts)), 'vpt_std': float(np.std(vpts)), 'vpt_median': float(np.median(vpts)), 'vpt_min': float(np.min(vpts)), 'vpt_max': float(np.max(vpts))}
 
 if __name__ == "__main__":
 

@@ -2,5 +2,12 @@ ProcessingData/RawData/
 ProcessingData/saws_data.nc
 ProcessingData/RawData/
 ProcessingData/saws_data.nc
+wandb/
+*.pt
+*.pth
+__pycache__/
 .DS_Store
 **/.DS_Store
+USTD/checkpoints/
+*.npy
+*.pkl

@@ -91,11 +91,13 @@ if __name__ == '__main__':
                     model.save_networks('best')
                     early_stop_trigger = 0
                 else:
-                    early_stop_trigger += val_opt.eval_epoch_freq
+                    print("Accumulating early stopping")
+                    # FIX: Increment by 1 evaluation step, not by the epoch frequency itself
+                    early_stop_trigger += 1
 
                 model.clear_cache()
 
-                # check early stopping
+                # check early stopping (Threshold is now 10 *evaluations*, not 10 epochs)
                 early_stopping_threshold = 10
                 if early_stop_trigger >= early_stopping_threshold:
                     print('Trigger early stopping!')
@@ -122,22 +124,45 @@ if __name__ == '__main__':
             new_lr = model.update_learning_rate()  # update learning rates in the beginning of every epoc
 
         log_summary({'best_val_MAE': best_metric, 'final_epoch': epoch})
+
+        # ADDITION: Save metrics to JSON for HPO / Optuna parsing
+        import json
+        metrics_payload = {
+            'best_val_MAE': float(best_metric),
+            'final_epoch': int(epoch)
+        }
+        with open(os.path.join(model.save_dir, 'best_metrics.json'), 'w') as f:
+            json.dump(metrics_payload, f, indent=4)
+
+        # ADDITION: Print directory delimiter for Optuna subprocess parser
+        print(f"USTD_SAVE_DIR::{model.save_dir}", flush=True)
+
     finally:
         finish()
 
-    print('Run the evaluation.')
-    with open(os.path.join(model.save_dir,'run_test.sh'), 'w') as f:
-        f.write('source activate pytorch-py39\n')
-        cmd = 'python test.py --model {} --dataset_mode {} ' \
-                  '--pred_attr {} --gpu_ids {} --config {} --t_len {} --file_time {} --epoch best'.format(
-            opt.model,
-            opt.dataset_mode,
-            opt.pred_attr,
-            opt.gpu_ids[0]+1,
-            opt.config,
-            opt.t_len,
-            opt.file_time)
-        f.write(cmd)
+    # ADDITION: Skip test execution if launched via HPO driver
+    if os.environ.get('USTD_SKIP_AUTO_TEST') == '1':
+        print('USTD_SKIP_AUTO_TEST=1 set; skipping automatic test evaluation.')
+    else:
+        print('Run the evaluation.')
+        with open(os.path.join(model.save_dir,'run_test.sh'), 'w') as f:
+            #f.write('#!/bin/bash\n')
+            f.write('source activate pytorch-py39\n')
+            cmd = 'python test.py --model {} --dataset_mode {} ' \
+                      '--pred_attr {} --gpu_ids {} --config {} --t_len {} --file_time {} --epoch best'.format(
+                opt.model,
+                opt.dataset_mode,
+                opt.pred_attr,
+                opt.gpu_ids[0],
+                opt.config,
+                opt.t_len,
+                opt.file_time)
+            f.write(cmd)
 
-    os.system('chmod u+x '+ os.path.join(model.save_dir,'run_test.sh'))
-    subprocess.Popen(os.path.join(model.save_dir,'run_test.sh'), shell=True)
+        os.system('chmod u+x '+ os.path.join(model.save_dir,'run_test.sh'))
+        clean_env = os.environ.copy()
+        clean_env = {k: v for k, v in clean_env.items() if not k.startswith('WANDB_')}
+        subprocess.run(os.path.join(model.save_dir,'run_test.sh'), shell=True, env=clean_env)
+
+
+
